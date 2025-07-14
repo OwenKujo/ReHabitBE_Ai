@@ -10,6 +10,16 @@ function PoseAngleDetector() {
   const [error, setError] = useState(null);
   const [angles, setAngles] = useState({ left: null, right: null });
   const [feedback, setFeedback] = useState("");
+  const [phase, setPhase] = useState("idle"); // idle, countdown, challenge, finished
+  const [countdown, setCountdown] = useState(10);
+  const [challengeTime, setChallengeTime] = useState(10);
+  const [heldTime, setHeldTime] = useState(0);
+  const intervalRef = useRef(null);
+  const challengeIntervalRef = useRef(null);
+  const [finalMessage, setFinalMessage] = useState("");
+  const [isHolding, setIsHolding] = useState(false); // Track if currently holding correct pose
+  const [challengeCountdown, setChallengeCountdown] = useState(10); // Challenge phase countdown
+  const [incorrectTime, setIncorrectTime] = useState(0); // Total incorrect seconds during challenge
 
   useEffect(() => {
     if (navigator.permissions) {
@@ -129,6 +139,10 @@ function PoseAngleDetector() {
   // Convert radians to degrees
   Math.degrees = (radians) => radians * (180 / Math.PI);
 
+  function isRightArmCorrect(angle) {
+    return angle !== null && angle >= 50 && angle <= 90;
+  }
+
   function onResults(results) {
     const canvasElement = canvasRef.current;
     if (!canvasElement) return;
@@ -237,12 +251,14 @@ function PoseAngleDetector() {
       let feedbackColor = "#FF0000";
       
       if (rightAngle !== null && leftAngle !== null) {
-        if (rightAngle >= 50 && rightAngle <= 90) {
+        if (isRightArmCorrect(rightAngle)) {
           feedbackText = "Correct";
           feedbackColor = "#00FF00";
+          setIsHolding(true);
         } else {
           feedbackText = "Incorrect";
           feedbackColor = "#FF0000";
+          setIsHolding(false);
         }
       }
 
@@ -254,10 +270,111 @@ function PoseAngleDetector() {
       }
       
       setFeedback(feedbackText);
+
+
+      if (phase === "challenge") {
+        if (feedbackText === "Correct") {
+          setIsHolding(true);
+        } else {
+          setIsHolding(false);
+          setFinalMessage("Come back and hold correct!");
+        }
+      }
     }
     
     canvasCtx.restore();
   }
+
+  const startCountdown = () => {
+    setPhase("countdown");
+    setCountdown(10);
+    setChallengeTime(60);
+    setHeldTime(0);
+    setFinalMessage("");
+    intervalRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(intervalRef.current);
+          startChallenge();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const startChallenge = () => {
+    setPhase("challenge");
+    setHeldTime(0);
+    setFinalMessage("");
+    setIsHolding(true);
+    setChallengeCountdown(60);
+    setIncorrectTime(0);
+  };
+
+  // Timer effect for challenge countdown (always runs during challenge phase)
+  useEffect(() => {
+    if (phase === "challenge" && challengeCountdown > 0 && heldTime < 60) { // challengeCountdown is the countdown for the challenge
+      const interval = setInterval(() => {
+        setChallengeCountdown((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [phase, challengeCountdown, heldTime]);
+
+  // Timer effect for counting held time only when isHolding is true and phase is challenge
+  useEffect(() => {
+    if (phase === "challenge" && isHolding && heldTime < 60 && challengeCountdown > 0) {
+      const interval = setInterval(() => {
+        setHeldTime((prev) => {
+          if (prev >= 59) { // will become 10
+            clearInterval(interval);
+            // Inline stopChallenge(true):
+            setPhase("finished");
+            setFinalMessage(
+              `Success! You held the correct pose for 60 seconds.\nTotal incorrect time: ${incorrectTime} second${incorrectTime === 1 ? '' : 's'}.`
+            );
+            return 60;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [phase, isHolding, heldTime, challengeCountdown]);
+
+  // Timer effect for counting incorrect time during challenge
+  useEffect(() => {
+    let interval;
+    if (phase === "challenge" && !isHolding && challengeCountdown > 0 && heldTime < 60) {
+      interval = setInterval(() => {
+        setIncorrectTime((prev) => prev + 1);
+        console.log("Incorrect time: ", incorrectTime);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [phase, isHolding, challengeCountdown, heldTime]);
+
+
+  useEffect(() => {
+    if (phase === "challenge" && challengeCountdown === 0 && heldTime < 60) {
+      // Inline stopChallenge(false):
+      setPhase("finished");
+      setFinalMessage(
+        `Time's up! You held the correct pose for ${heldTime} second${heldTime === 1 ? '' : 's'} out of 60 seconds.\nTotal incorrect time: ${incorrectTime} second${incorrectTime === 1 ? '' : 's'}.`
+      );
+    }
+  }, [phase, challengeCountdown, heldTime]);
+
+  
+
+  useEffect(() => {
+    // Cleanup intervals on unmount
+    return () => {
+      clearInterval(intervalRef.current);
+      clearInterval(challengeIntervalRef.current);
+    };
+  }, []);
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
@@ -280,6 +397,34 @@ function PoseAngleDetector() {
           Loading MediaPipe Pose...
         </div>
       )}
+      
+      <div style={{ marginBottom: "20px" }}>
+        {phase === "idle" && (
+          <button onClick={startCountdown} disabled={phase !== "idle" || isLoading} style={{ fontSize: "18px", padding: "10px 30px" }}>
+            Start
+          </button>
+        )}
+        {phase === "countdown" && (
+          <div style={{ fontSize: "32px", color: "#1976d2", fontWeight: "bold" }}>Get Ready: {countdown}</div>
+        )}
+        {phase === "challenge" && (
+          <div style={{ fontSize: "24px", color: feedback === "Correct" ? "#00FF00" : "#FF0000" }}>
+            <div>
+              Challenge Time Left: {challengeCountdown} s
+            </div>
+            <div>
+              {feedback === "Correct"
+                ? `Hold the correct pose! Time held: ${heldTime} s`
+                : `Come back and hold correct! Time held: ${heldTime} s`}
+            </div>
+          </div>
+        )}
+        {phase === "finished" && (
+          <div style={{ fontSize: "24px", color: finalMessage.startsWith("Success") ? "#00FF00" : "#FF0000" }}>
+            {finalMessage}
+          </div>
+        )}
+      </div>
       
       <div style={{ position: "relative", display: "inline-block" }}>
         <video 
