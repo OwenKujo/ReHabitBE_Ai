@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function PoseAngleDetector() {
-  const navigate = useNavigate();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const poseRef = useRef(null);
@@ -743,6 +742,8 @@ function PoseAngleDetector() {
     }
   }, [mode, repCount, targetReps]);
 
+  const navigate = useNavigate();
+
   if (mode === "face") {
     // When 5 reps are done, stop camera, hide canvas, and show summary
     if (showFaceSummary) {
@@ -771,7 +772,7 @@ function PoseAngleDetector() {
               Total Score: <b>{totalScore}</b> / 20
             </div>
             <button
-              onClick={() => navigate('/physicaltherapy')}
+              onClick={() => navigate("/physicaltherapy")}
               style={{
                 marginTop: 10,
                 padding: "12px 32px",
@@ -783,7 +784,7 @@ function PoseAngleDetector() {
                 cursor: "pointer"
               }}
             >
-              Return to  PhysicalTherapy
+              Return to Pose PhysicalTherapy
             </button>
           </div>
         </div>
