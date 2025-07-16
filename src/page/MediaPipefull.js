@@ -531,21 +531,44 @@ function PoseAngleDetector() {
     if (phase === "challenge" && !isHolding && challengeCountdown > 0 && heldTime < 30) {
       interval = setInterval(() => {
         setIncorrectTime((prev) => prev + 1);
+        console.log('incorrect time:',incorrectTime)
       }, 1000);
     }
     return () => clearInterval(interval);
   }, [phase, isHolding, challengeCountdown, heldTime]);
 
+  // When challenge ends, set phase to 'showfinal' and setFinalMessage
   useEffect(() => {
     if (phase === "challenge" && challengeCountdown === 0 && heldTime < 30) {
-      setPhase("getready");
-      setGetReadyCountdown(10);
+      setPhase("showfinal");
       setFinalMessage(
         `Time's up! You held the correct pose for ${heldTime} second${heldTime === 1 ? '' : 's'} out of 30 seconds.\nTotal incorrect time: ${incorrectTime} second${incorrectTime === 1 ? '' : 's'}.`
       );
     }
   }, [phase, challengeCountdown, heldTime, incorrectTime]);
 
+  // When challenge is completed successfully, also set phase to 'showfinal' and setFinalMessage
+  useEffect(() => {
+    if (phase === "finished") {
+      setPhase("showfinal");
+      setFinalMessage(
+        `Success! You held the correct pose for 30 seconds.\nTotal incorrect time: ${incorrectTime} second${incorrectTime === 1 ? '' : 's'}.`
+      );
+    }
+  }, [phase, incorrectTime]);
+
+  // Show final message for 5 seconds, then move to getready phase
+  useEffect(() => {
+    if (phase === "showfinal") {
+      const timeout = setTimeout(() => {
+        setPhase("getready");
+        setGetReadyCountdown(10);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [phase]);
+
+  // In the getready countdown effect, after countdown reaches 0, switch to face mode
   useEffect(() => {
     if (phase === "getready" && getReadyCountdown > 0) {
       const interval = setInterval(() => {
@@ -679,8 +702,16 @@ function PoseAngleDetector() {
           </div>
         )}
         {phase === "getready" && (
-          <div style={{ fontSize: "32px", color: "#1976d2", fontWeight: "bold" }}>
-            Get Ready for Next Step: {getReadyCountdown}
+          <div style={{ fontSize: "24px", color: finalMessage.startsWith("Success") ? "#00FF00" : "#FF0000" }}>
+            {finalMessage}
+            <div style={{ fontSize: "32px", color: "#1976d2", fontWeight: "bold", marginTop: 10 }}>
+              Get Ready for Next Step: {getReadyCountdown}
+            </div>
+          </div>
+        )}
+        {phase === "showfinal" && (
+          <div style={{ fontSize: "24px", color: finalMessage.startsWith("Success") ? "#00FF00" : "#FF0000" }}>
+            {finalMessage}
           </div>
         )}
       </div>
