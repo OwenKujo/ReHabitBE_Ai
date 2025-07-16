@@ -43,16 +43,30 @@ function FaceRepTracker() {
     };
   }, [permissionState]);
 
-  const loadMediaPipeScripts = async () => {
-    if (!window.Pose) {
-      await import('https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js');
-    }
-    if (!window.Camera) {
-      await import('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js');
-    }
-    if (!window.FaceMesh) {
-      await import('https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js');
-    }
+  const loadMediaPipeScripts = () => {
+    return new Promise((resolve, reject) => {
+      const scripts = [
+        'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.4.1646424915/camera_utils.js',
+        'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1646424915/face_mesh.js'
+      ];
+      let loadedCount = 0;
+      scripts.forEach(src => {
+        if (document.querySelector(`script[src="${src}"]`)) {
+          loadedCount++;
+          if (loadedCount === scripts.length) resolve();
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = false; // Important: preserve order!
+        script.onload = () => {
+          loadedCount++;
+          if (loadedCount === scripts.length) resolve();
+        };
+        script.onerror = () => reject(new Error(`Failed to load ${src}`));
+        document.head.appendChild(script);
+      });
+    });
   };
 
   const initializePose = async () => {
