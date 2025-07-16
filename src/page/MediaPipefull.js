@@ -309,14 +309,14 @@ function PoseAngleDetector() {
     return () => {
       if (cameraRef.current) {
         try {
-          cameraRef.current.stop();
+        cameraRef.current.stop();
         } catch (e) {
           console.warn("Error stopping camera:", e);
         }
       }
       if (poseRef.current) {
         try {
-          poseRef.current.close();
+        poseRef.current.close();
         } catch (e) {
           console.warn("Error closing pose:", e);
         }
@@ -371,7 +371,7 @@ function PoseAngleDetector() {
           onFrame: async () => {
             try {
               if (poseRef.current && videoRef.current) {
-                await poseRef.current.send({ image: videoRef.current });
+              await poseRef.current.send({ image: videoRef.current });
               }
             } catch (error) {
               console.error("Error sending frame to pose:", error);
@@ -411,8 +411,8 @@ function PoseAngleDetector() {
             return;
           }
           
-          const script = document.createElement('script');
-          script.src = src;
+        const script = document.createElement('script');
+        script.src = src;
           script.async = false;
           script.onload = () => resolveScript();
           script.onerror = () => rejectScript(new Error(`Failed to load ${src}`));
@@ -425,7 +425,7 @@ function PoseAngleDetector() {
         try {
           for (const src of scripts) {
             await loadScript(src);
-            loadedCount++;
+          loadedCount++;
           }
           resolve();
         } catch (error) {
@@ -470,20 +470,20 @@ function PoseAngleDetector() {
     const { width, height } = canvasElement;
     
     try {
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, width, height);
-      
+    canvasCtx.save();
+    canvasCtx.clearRect(0, 0, width, height);
+    
       if (results.image) {
-        canvasCtx.scale(-1, 1);
-        canvasCtx.translate(-width, 0);
-        canvasCtx.drawImage(results.image, 0, 0, width, height);
-        canvasCtx.scale(-1, 1);
-        canvasCtx.translate(-width, 0);
+    canvasCtx.scale(-1, 1);
+    canvasCtx.translate(-width, 0);
+    canvasCtx.drawImage(results.image, 0, 0, width, height);
+    canvasCtx.scale(-1, 1);
+    canvasCtx.translate(-width, 0);
       }
 
       if (results.poseLandmarks && results.poseLandmarks.length >= 17) {
-        const landmarks = results.poseLandmarks;
-        
+      const landmarks = results.poseLandmarks;
+      
         // Check if required landmarks exist
         if (!landmarks[12] || !landmarks[14] || !landmarks[16] || 
             !landmarks[11] || !landmarks[13] || !landmarks[15]) {
@@ -492,69 +492,69 @@ function PoseAngleDetector() {
         }
         
         const rightShoulder = { x: (1 - landmarks[12].x) * width, y: landmarks[12].y * height };
-        const rightElbow = { x: (1 - landmarks[14].x) * width, y: landmarks[14].y * height };
-        const rightWrist = { x: (1 - landmarks[16].x) * width, y: landmarks[16].y * height };
-        
-        const leftShoulder = { x: (1 - landmarks[11].x) * width, y: landmarks[11].y * height };
-        const leftElbow = { x: (1 - landmarks[13].x) * width, y: landmarks[13].y * height };
-        const leftWrist = { x: (1 - landmarks[15].x) * width, y: landmarks[15].y * height };
+      const rightElbow = { x: (1 - landmarks[14].x) * width, y: landmarks[14].y * height };
+      const rightWrist = { x: (1 - landmarks[16].x) * width, y: landmarks[16].y * height };
+      
+      const leftShoulder = { x: (1 - landmarks[11].x) * width, y: landmarks[11].y * height };
+      const leftElbow = { x: (1 - landmarks[13].x) * width, y: landmarks[13].y * height };
+      const leftWrist = { x: (1 - landmarks[15].x) * width, y: landmarks[15].y * height };
 
-        const rightAngle = calculateAngle(
-          landmarks[14], // elbow
-          landmarks[12], // shoulder
-          landmarks[16]  // wrist
+      const rightAngle = calculateAngle(
+        landmarks[14], // elbow
+        landmarks[12], // shoulder
+        landmarks[16]  // wrist
+      );
+      
+      const leftAngle = calculateAngle(
+        landmarks[13], // elbow
+        landmarks[11], // shoulder
+        landmarks[15]  // wrist
+      );
+
+      setAngles({ left: leftAngle, right: rightAngle });
+
+      canvasCtx.font = "16px Arial";
+      canvasCtx.fillStyle = "#00FF00";
+      
+      if (rightAngle !== null) {
+        canvasCtx.fillText(
+          `Right: ${Math.round(rightAngle)}°`,
+          rightShoulder.x - 50,
+          rightShoulder.y - 20
         );
-        
-        const leftAngle = calculateAngle(
-          landmarks[13], // elbow
-          landmarks[11], // shoulder
-          landmarks[15]  // wrist
-        );
-
-        setAngles({ left: leftAngle, right: rightAngle });
-
-        canvasCtx.font = "16px Arial";
-        canvasCtx.fillStyle = "#00FF00";
-        
-        if (rightAngle !== null) {
-          canvasCtx.fillText(
-            `Right: ${Math.round(rightAngle)}°`,
-            rightShoulder.x - 50,
-            rightShoulder.y - 20
-          );
-        }
-        
-        if (leftAngle !== null) {
-          canvasCtx.fillText(
-            `Left: ${Math.round(leftAngle)}°`,
-            leftShoulder.x - 50,
-            leftShoulder.y - 20
-          );
-        }
-
-        let feedbackText = "";
-        let feedbackColor = "#FF0000";
-        
-        if (rightAngle !== null && leftAngle !== null) {
-          if (isRightArmCorrect(rightAngle)) {
-            feedbackText = "Correct";
-            feedbackColor = "#00FF00";
-            setIsHolding(true);
-          } else {
-            feedbackText = "Incorrect";
-            feedbackColor = "#FF0000";
-            setIsHolding(false);
-          }
-        }
-
-        if (feedbackText) {
-          canvasCtx.font = "24px Arial";
-          canvasCtx.fillStyle = feedbackColor;
-          canvasCtx.fillText(feedbackText, 50, 50);
-        }
-        
-        setFeedback(feedbackText);
       }
+      
+      if (leftAngle !== null) {
+        canvasCtx.fillText(
+          `Left: ${Math.round(leftAngle)}°`,
+          leftShoulder.x - 50,
+          leftShoulder.y - 20
+        );
+      }
+
+      let feedbackText = "";
+      let feedbackColor = "#FF0000";
+      
+      if (rightAngle !== null && leftAngle !== null) {
+          if (isRightArmCorrect(rightAngle)) {
+          feedbackText = "Correct";
+          feedbackColor = "#00FF00";
+            setIsHolding(true);
+        } else {
+          feedbackText = "Incorrect";
+          feedbackColor = "#FF0000";
+            setIsHolding(false);
+        }
+      }
+
+      if (feedbackText) {
+        canvasCtx.font = "24px Arial";
+        canvasCtx.fillStyle = feedbackColor;
+        canvasCtx.fillText(feedbackText, 50, 50);
+      }
+      
+      setFeedback(feedbackText);
+    }
     } catch (error) {
       console.error("Error in onResults:", error);
     } finally {
@@ -818,6 +818,25 @@ function PoseAngleDetector() {
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
+      <div style={{ width: '100%', textAlign: 'left', marginBottom: 16 }}>
+        <button
+          onClick={() => navigate('/office-syndrome')}
+          style={{
+            background: '#1976d2',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 8,
+            padding: '10px 24px',
+            fontWeight: 700,
+            fontSize: 16,
+            cursor: 'pointer',
+            marginTop: 8,
+            marginLeft: 8
+          }}
+        >
+          ← Go Back
+        </button>
+      </div>
       <h1>OfficeSyndrome Rehabilitation</h1>
       {error && (
         <div style={{ 
@@ -892,9 +911,9 @@ function PoseAngleDetector() {
                 </div>
               </>
             )}
-          </div>
-        )}
-        
+        </div>
+      )}
+      
       </div>
       <div style={{ position: "relative", display: "inline-block" }}>
         <video 
@@ -914,7 +933,7 @@ function PoseAngleDetector() {
           }}
         />
       </div>
-   
+      
      
     </div>
   );

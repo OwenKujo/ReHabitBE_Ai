@@ -7,7 +7,7 @@ function ReHabitNavbarGuest() {
 
   const navItems = [
     { name: 'Home', href: '/' },
-    { name: 'Physical Therapy', href: '/MediaPipefull' },
+    { name: 'Physical Therapy', href: '/PhysicalMenu' },
     { name: 'About', href: '#' },
     { name: 'Contact', href: '#' }
   ];

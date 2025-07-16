@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const menuItems = [
   { label: 'Suggestion', active: true },
@@ -7,25 +8,27 @@ const menuItems = [
   { label: 'All course' },
 ];
 
+const suggestionImg = '/one.webp';
 const suggestions = [
   {
-    img: 'https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg?auto=compress&w=400&h=250&fit=crop',
-    title: 'Class adds $30 million to its balance sheet for a Zoom-friendly edtech solution',
-    desc: 'Class, launched less than a year ago by Blackboard co-founder Michael Chasen, integrates exclusively...'
+    img: suggestionImg,
+    title: 'Office Syndrome Relief',
+    desc: 'Learn effective stretches and exercises to relieve neck, shoulder, and back pain caused by prolonged desk work. Improve your posture and reduce discomfort with guided routines.'
   },
   {
-    img: 'https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg?auto=compress&w=400&h=250&fit=crop',
-    title: 'Class adds $30 million to its balance sheet for a Zoom-friendly edtech solution',
-    desc: 'Class, launched less than a year ago by Blackboard co-founder Michael Chasen, integrates exclusively...'
+    img: suggestionImg,
+    title: 'Post-Surgery Rehabilitation',
+    desc: 'Discover safe and progressive exercises to regain strength and mobility after surgery. Our programs are designed to help you recover faster and return to daily activities with confidence.'
   },
   {
-    img: 'https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg?auto=compress&w=400&h=250&fit=crop',
-    title: 'Class adds $30 million to its balance sheet for a Zoom-friendly edtech solution',
-    desc: 'Class, launched less than a year ago by Blackboard co-founder Michael Chasen, integrates exclusively...'
+    img: suggestionImg,
+    title: 'Sports Injury Recovery',
+    desc: 'Explore targeted physical therapy plans for common sports injuries. Prevent re-injury and enhance your performance with expert-approved rehabilitation exercises.'
   },
 ];
 
 const PhysicalTherapyMenu = () => {
+  const navigate = useNavigate();
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f4fafd', fontFamily: 'Kanit, Prompt, Arial, sans-serif' }}>
       {/* Sidebar */}
@@ -36,13 +39,30 @@ const PhysicalTherapyMenu = () => {
           <span style={{ fontWeight: 700, fontSize: 24, color: '#1976d2', letterSpacing: 1 }}>ReHabit</span>
         </div>
         {/* Search */}
-        <div style={{ width: '80%', marginBottom: 32 }}>
+        <div style={{ width: '50%', marginBottom: 32, position: 'relative', alignSelf: 'flex-start', marginLeft: 25 }}>
+          <span style={{
+            position: 'absolute',
+            left: 16,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            color: '#1976d2',
+            pointerEvents: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: 20
+          }}>
+            {/* Magnifying glass SVG */}
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </span>
           <input
             type="text"
             placeholder="Search here"
             style={{
               width: '100%',
-              padding: '12px 16px',
+              padding: '12px 16px 12px 44px',
               borderRadius: 16,
               border: 'none',
               background: '#e0f2fe',
@@ -96,7 +116,12 @@ const PhysicalTherapyMenu = () => {
               <div style={{ padding: '18px 18px 12px 18px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div style={{ fontWeight: 700, fontSize: 16, color: '#222', marginBottom: 8 }}>{s.title}</div>
                 <div style={{ fontSize: 14, color: '#555', marginBottom: 18 }}>{s.desc}</div>
-                <button style={{ alignSelf: 'flex-end', background: '#19c2d2', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 24px', fontWeight: 600, fontSize: 15, cursor: 'pointer', boxShadow: '0 1px 4px rgba(30,136,229,0.06)' }}>View</button>
+                <button
+                  style={{ alignSelf: 'flex-end', background: '#19c2d2', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 24px', fontWeight: 600, fontSize: 15, cursor: 'pointer', boxShadow: '0 1px 4px rgba(30,136,229,0.06)' }}
+                  onClick={i === 0 ? () => navigate('/office-syndrome') : undefined}
+                >
+                  View
+                </button>
               </div>
             </div>
           ))}

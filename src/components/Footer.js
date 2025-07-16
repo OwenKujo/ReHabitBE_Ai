@@ -5,7 +5,7 @@ const ReHabitFooter = () => {
   const footerStyle = {
     backgroundColor: '#D6E9F7',
     padding: '0',
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'Kanit , Prompt',
     display: 'flex',
     flexDirection: 'column',
     marginTop: 'auto'

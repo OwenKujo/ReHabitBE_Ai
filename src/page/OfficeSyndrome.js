@@ -1,7 +1,9 @@
 import React from 'react';
-import { PlayCircle, ChevronDown } from 'lucide-react';
+import { PlayCircle, ChevronDown, List, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 function OfficeSyndromePage() {
+  const navigate = useNavigate();
   const movements = [
     { id: 1, name: 'เงยหน้าแหงนไฝ่', duration: '2 min' },
     { id: 2, name: 'ทรงตัวทรวงอกยื่น', duration: '2 min' },
@@ -13,7 +15,7 @@ function OfficeSyndromePage() {
     <div className="page">
       <style>{`
         .page {
-          font-family: sans-serif;
+          font-family: 'Kanit', 'Prompt';
           background-color: #eaf6fd;
           min-height: 100vh;
           margin: 0;
@@ -26,7 +28,7 @@ function OfficeSyndromePage() {
 
         .header-image {
           width: 100%;
-          height: 300px;
+          height: 450px;
           object-fit: cover;
         }
 
@@ -39,20 +41,24 @@ function OfficeSyndromePage() {
           background-color: rgba(0,0,0,0.4);
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          justify-content: flex-start;
+          align-items: flex-start;
           padding-left: 40px;
+          padding-top: 24px;
           color: white;
         }
 
         .start-button {
-          margin-top: 15px;
           background-color: #14b8a6;
           color: white;
           border: none;
-          padding: 10px 20px;
-          font-weight: bold;
-          border-radius: 6px;
+          padding: 16px 36px;
+          font-size: 1.25rem;
+          font-weight: 700;
+          border-radius: 8px;
           cursor: pointer;
+          margin-top: 32px;
+          letter-spacing: 0.5px;
         }
 
         .info-box {
@@ -166,17 +172,23 @@ function OfficeSyndromePage() {
           className="header-image"
         />
         <div className="overlay">
-          <a href="#" style={{ textDecoration: 'underline', color: 'white', fontSize: '14px' }}>
+          <a href="#" style={{ textDecoration: 'underline', color: 'white', fontSize: '1.15rem', fontWeight: 700, alignSelf: 'flex-start', marginBottom: 24, letterSpacing: 0.5 }}>
             ← Go Back
           </a>
-          <h1 style={{ fontSize: '36px', fontWeight: 'bold' }}>Office Syndrome</h1>
-          <button className="start-button">▶ Start</button>
+          <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginTop: 80 }}>Office Syndrome</h1>
+          <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ Start</button>
         </div>
 
         {/* Summary cards */}
         <div className="info-box">
-          <div className="info-card">5 movements</div>
-          <div className="info-card">7 minutes</div>
+          <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <List size={20} style={{ color: '#1976d2' }} />
+            5 movements
+          </div>
+          <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Clock size={20} style={{ color: '#1976d2' }} />
+            7 minutes
+          </div>
         </div>
       </div>
 
