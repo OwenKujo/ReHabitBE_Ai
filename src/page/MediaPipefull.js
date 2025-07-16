@@ -2,6 +2,21 @@ import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function PoseAngleDetector() {
+  // Text-to-speech utility
+  function speak(text) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // Stop any current speech
+      const utter = new window.SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.rate = 1;
+      utter.pitch = 1;
+      // Try to use an English voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const enVoice = voices.find(v => v.lang.startsWith('en'));
+      if (enVoice) utter.voice = enVoice;
+      window.speechSynthesis.speak(utter);
+    }
+  }
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -536,14 +551,14 @@ function PoseAngleDetector() {
       let feedbackColor = "#FF0000";
       
       if (rightAngle !== null && leftAngle !== null) {
-          if (isRightArmCorrect(rightAngle)) {
+        if (isRightArmCorrect(rightAngle)) {
           feedbackText = "Correct";
           feedbackColor = "#00FF00";
-            setIsHolding(true);
+          setIsHolding(true);
         } else {
           feedbackText = "Incorrect";
           feedbackColor = "#FF0000";
-            setIsHolding(false);
+          setIsHolding(false);
         }
       }
 
@@ -554,7 +569,7 @@ function PoseAngleDetector() {
       }
       
       setFeedback(feedbackText);
-    }
+      }
     } catch (error) {
       console.error("Error in onResults:", error);
     } finally {
@@ -622,7 +637,7 @@ function PoseAngleDetector() {
               setCurrentSet(currentSet + 1);
               startRest();
             } else {
-              setPhase("finished");
+            setPhase("finished");
               setFinalMessage(`Congratulations! You completed all ${totalSets} sets!`);
             }
             return holdTimePerSet;
@@ -672,7 +687,7 @@ function PoseAngleDetector() {
         setCurrentSet(currentSet + 1);
         startRest();
       } else {
-        setPhase("finished");
+      setPhase("finished");
         setFinalMessage(`Congratulations! You completed all ${totalSets} sets!`);
       }
     }
@@ -743,6 +758,51 @@ function PoseAngleDetector() {
     }
   }, [mode, repCount, targetReps]);
 
+  // Recommendation tips
+  const poseTips = [
+    "Make sure your right arm is bent between 50° and 90°. Try raising or lowering your elbow!",
+    "Keep your back straight and avoid leaning forward.",
+    "Relax your shoulders and keep them level.",
+    "Check your camera angle to ensure your full arm is visible.",
+    "Try to keep your wrist in line with your elbow for better accuracy."
+  ];
+  const faceTips = [
+    "Tilt your head back until you feel a gentle stretch in your neck.",
+    "Keep your chin up and look slightly upwards.",
+    "Relax your shoulders and keep your back straight.",
+    "Hold your head steady and avoid moving during the rep.",
+    "Make sure your face is clearly visible to the camera."
+  ];
+
+  const [poseTip, setPoseTip] = useState(poseTips[0]);
+  const [faceTip, setFaceTip] = useState(faceTips[0]);
+
+  // Update pose tip when feedback changes to Incorrect
+  useEffect(() => {
+    if (phase === "challenge" && feedback === "Incorrect") {
+      const tip = poseTips[Math.floor(Math.random() * poseTips.length)];
+      setPoseTip(tip);
+      speak(tip);
+    }
+  }, [phase, feedback]);
+
+  // Update face tip when user is not holding and in face mode
+  useEffect(() => {
+    if (mode === "face" && holdTime === 0 && repCount < targetReps) {
+      const tip = faceTips[Math.floor(Math.random() * faceTips.length)];
+      setFaceTip(tip);
+      speak(tip);
+    }
+  }, [mode, holdTime, repCount]);
+
+  useEffect(() => {
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [phase, mode]);
+
   if (mode === "face") {
     // When 5 reps are done, stop camera, hide canvas, and show summary
     if (showFaceSummary) {
@@ -812,31 +872,17 @@ function PoseAngleDetector() {
         <div style={{ marginTop: 10, padding: 10, borderRadius: 5, textAlign: 'center', fontWeight: 'bold', backgroundColor: faceStatus.type === 'error' ? '#dc3545' : faceStatus.type === 'loading' ? '#ffc107' : '#28a745', color: faceStatus.type === 'error' ? '#fff' : faceStatus.type === 'loading' ? '#856404' : '#fff' }}>
           {faceStatus.message || faceError}
         </div>
+        {holdTime === 0 && repCount < targetReps && (
+          <div style={{ color: '#ff9800', fontSize: 16, marginTop: 10 }}>
+             Tip: {faceTip}
+          </div>
+        )}
       </div>
     );
   }
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
-      <div style={{ width: '100%', textAlign: 'left', marginBottom: 16 }}>
-        <button
-          onClick={() => navigate('/office-syndrome')}
-          style={{
-            background: '#1976d2',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            padding: '10px 24px',
-            fontWeight: 700,
-            fontSize: 16,
-            cursor: 'pointer',
-            marginTop: 8,
-            marginLeft: 8
-          }}
-        >
-          ← Go Back
-        </button>
-      </div>
       <h1>OfficeSyndrome Rehabilitation</h1>
       {error && (
         <div style={{ 
@@ -871,17 +917,22 @@ function PoseAngleDetector() {
             fontSize: 18,
             color: feedback === "Correct" ? "#00CC00" : "#FF0000"
           }}>
-            {phase === "countdown" && (
+        {phase === "countdown" && (
               <>
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready</div>
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {countdown} s</div>
               </>
-            )}
-            {phase === "challenge" && (
+        )}
+        {phase === "challenge" && (
               <>
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet} / {totalSets}</div>
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {challengeCountdown} s</div>
                 <div style={{ marginBottom: 8 }}>{feedback === "Correct" ? "Great! Keep holding the correct pose!" : "Adjust your pose to the correct position!"}</div>
+               {feedback === "Incorrect" && (
+                 <div style={{ color: "#ff9800", fontSize: 16, marginTop: 8 }}>
+                   Tip: {poseTip}
+          </div>
+               )}
               </>
             )}
             {phase === "rest" && (
@@ -890,8 +941,8 @@ function PoseAngleDetector() {
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Rest Time: {restCountdown} s</div>
                 <div style={{ marginBottom: 8 }}>Next: Set {currentSet} / {totalSets}</div>
               </>
-            )}
-            {phase === "finished" && (
+        )}
+        {phase === "finished" && (
               <>
                 <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>All Sets Complete!</div>
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>See your results below.</div>
@@ -907,13 +958,13 @@ function PoseAngleDetector() {
               <>
                 <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>Summary</div>
                 <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
-                  {finalMessage}
+            {finalMessage}
                 </div>
               </>
             )}
-        </div>
-      )}
-      
+          </div>
+        )}
+        
       </div>
       <div style={{ position: "relative", display: "inline-block" }}>
         <video 
