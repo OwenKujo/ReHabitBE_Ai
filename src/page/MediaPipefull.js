@@ -2,6 +2,21 @@ import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function PoseAngleDetector() {
+  // Text-to-speech utility
+  function speak(text) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // Stop any current speech
+      const utter = new window.SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.rate = 1;
+      utter.pitch = 1;
+      // Try to use an English voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const enVoice = voices.find(v => v.lang.startsWith('en'));
+      if (enVoice) utter.voice = enVoice;
+      window.speechSynthesis.speak(utter);
+    }
+  }
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -309,14 +324,14 @@ function PoseAngleDetector() {
     return () => {
       if (cameraRef.current) {
         try {
-          cameraRef.current.stop();
+        cameraRef.current.stop();
         } catch (e) {
           console.warn("Error stopping camera:", e);
         }
       }
       if (poseRef.current) {
         try {
-          poseRef.current.close();
+        poseRef.current.close();
         } catch (e) {
           console.warn("Error closing pose:", e);
         }
@@ -371,7 +386,7 @@ function PoseAngleDetector() {
           onFrame: async () => {
             try {
               if (poseRef.current && videoRef.current) {
-                await poseRef.current.send({ image: videoRef.current });
+              await poseRef.current.send({ image: videoRef.current });
               }
             } catch (error) {
               console.error("Error sending frame to pose:", error);
@@ -411,8 +426,8 @@ function PoseAngleDetector() {
             return;
           }
           
-          const script = document.createElement('script');
-          script.src = src;
+        const script = document.createElement('script');
+        script.src = src;
           script.async = false;
           script.onload = () => resolveScript();
           script.onerror = () => rejectScript(new Error(`Failed to load ${src}`));
@@ -425,7 +440,7 @@ function PoseAngleDetector() {
         try {
           for (const src of scripts) {
             await loadScript(src);
-            loadedCount++;
+          loadedCount++;
           }
           resolve();
         } catch (error) {
@@ -470,20 +485,20 @@ function PoseAngleDetector() {
     const { width, height } = canvasElement;
     
     try {
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, width, height);
-      
+    canvasCtx.save();
+    canvasCtx.clearRect(0, 0, width, height);
+    
       if (results.image) {
-        canvasCtx.scale(-1, 1);
-        canvasCtx.translate(-width, 0);
-        canvasCtx.drawImage(results.image, 0, 0, width, height);
-        canvasCtx.scale(-1, 1);
-        canvasCtx.translate(-width, 0);
+    canvasCtx.scale(-1, 1);
+    canvasCtx.translate(-width, 0);
+    canvasCtx.drawImage(results.image, 0, 0, width, height);
+    canvasCtx.scale(-1, 1);
+    canvasCtx.translate(-width, 0);
       }
 
       if (results.poseLandmarks && results.poseLandmarks.length >= 17) {
-        const landmarks = results.poseLandmarks;
-        
+      const landmarks = results.poseLandmarks;
+      
         // Check if required landmarks exist
         if (!landmarks[12] || !landmarks[14] || !landmarks[16] || 
             !landmarks[11] || !landmarks[13] || !landmarks[15]) {
@@ -492,68 +507,68 @@ function PoseAngleDetector() {
         }
         
         const rightShoulder = { x: (1 - landmarks[12].x) * width, y: landmarks[12].y * height };
-        const rightElbow = { x: (1 - landmarks[14].x) * width, y: landmarks[14].y * height };
-        const rightWrist = { x: (1 - landmarks[16].x) * width, y: landmarks[16].y * height };
-        
-        const leftShoulder = { x: (1 - landmarks[11].x) * width, y: landmarks[11].y * height };
-        const leftElbow = { x: (1 - landmarks[13].x) * width, y: landmarks[13].y * height };
-        const leftWrist = { x: (1 - landmarks[15].x) * width, y: landmarks[15].y * height };
+      const rightElbow = { x: (1 - landmarks[14].x) * width, y: landmarks[14].y * height };
+      const rightWrist = { x: (1 - landmarks[16].x) * width, y: landmarks[16].y * height };
+      
+      const leftShoulder = { x: (1 - landmarks[11].x) * width, y: landmarks[11].y * height };
+      const leftElbow = { x: (1 - landmarks[13].x) * width, y: landmarks[13].y * height };
+      const leftWrist = { x: (1 - landmarks[15].x) * width, y: landmarks[15].y * height };
 
-        const rightAngle = calculateAngle(
-          landmarks[14], // elbow
-          landmarks[12], // shoulder
-          landmarks[16]  // wrist
+      const rightAngle = calculateAngle(
+        landmarks[14], // elbow
+        landmarks[12], // shoulder
+        landmarks[16]  // wrist
+      );
+      
+      const leftAngle = calculateAngle(
+        landmarks[13], // elbow
+        landmarks[11], // shoulder
+        landmarks[15]  // wrist
+      );
+
+      setAngles({ left: leftAngle, right: rightAngle });
+
+      canvasCtx.font = "16px Arial";
+      canvasCtx.fillStyle = "#00FF00";
+      
+      if (rightAngle !== null) {
+        canvasCtx.fillText(
+          `Right: ${Math.round(rightAngle)}°`,
+          rightShoulder.x - 50,
+          rightShoulder.y - 20
         );
-        
-        const leftAngle = calculateAngle(
-          landmarks[13], // elbow
-          landmarks[11], // shoulder
-          landmarks[15]  // wrist
+      }
+      
+      if (leftAngle !== null) {
+        canvasCtx.fillText(
+          `Left: ${Math.round(leftAngle)}°`,
+          leftShoulder.x - 50,
+          leftShoulder.y - 20
         );
+      }
 
-        setAngles({ left: leftAngle, right: rightAngle });
+      let feedbackText = "";
+      let feedbackColor = "#FF0000";
+      
+      if (rightAngle !== null && leftAngle !== null) {
+        if (isRightArmCorrect(rightAngle)) {
+          feedbackText = "Correct";
+          feedbackColor = "#00FF00";
+          setIsHolding(true);
+        } else {
+          feedbackText = "Incorrect";
+          feedbackColor = "#FF0000";
+          setIsHolding(false);
+        }
+      }
 
-        canvasCtx.font = "16px Arial";
-        canvasCtx.fillStyle = "#00FF00";
-        
-        if (rightAngle !== null) {
-          canvasCtx.fillText(
-            `Right: ${Math.round(rightAngle)}°`,
-            rightShoulder.x - 50,
-            rightShoulder.y - 20
-          );
-        }
-        
-        if (leftAngle !== null) {
-          canvasCtx.fillText(
-            `Left: ${Math.round(leftAngle)}°`,
-            leftShoulder.x - 50,
-            leftShoulder.y - 20
-          );
-        }
-
-        let feedbackText = "";
-        let feedbackColor = "#FF0000";
-        
-        if (rightAngle !== null && leftAngle !== null) {
-          if (isRightArmCorrect(rightAngle)) {
-            feedbackText = "Correct";
-            feedbackColor = "#00FF00";
-            setIsHolding(true);
-          } else {
-            feedbackText = "Incorrect";
-            feedbackColor = "#FF0000";
-            setIsHolding(false);
-          }
-        }
-
-        if (feedbackText) {
-          canvasCtx.font = "24px Arial";
-          canvasCtx.fillStyle = feedbackColor;
-          canvasCtx.fillText(feedbackText, 50, 50);
-        }
-        
-        setFeedback(feedbackText);
+      if (feedbackText) {
+        canvasCtx.font = "24px Arial";
+        canvasCtx.fillStyle = feedbackColor;
+        canvasCtx.fillText(feedbackText, 50, 50);
+      }
+      
+      setFeedback(feedbackText);
       }
     } catch (error) {
       console.error("Error in onResults:", error);
@@ -622,7 +637,7 @@ function PoseAngleDetector() {
               setCurrentSet(currentSet + 1);
               startRest();
             } else {
-              setPhase("finished");
+            setPhase("finished");
               setFinalMessage(`Congratulations! You completed all ${totalSets} sets!`);
             }
             return holdTimePerSet;
@@ -672,7 +687,7 @@ function PoseAngleDetector() {
         setCurrentSet(currentSet + 1);
         startRest();
       } else {
-        setPhase("finished");
+      setPhase("finished");
         setFinalMessage(`Congratulations! You completed all ${totalSets} sets!`);
       }
     }
@@ -743,6 +758,51 @@ function PoseAngleDetector() {
     }
   }, [mode, repCount, targetReps]);
 
+  // Recommendation tips
+  const poseTips = [
+    "Make sure your right arm is bent between 50° and 90°. Try raising or lowering your elbow!",
+    "Keep your back straight and avoid leaning forward.",
+    "Relax your shoulders and keep them level.",
+    "Check your camera angle to ensure your full arm is visible.",
+    "Try to keep your wrist in line with your elbow for better accuracy."
+  ];
+  const faceTips = [
+    "Tilt your head back until you feel a gentle stretch in your neck.",
+    "Keep your chin up and look slightly upwards.",
+    "Relax your shoulders and keep your back straight.",
+    "Hold your head steady and avoid moving during the rep.",
+    "Make sure your face is clearly visible to the camera."
+  ];
+
+  const [poseTip, setPoseTip] = useState(poseTips[0]);
+  const [faceTip, setFaceTip] = useState(faceTips[0]);
+
+  // Update pose tip when feedback changes to Incorrect
+  useEffect(() => {
+    if (phase === "challenge" && feedback === "Incorrect") {
+      const tip = poseTips[Math.floor(Math.random() * poseTips.length)];
+      setPoseTip(tip);
+      speak(tip);
+    }
+  }, [phase, feedback]);
+
+  // Update face tip when user is not holding and in face mode
+  useEffect(() => {
+    if (mode === "face" && holdTime === 0 && repCount < targetReps) {
+      const tip = faceTips[Math.floor(Math.random() * faceTips.length)];
+      setFaceTip(tip);
+      speak(tip);
+    }
+  }, [mode, holdTime, repCount]);
+
+  useEffect(() => {
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [phase, mode]);
+
   if (mode === "face") {
     // When 5 reps are done, stop camera, hide canvas, and show summary
     if (showFaceSummary) {
@@ -812,6 +872,11 @@ function PoseAngleDetector() {
         <div style={{ marginTop: 10, padding: 10, borderRadius: 5, textAlign: 'center', fontWeight: 'bold', backgroundColor: faceStatus.type === 'error' ? '#dc3545' : faceStatus.type === 'loading' ? '#ffc107' : '#28a745', color: faceStatus.type === 'error' ? '#fff' : faceStatus.type === 'loading' ? '#856404' : '#fff' }}>
           {faceStatus.message || faceError}
         </div>
+        {holdTime === 0 && repCount < targetReps && (
+          <div style={{ color: '#ff9800', fontSize: 16, marginTop: 10 }}>
+             Tip: {faceTip}
+          </div>
+        )}
       </div>
     );
   }
@@ -852,17 +917,22 @@ function PoseAngleDetector() {
             fontSize: 18,
             color: feedback === "Correct" ? "#00CC00" : "#FF0000"
           }}>
-            {phase === "countdown" && (
+        {phase === "countdown" && (
               <>
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready</div>
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {countdown} s</div>
               </>
-            )}
-            {phase === "challenge" && (
+        )}
+        {phase === "challenge" && (
               <>
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet} / {totalSets}</div>
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {challengeCountdown} s</div>
                 <div style={{ marginBottom: 8 }}>{feedback === "Correct" ? "Great! Keep holding the correct pose!" : "Adjust your pose to the correct position!"}</div>
+               {feedback === "Incorrect" && (
+                 <div style={{ color: "#ff9800", fontSize: 16, marginTop: 8 }}>
+                   Tip: {poseTip}
+          </div>
+               )}
               </>
             )}
             {phase === "rest" && (
@@ -871,8 +941,8 @@ function PoseAngleDetector() {
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Rest Time: {restCountdown} s</div>
                 <div style={{ marginBottom: 8 }}>Next: Set {currentSet} / {totalSets}</div>
               </>
-            )}
-            {phase === "finished" && (
+        )}
+        {phase === "finished" && (
               <>
                 <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>All Sets Complete!</div>
                 <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>See your results below.</div>
@@ -888,7 +958,7 @@ function PoseAngleDetector() {
               <>
                 <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>Summary</div>
                 <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
-                  {finalMessage}
+            {finalMessage}
                 </div>
               </>
             )}
@@ -914,7 +984,7 @@ function PoseAngleDetector() {
           }}
         />
       </div>
-   
+      
      
     </div>
   );
