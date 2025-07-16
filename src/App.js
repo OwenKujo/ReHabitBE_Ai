@@ -10,6 +10,7 @@ import EditProfile from './page/EditProfile';
 import OfficeSyndromePage from './page/OfficeSyndrome';
 import ContactUs from './page/ContactUs';
 import Footer from './components/Footer';
+import MediaPipefullDemo from './page/MediaPipefulldemo'
 
 
 function App() {
@@ -29,6 +30,9 @@ function App() {
         <Route path="/contact-us" element={<ContactUs />} />
 
         
+        <Route path="/officesyndromerehab" element={<MediaPipefull />} />
+        <Route path="/MediaPipefullDemo" element={<MediaPipefullDemo />} />
+       
       </Routes>
 
       <Footer />
