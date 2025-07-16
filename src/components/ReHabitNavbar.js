@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, ChevronDown, User, Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 function ReHabitNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -179,9 +180,9 @@ function ReHabitNavbar() {
           <div style={logoStyle}>
             <div style={logoIconStyle}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <span style={logoTextStyle}>ReHabit</span>
@@ -218,7 +219,7 @@ function ReHabitNavbar() {
           {mediaQuery && (
             <div style={rightSectionStyle}>
               {/* Notification Bell */}
-              <button 
+              <button
                 style={iconButtonStyle}
                 onMouseEnter={(e) => {
                   e.target.style.color = 'white';
@@ -256,30 +257,33 @@ function ReHabitNavbar() {
                 {/* Profile Dropdown Menu */}
                 {isProfileOpen && (
                   <div style={dropdownStyle}>
-                    <a 
-                      href="#" 
+                    <Link
+                      to="#"
                       style={dropdownItemStyle}
                       onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
                       onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                     >
                       Your Profile
-                    </a>
-                    <a 
-                      href="#" 
+                    </Link>
+
+                    <Link
+                      to="/edit-profile"
                       style={dropdownItemStyle}
+                      onClick={() => setIsProfileOpen(false)} // ปิด dropdown หลังคลิก
                       onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
                       onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                     >
-                      Settings
-                    </a>
-                    <a 
-                      href="#" 
+                      Edit Profile
+                    </Link>
+
+                    <Link
+                      to="#"
                       style={dropdownItemStyle}
                       onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
                       onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                     >
                       Sign out
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>
@@ -333,7 +337,7 @@ function ReHabitNavbar() {
             {item.name}
           </a>
         ))}
-        
+
         {/* Mobile Profile Section */}
         <div style={{ paddingTop: '16px', borderTop: '1px solid #4b5563', marginTop: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', padding: '0 12px' }}>

@@ -1,22 +1,38 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ReHabitNavbar from './components/ReHabitNavbar';
+// import ReHabitNavbar from './components/ReHabitNavbar';
+import ReHabitNavbarGuest from './components/ReHabitNavbarGuest';
 import MediaPipefull from './page/MediaPipefull';
 import PhysicalTherapyMenu from './page/PhysicalTherapyMenu';
 import Home from './page/Home';
 import Mediapipe2 from './page/Mediapipe2';
+import EditProfile from './page/EditProfile';
+import OfficeSyndromePage from './page/OfficeSyndrome';
+import ContactUs from './page/ContactUs';
+import Footer from './components/Footer';
 
 
 function App() {
   return (
     <Router>
-      <ReHabitNavbar />
+      {/* <ReHabitNavbar /> */}
+      <ReHabitNavbarGuest />
+
       <Routes>
+
         <Route path="/" element={<Home />} />
         <Route path="/MediaPipefull" element={<MediaPipefull />} />
         <Route path="/Mediapipe2" element={<Mediapipe2 />} />
         <Route path= "/physicalmenu" element={<PhysicalTherapyMenu />}/>
+        <Route path="/edit-profile" element={<EditProfile />} />  
+        <Route path="/office-syndrome" element={<OfficeSyndromePage />} />
+        <Route path="/contact-us" element={<ContactUs />} />
+
+        
       </Routes>
+
+      <Footer />
+
     </Router>
   );
 }
