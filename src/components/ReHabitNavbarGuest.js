@@ -7,7 +7,12 @@ function ReHabitNavbarGuest() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { lang, changeLang } = useLang();
 
-  const navItems = [
+  const navItems = lang === 'th' ? [
+    { name: 'หน้าหลัก', href: '/' },
+    { name: 'กายภาพบำบัด', href: '/PhysicalMenu' },
+    { name: 'เกี่ยวกับเรา', href: '/contact' },
+    { name: 'ติดต่อ', href: '/contact' }
+  ] : [
     { name: 'Home', href: '/' },
     { name: 'Physical Therapy', href: '/PhysicalMenu' },
     { name: 'About', href: '/contact' },
@@ -155,7 +160,9 @@ function ReHabitNavbarGuest() {
               </a>
             ))}
             <Link to="/login">
-              <button className="navbar-login-btn">Login</button>
+              <button className="navbar-login-btn">
+                {lang === 'th' ? 'เข้าสู่ระบบ' : 'Login'}
+              </button>
             </Link>
             <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginLeft: 12 }}>
               <button
@@ -212,7 +219,7 @@ function ReHabitNavbarGuest() {
           </a>
         ))}
         <Link to="/login" className="navbar-nav-item" style={{ display: 'block', color: '#60a5fa', fontSize: 16 }}>
-          Login
+          {lang === 'th' ? 'เข้าสู่ระบบ' : 'Login'}
         </Link>
       </div>
     </nav>

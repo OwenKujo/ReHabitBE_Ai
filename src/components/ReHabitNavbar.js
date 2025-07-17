@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import { Bell, ChevronDown, User, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useLang } from '../App';
 
 function ReHabitNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { t, i18n } = useTranslation();
   const { lang, changeLang } = useLang();
 
-  const navItems = [
-    { name: t('home'), href: '/', active: true },
-    { name: t('physicalTherapy'), href: 'MediaPipefull', active: false },
-    { name: t('about'), href: '#', active: false },
-    { name: t('contact'), href: '#', active: false },
+  const navItems = lang === 'th' ? [
+    { name: 'หน้าหลัก', href: '/', active: true },
+    { name: 'กายภาพบำบัด', href: 'MediaPipefull', active: false },
+    { name: 'เกี่ยวกับเรา', href: '#', active: false },
+    { name: 'ติดต่อ', href: '#', active: false },
+  ] : [
+    { name: 'Home', href: '/', active: true },
+    { name: 'Physical Therapy', href: 'MediaPipefull', active: false },
+    { name: 'About', href: '#', active: false },
+    { name: 'Contact', href: '#', active: false },
   ];
 
   return (
@@ -265,9 +268,9 @@ function ReHabitNavbar() {
             </button>
             {isProfileOpen && (
               <div className="navbar-dropdown">
-                <Link to="#" className="navbar-dropdown-item">{t('yourProfile')}</Link>
-                <Link to="/edit-profile" className="navbar-dropdown-item" onClick={() => setIsProfileOpen(false)}>{t('editProfile')}</Link>
-                <Link to="#" className="navbar-dropdown-item">{t('signOut')}</Link>
+                <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'โปรไฟล์ของคุณ' : 'Your Profile'}</Link>
+                <Link to="/edit-profile" className="navbar-dropdown-item" onClick={() => setIsProfileOpen(false)}>{lang === 'th' ? 'แก้ไขโปรไฟล์' : 'Edit Profile'}</Link>
+                <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'ออกจากระบบ' : 'Sign Out'}</Link>
               </div>
             )}
             {/* Mobile menu button */}
@@ -299,8 +302,8 @@ function ReHabitNavbar() {
               <User size={24} />
             </div>
             <div style={{ marginLeft: 12, flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 500, color: 'white' }}>{t('userName')}</div>
-              <div style={{ fontSize: 14, color: '#9ca3af' }}>{t('userEmail')}</div>
+              <div style={{ fontSize: 16, fontWeight: 500, color: 'white' }}>{lang === 'th' ? 'ชื่อผู้ใช้' : 'User Name'}</div>
+              <div style={{ fontSize: 14, color: '#9ca3af' }}>{lang === 'th' ? 'อีเมลผู้ใช้' : 'User Email'}</div>
             </div>
             <button className="navbar-icon-btn">
               <Bell size={24} />
