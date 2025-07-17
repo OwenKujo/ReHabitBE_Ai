@@ -400,11 +400,12 @@ function ContactUs() {
           </div>
         </div>
 
-        <div className="cta-section fade-in">
+        <div className="cta-section fade-in" style={{ marginBottom: 40 }}>
           <h3>Get Your Free Rehab Checkup<br />Let's Connect with Us</h3>
           <p>If you're interested in a free rehabilitation checkup, we'd love to hear from you.</p>
           <button>Contact Us</button>
         </div>
+        <div />
       </div>
     );
   } else {
@@ -789,11 +790,12 @@ function ContactUs() {
           </div>
         </div>
 
-        <div className="cta-section fade-in">
+        <div className="cta-section fade-in" style={{ marginBottom: 40 }}>
           <h3>รับสิทธิ์ตรวจสุขภาพฟื้นฟูฟรี<br />เชื่อมต่อกับเรา</h3>
           <p>หากคุณสนใจรับสิทธิ์ตรวจสุขภาพฟื้นฟูฟรี เรายินดีให้คำปรึกษา</p>
           <button>ติดต่อเรา</button>
         </div>
+        <div />
       </div>
     );
   }

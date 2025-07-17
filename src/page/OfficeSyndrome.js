@@ -553,9 +553,37 @@ function OfficeSyndromePage() {
           <h2>รายการท่าบริหาร</h2>
           <div className="movement-box">
             {movementsTH.map((m) => (
-              <div key={m.id} className="movement-item">
-                <span className="movement-name">{m.name}</span>
-                <span className="movement-right">{m.duration}</span>
+              <div key={m.id}>
+                <div
+                  className="movement-item"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setOpenMovement(openMovement === m.id ? null : m.id)}
+                >
+                  <div className="movement-name">{m.id}. {m.name}</div>
+                  <div className="movement-right">
+                    <span>{m.duration}</span>
+                    <ChevronDown
+                      size={16}
+                      style={{
+                        transform: openMovement === m.id ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s',
+                      }}
+                    />
+                  </div>
+                </div>
+                {openMovement === m.id && (
+                  <div style={{
+                    background: '#f6fbff',
+                    borderRadius: '8px',
+                    margin: '8px 0 8px 0',
+                    padding: '16px 24px',
+                    color: '#333',
+                    fontSize: '15px',
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+                  }}>
+                    <strong>รายละเอียดท่าจะมาเร็วๆ นี้</strong>
+                  </div>
+                )}
               </div>
             ))}
           </div>
