@@ -733,54 +733,52 @@ function ContactUs() {
 
         <div className="contact-header fade-in">
           <h1>ติดต่อเรา</h1>
-          <p>
-            หากคุณมีคำถามหรือข้อเสนอแนะ กรุณาติดต่อเราได้เลย
-          </p>
+          <p>หากคุณมีคำถามหรือข้อเสนอแนะ กรุณาติดต่อเราได้เลย</p>
           <div className="icon-row">
             <div className="icon-item">
               <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="Location" />
-              <p><strong>Location</strong><br />Bangkok, Thailand</p>
+              <p><strong>ที่ตั้ง</strong><br />กรุงเทพฯ ประเทศไทย</p>
             </div>
             <div className="icon-item">
               <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="Email" />
-              <p><strong>Email Address</strong><br /><span className="email-break">rehabitcontact@gmail.com</span></p>
+              <p><strong>อีเมล</strong><br /><span className="email-break">rehabitcontact@gmail.com</span></p>
             </div>
             <div className="icon-item">
               <img src="https://cdn-icons-png.flaticon.com/512/597/597177.png" alt="Phone" />
-              <p><strong>Phone Number</strong><br />010-9999997</p>
+              <p><strong>เบอร์โทรศัพท์</strong><br />010-9999997</p>
             </div>
             <div className="icon-item">
               <img src="https://cdn-icons-png.flaticon.com/512/2089/2089795.png" alt="Work Day" />
-              <p><strong>Work Hours</strong><br />Sun-Fri: 09:00 - 17:00<br />Sat-Mon: 09:00 - 15:00</p>
+              <p><strong>เวลาทำการ</strong><br />อา-ศ: 09:00 - 17:00<br />ส-จ: 09:00 - 15:00</p>
             </div>
           </div>
         </div>
 
         <div className="contact-main-section fade-in">
           <form className="contact-form" onSubmit={handleSubmit} autoComplete="off">
-            <h2>Get in Touch with Us</h2>
-            {submitted && <div className="success-message">Thank you! Your message has been sent.</div>}
+            <h2>ติดต่อทีมงาน</h2>
+            {submitted && <div className="success-message">ขอบคุณ! ข้อความของคุณถูกส่งเรียบร้อยแล้ว</div>}
             <div className="floating-label-group">
               <input name="name" value={form.name} onChange={handleChange} required placeholder=" " />
-              <label className="floating-label">Name</label>
+              <label className="floating-label">ชื่อ</label>
             </div>
             <div className="floating-label-group">
               <input name="email" value={form.email} onChange={handleChange} required type="email" placeholder=" " />
-              <label className="floating-label">Email</label>
+              <label className="floating-label">อีเมล</label>
             </div>
             <div className="floating-label-group">
               <input name="phone" value={form.phone} onChange={handleChange} required placeholder=" " />
-              <label className="floating-label">Phone Number</label>
+              <label className="floating-label">เบอร์โทรศัพท์</label>
             </div>
             <div className="floating-label-group">
               <input name="subject" value={form.subject} onChange={handleChange} required placeholder=" " />
-              <label className="floating-label">Subject</label>
+              <label className="floating-label">หัวข้อ</label>
             </div>
             <div className="floating-label-group">
               <textarea name="message" value={form.message} onChange={handleChange} required placeholder=" "></textarea>
-              <label className="floating-label">Message</label>
+              <label className="floating-label">ข้อความ</label>
             </div>
-            <button type="submit">Send Message</button>
+            <button type="submit">ส่งข้อความ</button>
           </form>
           <div className="contact-image fade-in">
             <img src="https://www.kindpng.com/picc/m/495-4952535_create-digital-profile-icon-blue-user-profile-icon.png" alt="Profile" />
@@ -788,9 +786,9 @@ function ContactUs() {
         </div>
 
         <div className="cta-section fade-in">
-          <h3>Get Your Free Rehab Checkup<br />Let's Connect with Us</h3>
-          <p>If you're interested in a free rehabilitation checkup, we'd love to hear from you.</p>
-          <button>Contact Us</button>
+          <h3>รับสิทธิ์ตรวจสุขภาพฟื้นฟูฟรี<br />เชื่อมต่อกับเรา</h3>
+          <p>หากคุณสนใจรับสิทธิ์ตรวจสุขภาพฟื้นฟูฟรี เรายินดีให้คำปรึกษา</p>
+          <button>ติดต่อเรา</button>
         </div>
       </div>
     );

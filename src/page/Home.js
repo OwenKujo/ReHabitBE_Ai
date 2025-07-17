@@ -32,6 +32,24 @@ const Home = () => {
     { title: 'Neck Shoulder & Chest Stretch', desc: 'Interlace your fingers behind your back, straighten your arms, and lift your chest. Hold for 15-30 seconds.' },
     { title: 'Scapular and Lower Back Stretch', desc: 'Cross your arms in front, round your upper back, and gently push your hands forward. Hold and repeat.' },
   ];
+  // Add Thai translations for features, therapyTabs, officeSyndromeExercises
+  const featuresTH = [
+    { title: 'ดูตัวอย่างวิดีโอ', desc: 'ดูตัวเองแบบเรียลไทม์และทำตามท่าทางที่แนะนำ', icon: '🎥' },
+    { title: 'AI ตรวจจับ', desc: 'วิเคราะห์ท่าทางและการเคลื่อนไหวด้วย AI เพื่อผลลัพธ์ที่ดียิ่งขึ้น', icon: '🤖' },
+    { title: 'ติดตามความก้าวหน้า', desc: 'ตรวจสอบความก้าวหน้าและสร้างแรงจูงใจด้วยการบันทึกผล', icon: '📈' },
+  ];
+  const therapyTabsTH = [
+    { label: 'ออฟฟิศซินโดรม', key: 'office' },
+    { label: 'ปวดหลังส่วนล่าง', key: 'back' },
+    { label: 'ปวดศีรษะจากคอ', key: 'headache' },
+    { label: 'หมอนรองกระดูกทับเส้น', key: 'disc' },
+  ];
+  const officeSyndromeExercisesTH = [
+    { title: 'ท่ายืดคอด้านข้าง', desc: 'เอียงศีรษะไปด้านข้างให้หูเข้าใกล้ไหล่ ค้างไว้ 15-30 วินาทีต่อข้าง' },
+    { title: 'ท่ายืดกล้ามเนื้อสะบัก', desc: 'นั่งหรือตรง จับศีรษะด้านข้างแล้วดึงเบาๆ เข้าหาไหล่ ค้างไว้และทำซ้ำ' },
+    { title: 'ท่ายืดคอ ไหล่ และอก', desc: 'ประสานมือไว้ด้านหลัง เหยียดแขนตรง แล้วยกอกขึ้น ค้างไว้ 15-30 วินาที' },
+    { title: 'ท่ายืดสะบักและหลังส่วนล่าง', desc: 'ไขว้แขนด้านหน้า โค้งหลังส่วนบน แล้วดันมือไปข้างหน้า ค้างไว้และทำซ้ำ' },
+  ];
   const [selectedTab, setSelectedTab] = useState('office');
   const [featureIndex, setFeatureIndex] = useState(0);
   // Touch state for swipe
@@ -215,6 +233,7 @@ const Home = () => {
             font-size: 15px;
             cursor: pointer;
             box-shadow: 0 1px 4px rgba(30,136,229,0.06);
+            margin-bottom: 12px;
           }
           .feature-arrows {
             display: flex;
@@ -538,6 +557,8 @@ const Home = () => {
             )}
           </div>
         </div>
+        {/* Add a <div style={{ marginBottom: 32 }} /> after the last main section (after the therapy section, before the end of the main container) */}
+        <div style={{ marginBottom: 32 }} />
       </div>
     );
   } else {
@@ -679,6 +700,7 @@ const Home = () => {
             font-size: 15px;
             cursor: pointer;
             box-shadow: 0 1px 4px rgba(30,136,229,0.06);
+            margin-bottom: 12px;
           }
           .feature-arrows {
             display: flex;
@@ -927,31 +949,31 @@ const Home = () => {
             <h1 className="home-hero-h1">ยินดีต้อนรับสู่ ReHabit</h1>
             <p className="home-hero-p">เพื่อนคู่ใจด้านการฟื้นฟูสุขภาพของคุณ</p>
             <div className="home-hero-btns">
-              <button className="home-hero-btn-primary">Try Out ReHabit</button>
-              <button className="home-hero-btn-secondary">Contact Us</button>
+              <button className="home-hero-btn-primary">ทดลองใช้ ReHabit</button>
+              <button className="home-hero-btn-secondary">ติดต่อเรา</button>
             </div>
           </div>
         </div>
         {/* Feature Section */}
         <div className="home-features-section">
-          <h2 className="home-features-title">Our Features</h2>
-          <div className="home-features-desc">Learn more about our platform</div>
+          <h2 className="home-features-title">ฟีเจอร์ของเรา</h2>
+          <div className="home-features-desc">เรียนรู้เพิ่มเติมเกี่ยวกับแพลตฟอร์มของเรา</div>
           <div ref={featureRowRef} className="feature-scroll-row">
             {/* Get Started Card */}
             <div className="get-started-card">
-              <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 18, lineHeight: 1.2 }}>Get Started With Your Free Trial</div>
+              <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 18, lineHeight: 1.2 }}>เริ่มต้นทดลองใช้ฟรี</div>
               <div style={{ fontSize: 16, marginBottom: 32, color: '#e0f2fe' }}>
-                Start your recovery journey today.
+                เริ่มต้นเส้นทางฟื้นฟูสุขภาพของคุณวันนี้
               </div>
-              <button style={{ background: '#fff', color: '#155e75', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px rgba(21,94,117,0.10)' }}>Get Started Today</button>
+              <button style={{ background: '#fff', color: '#155e75', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px rgba(21,94,117,0.10)' }}>เริ่มต้นวันนี้</button>
             </div>
             {/* Feature Cards */}
-            {features.map((f, i) => (
+            {(lang === 'th' ? featuresTH : features).map((f, i) => (
               <div key={f.title} className="feature-card">
                 <div className="feature-card-icon">{f.icon}</div>
                 <div className="feature-card-title">{f.title}</div>
                 <div className="feature-card-desc">{f.desc}</div>
-                <button className="feature-card-btn">Learn More</button>
+                <button className="feature-card-btn">{lang === 'th' ? 'ดูรายละเอียด' : 'Learn More'}</button>
               </div>
             ))}
           </div>
@@ -964,7 +986,7 @@ const Home = () => {
         {/* Therapy Section */}
         <div className="therapy-section">
           <div className="therapy-tabs">
-            {therapyTabs.map(tab => (
+            {(lang === 'th' ? therapyTabsTH : therapyTabs).map(tab => (
               <button
                 key={tab.key}
                 className={`therapy-tab${selectedTab === tab.key ? ' active' : ''}`}
@@ -983,25 +1005,27 @@ const Home = () => {
                   className="therapy-img"
                 />
                 <div className="therapy-details">
-                  <div className="therapy-title">Office Syndrome</div>
-                  <div className="therapy-desc">Simple exercises to relieve neck, shoulder, and back pain.</div>
+                  <div className="therapy-title">{lang === 'th' ? 'ออฟฟิศซินโดรม' : 'Office Syndrome'}</div>
+                  <div className="therapy-desc">{lang === 'th' ? 'ท่าง่ายๆ เพื่อบรรเทาอาการปวดคอ ไหล่ และหลัง' : 'Simple exercises to relieve neck, shoulder, and back pain.'}</div>
                   <div className="therapy-exercises">
-                    {officeSyndromeExercises.map((ex, idx) => (
+                    {(lang === 'th' ? officeSyndromeExercisesTH : officeSyndromeExercises).map((ex, idx) => (
                       <div key={ex.title} className="therapy-exercise-card">
                         <div className="therapy-exercise-title">{idx + 1}. {ex.title}</div>
                         <div className="therapy-exercise-desc">{ex.desc}</div>
                       </div>
                     ))}
                   </div>
-                  <button className="therapy-btn">Try Out ReHabit</button>
+                  <button className="therapy-btn" style={{ marginBottom: 32 }}>{lang === 'th' ? 'ทดลองใช้ ReHabit' : 'Try Out ReHabit'}</button>
                 </div>
               </>
             )}
             {selectedTab !== 'office' && (
-              <div className="therapy-coming-soon">Content Coming Soon</div>
+              <div className="therapy-coming-soon">{lang === 'th' ? 'เนื้อหาเร็วๆ นี้' : 'Content Coming Soon'}</div>
             )}
           </div>
         </div>
+        {/* Add a <div style={{ marginBottom: 32 }} /> after the last main section (after the therapy section, before the end of the main container) */}
+        <div style={{ marginBottom: 0}} />
       </div>
     );
   }

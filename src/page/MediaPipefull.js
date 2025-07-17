@@ -734,6 +734,22 @@ function PoseAngleDetector() {
     "Make sure your face is clearly visible to the camera."
   ];
 
+  // Add Thai translations for all poseTips, faceTips, feedback, instructions, and button labels
+  const poseTipsTH = [
+    'งอข้อศอกขวาให้ได้มุม 50° ถึง 90° ลองยกหรือกดข้อศอก',
+    'นั่งหลังตรง หลีกเลี่ยงการโน้มตัวไปข้างหน้า',
+    'ผ่อนคลายไหล่และตั้งไหล่ให้เสมอกัน',
+    'ปรับกล้องให้เห็นแขนขวาชัดเจน',
+    'พยายามให้ข้อมืออยู่ในแนวเดียวกับข้อศอก',
+  ];
+  const faceTipsTH = [
+    'เงยศีรษะไปด้านหลังจนรู้สึกตึงที่คอ',
+    'เชิดคางขึ้นและมองขึ้นเล็กน้อย',
+    'ผ่อนคลายไหล่และนั่งหลังตรง',
+    'อย่าขยับศีรษะขณะทำท่า',
+    'ให้ใบหน้าเห็นชัดเจนต่อกล้อง',
+  ];
+
   const [poseTip, setPoseTip] = useState(poseTips[0]);
   const [faceTip, setFaceTip] = useState(faceTips[0]);
 
@@ -959,7 +975,6 @@ function PoseAngleDetector() {
           </div>
           <div className="mpfull-control-panel" style={{ marginTop: 50, paddingTop: 0 }}>
             {/* Place all control/status UI here, e.g. phase, feedback, buttons, stats, etc. */}
-            {/* ...existing control panel JSX (copy from your return) ... */}
             <h1 className="mpfull-title">OfficeSyndrome Rehabilitation</h1>
             {error && (
               <div style={{ 
@@ -981,7 +996,7 @@ function PoseAngleDetector() {
               {phase === "idle" && (
                 <>
                   <button onClick={startCountdown} disabled={phase !== "idle" || isLoading} style={{ fontSize: "18px", padding: "10px 30px" }}>
-                    Start Rehabilitation
+                    {lang === 'th' ? 'เริ่มฟื้นฟู' : 'Start Rehabilitation'}
                   </button>
                   <div style={{
                     marginTop: 16,
@@ -997,12 +1012,12 @@ function PoseAngleDetector() {
                     marginRight: 'auto',
                     boxShadow: '0 2px 8px rgba(251,191,36,0.08)'
                   }}>
-                    <div>1. ปรับมุมกล้องให้เห็นครึ่งตัวด้านบน และแสงในห้องพอดี</div>
-                    <div>2. ปรับมุมการนั่งเป็นแนวข้าง ให้แขนขวาของคุณเข้าหากล้อง</div>
+                    <div>{lang === 'th' ? '1. ปรับมุมกล้องให้เห็นครึ่งตัวด้านบน และแสงในห้องพอดี' : '1. Adjust the camera to see your upper body and ensure good lighting.'}</div>
+                    <div>{lang === 'th' ? '2. ปรับมุมการนั่งเป็นแนวข้าง ให้แขนขวาของคุณเข้าหากล้อง' : '2. Sit sideways so your right arm faces the camera.'}</div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 12 }}>
                     <img src="/1.1.jpg" alt="ตัวอย่างท่าทาง" style={{ maxWidth: 320, width: '100%', borderRadius: 12, border: '2px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }} />
-                    <div style={{ fontSize: 14, color: '#555', marginTop: 8 }}>ตัวอย่างท่าทางที่ถูกต้อง</div>
+                    <div style={{ fontSize: 14, color: '#555', marginTop: 8 }}>{lang === 'th' ? 'ตัวอย่างท่าทางที่ถูกต้อง' : 'Example of correct posture'}</div>
                   </div>
                 </>
               )}
@@ -1020,7 +1035,7 @@ function PoseAngleDetector() {
                   {/* ...existing phase/feedback UI... */}
                   {phase === "countdown" && (
                     <>
-                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready</div>
+                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'เตรียมตัว' : 'Get Ready'}</div>
                       <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {countdown} s</div>
                     </>
                   )}
@@ -1028,7 +1043,7 @@ function PoseAngleDetector() {
                     <>
                       <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet} / {totalSets}</div>
                       <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {challengeCountdown} s</div>
-                      <div style={{ marginBottom: 8 }}>{feedback === "Correct" ? "Great! Keep holding the correct pose!" : "Adjust your pose to the correct position!"}</div>
+                      <div style={{ marginBottom: 8 }}>{feedback === "Correct" ? (lang === 'th' ? 'ถูกต้อง! ค้างท่าไว้' : 'Great! Keep holding the correct pose!') : (lang === 'th' ? 'ปรับท่าให้ถูกต้อง' : 'Adjust your pose to the correct position!')}</div>
                       {feedback === "Incorrect" && (
                         <div style={{ color: "#ff9800", fontSize: 16, marginTop: 8 }}>
                           Tip: {poseTip}
@@ -1038,26 +1053,25 @@ function PoseAngleDetector() {
                   )}
                   {phase === "rest" && (
                     <>
-                      <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet - 1} Complete!</div>
-                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Rest Time: {restCountdown} s</div>
-                      <div style={{ marginBottom: 8 }}>Next: Set {currentSet} / {totalSets}</div>
+                      <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'เวลาพัก' : 'Rest Time'}: {restCountdown} s</div>
+                      <div style={{ marginBottom: 8 }}>{lang === 'th' ? 'ถัดไป: เซ็ต' : 'Next: Set'} {currentSet} / {totalSets}</div>
                     </>
                   )}
                   {phase === "finished" && (
                     <>
-                      <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>All Sets Complete!</div>
-                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>See your results below.</div>
+                      <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'ครบทุกเซ็ต!' : 'All Sets Complete!'}</div>
+                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'ดูผลการทดสอบด้านล่าง' : 'See your results below.'}</div>
                     </>
                   )}
                   {phase === "getready" && (
                     <>
-                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready for Next Step</div>
+                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'เตรียมตัวสำหรับขั้นตอนถัดไป' : 'Get Ready for Next Step'}</div>
                       <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {getReadyCountdown} s</div>
                     </>
                   )}
                   {phase === "showfinal" && (
                     <>
-                      <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>Summary</div>
+                      <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'สรุป' : 'Summary'}</div>
                       <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
                         {finalMessage}
                       </div>
@@ -1180,7 +1194,6 @@ function PoseAngleDetector() {
           </div>
           <div className="mpfull-control-panel" style={{ marginTop: 50, paddingTop: 0 }}>
             {/* Place all control/status UI here, e.g. phase, feedback, buttons, stats, etc. */}
-            {/* ...existing control panel JSX (copy from your return) ... */}
             <h1 className="mpfull-title">OfficeSyndrome Rehabilitation</h1>
             {error && (
               <div style={{ 
@@ -1202,7 +1215,7 @@ function PoseAngleDetector() {
               {phase === "idle" && (
                 <>
                   <button onClick={startCountdown} disabled={phase !== "idle" || isLoading} style={{ fontSize: "18px", padding: "10px 30px" }}>
-                    Start Rehabilitation
+                    {lang === 'th' ? 'เริ่มฟื้นฟู' : 'Start Rehabilitation'}
                   </button>
                   <div style={{
                     marginTop: 16,
@@ -1218,12 +1231,12 @@ function PoseAngleDetector() {
                     marginRight: 'auto',
                     boxShadow: '0 2px 8px rgba(251,191,36,0.08)'
                   }}>
-                    <div>1. ปรับมุมกล้องให้เห็นครึ่งตัวด้านบน และแสงในห้องพอดี</div>
-                    <div>2. ปรับมุมการนั่งเป็นแนวข้าง ให้แขนขวาของคุณเข้าหากล้อง</div>
+                    <div>{lang === 'th' ? '1. ปรับมุมกล้องให้เห็นครึ่งตัวด้านบน และแสงในห้องพอดี' : '1. Adjust the camera to see your upper body and ensure good lighting.'}</div>
+                    <div>{lang === 'th' ? '2. ปรับมุมการนั่งเป็นแนวข้าง ให้แขนขวาของคุณเข้าหากล้อง' : '2. Sit sideways so your right arm faces the camera.'}</div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 12 }}>
                     <img src="/1.1.jpg" alt="ตัวอย่างท่าทาง" style={{ maxWidth: 320, width: '100%', borderRadius: 12, border: '2px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }} />
-                    <div style={{ fontSize: 14, color: '#555', marginTop: 8 }}>ตัวอย่างท่าทางที่ถูกต้อง</div>
+                    <div style={{ fontSize: 14, color: '#555', marginTop: 8 }}>{lang === 'th' ? 'ตัวอย่างท่าทางที่ถูกต้อง' : 'Example of correct posture'}</div>
                   </div>
                 </>
               )}
@@ -1241,7 +1254,7 @@ function PoseAngleDetector() {
                   {/* ...existing phase/feedback UI... */}
                   {phase === "countdown" && (
                     <>
-                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready</div>
+                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'เตรียมตัว' : 'Get Ready'}</div>
                       <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {countdown} s</div>
                     </>
                   )}
@@ -1249,7 +1262,7 @@ function PoseAngleDetector() {
                     <>
                       <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet} / {totalSets}</div>
                       <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {challengeCountdown} s</div>
-                      <div style={{ marginBottom: 8 }}>{feedback === "Correct" ? "Great! Keep holding the correct pose!" : "Adjust your pose to the correct position!"}</div>
+                      <div style={{ marginBottom: 8 }}>{feedback === "Correct" ? (lang === 'th' ? 'ถูกต้อง! ค้างท่าไว้' : 'Great! Keep holding the correct pose!') : (lang === 'th' ? 'ปรับท่าให้ถูกต้อง' : 'Adjust your pose to the correct position!')}</div>
                       {feedback === "Incorrect" && (
                         <div style={{ color: "#ff9800", fontSize: 16, marginTop: 8 }}>
                           Tip: {poseTip}
@@ -1259,26 +1272,25 @@ function PoseAngleDetector() {
                   )}
                   {phase === "rest" && (
                     <>
-                      <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet - 1} Complete!</div>
-                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Rest Time: {restCountdown} s</div>
-                      <div style={{ marginBottom: 8 }}>Next: Set {currentSet} / {totalSets}</div>
+                      <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'เวลาพัก' : 'Rest Time'}: {restCountdown} s</div>
+                      <div style={{ marginBottom: 8 }}>{lang === 'th' ? 'ถัดไป: เซ็ต' : 'Next: Set'} {currentSet} / {totalSets}</div>
                     </>
                   )}
                   {phase === "finished" && (
                     <>
-                      <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>All Sets Complete!</div>
-                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>See your results below.</div>
+                      <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'ครบทุกเซ็ต!' : 'All Sets Complete!'}</div>
+                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'ดูผลการทดสอบด้านล่าง' : 'See your results below.'}</div>
                     </>
                   )}
                   {phase === "getready" && (
                     <>
-                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready for Next Step</div>
+                      <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'เตรียมตัวสำหรับขั้นตอนถัดไป' : 'Get Ready for Next Step'}</div>
                       <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {getReadyCountdown} s</div>
                     </>
                   )}
                   {phase === "showfinal" && (
                     <>
-                      <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>Summary</div>
+                      <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>{lang === 'th' ? 'สรุป' : 'Summary'}</div>
                       <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
                         {finalMessage}
                       </div>

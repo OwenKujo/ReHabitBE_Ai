@@ -12,6 +12,12 @@ function OfficeSyndromePage() {
     { id: 3, name: 'Right Wing Stretch', duration: '2 min' },
     { id: 4, name: 'Left Shoulder Press', duration: '2 min' },
   ];
+  const movementsTH = [
+    { id: 1, name: 'ท่ายืดคอ', duration: '2 นาที' },
+    { id: 2, name: 'ท่าอกผาย', duration: '2 นาที' },
+    { id: 3, name: 'ท่ายืดปีกขวา', duration: '2 นาที' },
+    { id: 4, name: 'ท่ากดไหล่ซ้าย', duration: '2 นาที' },
+  ];
   const { lang } = useLang();
 
   if (lang === 'en') {
@@ -498,45 +504,45 @@ function OfficeSyndromePage() {
         <div className="header">
           <img
             src="/office-syndrome-header.jpg" // แก้ path ให้ตรงกับภาพจริง
-            alt="Office Syndrome"
+            alt="ออฟฟิศซินโดรม"
             className="header-image"
           />
           <div className="overlay">
-            <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ Start</button>
+            <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ เริ่ม</button>
           </div>
 
           {/* Summary cards */}
           <div className="info-box">
             <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <List size={20} style={{ color: '#1976d2' }} />
-              4 movements
+              4 ท่า
             </div>
             <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <Clock size={20} style={{ color: '#1976d2' }} />
-              8 minutes
+              8 นาที
             </div>
           </div>
         </div>
 
         {/* Detail Section */}
         <div className="section">
-          <h2>Details</h2>
+          <h2>รายละเอียด</h2>
           <div className="detail-container">
             <div className="preview-video">
-              <img src="/neck-stretch-preview.jpg" alt="Preview" />
+              <img src="/neck-stretch-preview.jpg" alt="ตัวอย่าง" />
               <div className="play-icon">
                 <PlayCircle size={64} />
               </div>
             </div>
             <div className="video-text">
-              <h3>Preview Video Details</h3>
+              <h3>รายละเอียดวิดีโอตัวอย่าง</h3>
               <p>
-                • Neck and shoulder stretching exercises to relieve tension.<br />
-                • Proper sitting posture techniques to reduce neck strain.<br />
-                • Upper back muscle strengthening routines.<br />
-                • Shoulder and scapular relaxation methods.<br />
-                • Tips for eye rest and changing work positions regularly.<br />
-                <strong>By: Dr. Pingpong Suksomboon</strong>
+                • ท่ายืดคอและไหล่เพื่อคลายความตึง<br />
+                • เทคนิคการนั่งที่ถูกต้องเพื่อลดอาการปวดคอ<br />
+                • ท่าเสริมสร้างกล้ามเนื้อหลังส่วนบน<br />
+                • วิธีผ่อนคลายไหล่และสะบัก<br />
+                • เคล็ดลับการพักสายตาและเปลี่ยนอิริยาบถ<br />
+                <strong>โดย: นพ.ปิงปอง สุขสมบูรณ์</strong>
               </p>
             </div>
           </div>
@@ -544,42 +550,12 @@ function OfficeSyndromePage() {
 
         {/* Movement List Section */}
         <div className="section">
-          <h2>Movement List</h2>
+          <h2>รายการท่าบริหาร</h2>
           <div className="movement-box">
-            {movements.map((move) => (
-              <div key={move.id}>
-                <div
-                  className="movement-item"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => setOpenMovement(openMovement === move.id ? null : move.id)}
-                >
-                  <div className="movement-name">
-                    {move.id}. {move.name}
-                  </div>
-                  <div className="movement-right">
-                    <span>{move.duration}</span>
-                    <ChevronDown
-                      size={16}
-                      style={{
-                        transform: openMovement === move.id ? 'rotate(180deg)' : 'rotate(0deg)',
-                        transition: 'transform 0.2s',
-                      }}
-                    />
-                  </div>
-                </div>
-                {openMovement === move.id && (
-                  <div style={{
-                    background: '#f6fbff',
-                    borderRadius: '8px',
-                    margin: '8px 0 8px 0',
-                    padding: '16px 24px',
-                    color: '#333',
-                    fontSize: '15px',
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
-                  }}>
-                    <strong>Movement details coming soon</strong>
-                  </div>
-                )}
+            {movementsTH.map((m) => (
+              <div key={m.id} className="movement-item">
+                <span className="movement-name">{m.name}</span>
+                <span className="movement-right">{m.duration}</span>
               </div>
             ))}
           </div>

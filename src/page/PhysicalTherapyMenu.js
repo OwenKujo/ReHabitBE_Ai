@@ -28,6 +28,30 @@ const suggestions = [
   },
 ];
 
+const menuItemsTH = [
+  { label: 'แนะนำ', active: true },
+  { label: 'ออฟฟิศซินโดรม' },
+  { label: 'ปวดหลัง' },
+  { label: 'ทุกคอร์ส' },
+];
+const suggestionsTH = [
+  {
+    img: suggestionImg,
+    title: 'บรรเทาออฟฟิศซินโดรม',
+    desc: 'เรียนรู้ท่ายืดและออกกำลังกายเพื่อบรรเทาอาการปวดคอ ไหล่ และหลังจากการนั่งทำงานนานๆ ปรับท่าทางและลดความไม่สบายด้วยโปรแกรมแนะนำ',
+  },
+  {
+    img: suggestionImg,
+    title: 'ฟื้นฟูหลังผ่าตัด',
+    desc: 'ค้นหาท่าออกกำลังกายที่ปลอดภัยและค่อยเป็นค่อยไปเพื่อฟื้นฟูความแข็งแรงและการเคลื่อนไหวหลังผ่าตัด ช่วยให้คุณกลับไปใช้ชีวิตประจำวันได้อย่างมั่นใจ',
+  },
+  {
+    img: suggestionImg,
+    title: 'ฟื้นฟูอาการบาดเจ็บจากกีฬา',
+    desc: 'สำรวจแผนกายภาพบำบัดเฉพาะสำหรับอาการบาดเจ็บจากกีฬา ป้องกันการบาดเจ็บซ้ำและเพิ่มประสิทธิภาพด้วยท่าฟื้นฟูที่ผู้เชี่ยวชาญแนะนำ',
+  },
+];
+
 const PhysicalTherapyMenu = () => {
   const navigate = useNavigate();
   const { lang } = useLang();
@@ -419,7 +443,7 @@ const PhysicalTherapyMenu = () => {
           </div>
           {/* Menu */}
           <nav style={{ width: '80%' }}>
-            {menuItems.map((item) => (
+            {menuItemsTH.map((item) => (
               <div
                 key={item.label}
                 style={{
@@ -447,17 +471,17 @@ const PhysicalTherapyMenu = () => {
           <div style={{ width: '100%', maxWidth: 900, borderRadius: 28, overflow: 'hidden', marginBottom: 36 }}>
             <img
               src="https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&w=900&h=260&fit=crop"
-              alt="Physical Therapy Hero"
+              alt={lang === 'th' ? 'ภาพกายภาพบำบัด' : 'Physical Therapy Hero'}
               style={{ width: '100%', height: 220, objectFit: 'cover', display: 'block' }}
             />
           </div>
           {/* Section Title */}
-          <div style={{ fontWeight: 700, fontSize: 28, color: '#222', marginBottom: 24 }}>Suggestion</div>
+          <div style={{ fontWeight: 700, fontSize: 28, color: '#222', marginBottom: 24 }}>{lang === 'th' ? 'แนะนำ' : 'Suggestion'}</div>
           {/* Suggestion Cards */}
           <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
-            {suggestions.map((s, i) => (
+            {(lang === 'th' ? suggestionsTH : suggestions).map((s, i) => (
               <div key={i} style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 16px 0 rgba(30,136,229,0.08)', width: 300, padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <img src={s.img} alt="Suggestion" style={{ width: '100%', height: 140, objectFit: 'cover' }} />
+                <img src={s.img} alt={lang === 'th' ? 'คำแนะนำ' : 'Suggestion'} style={{ width: '100%', height: 140, objectFit: 'cover' }} />
                 <div style={{ padding: '18px 18px 12px 18px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div style={{ fontWeight: 700, fontSize: 16, color: '#222', marginBottom: 8 }}>{s.title}</div>
                   <div style={{ fontSize: 14, color: '#555', marginBottom: 18 }}>{s.desc}</div>
@@ -465,7 +489,7 @@ const PhysicalTherapyMenu = () => {
                     style={{ alignSelf: 'flex-end', background: '#19c2d2', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 24px', fontWeight: 600, fontSize: 15, cursor: 'pointer', boxShadow: '0 1px 4px rgba(30,136,229,0.06)' }}
                     onClick={i === 0 ? () => navigate('/office-syndrome') : undefined}
                   >
-                    View
+                    {lang === 'th' ? 'ดูรายละเอียด' : 'View'}
                   </button>
                 </div>
               </div>
