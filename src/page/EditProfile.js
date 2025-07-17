@@ -215,13 +215,13 @@ const EditProfile = () => {
 
           {/* Height */}
           <div>
-            <label>Height (cm)</label>
+            <label>Height</label>
             <input type="number" name="height" value={form.height} onChange={handleChange} />
           </div>
 
           {/* Weight */}
           <div>
-            <label>Weight (kg)</label>
+            <label>Weight</label>
             <input type="number" name="weight" value={form.weight} onChange={handleChange} />
           </div>
 
@@ -251,7 +251,7 @@ const EditProfile = () => {
 
           {/* Exercise Frequency */}
           <div>
-            <label>How Often Do You Exercise</label>
+            <label>Exercise Frequency</label>
             <input
               name="exerciseFrequency"
               value={form.exerciseFrequency}

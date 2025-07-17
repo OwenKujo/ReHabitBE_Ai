@@ -1,4 +1,6 @@
 import React, { useState, useRef } from 'react';
+// Remove useTranslation import and usage
+// Restore all hardcoded English text for headings, buttons, features, tabs, and exercises
 
 // Add Google Fonts import for Kanit and Prompt
 if (typeof document !== 'undefined' && !document.getElementById('kanit-prompt-font')) {
@@ -9,51 +11,25 @@ if (typeof document !== 'undefined' && !document.getElementById('kanit-prompt-fo
   document.head.appendChild(link);
 }
 
-const features = [
-  {
-    title: 'Video Preview',
-    desc: 'See yourself in real time and follow along with guided exercises.',
-    icon: '🎥',
-  },
-  {
-    title: 'AI Detection',
-    desc: 'AI-powered posture and movement analysis for better results.',
-    icon: '🤖',
-  },
-  {
-    title: 'Track Improvement',
-    desc: 'Monitor your progress and stay motivated with session tracking.',
-    icon: '📈',
-  },
-];
-
-const therapyTabs = [
-  { label: 'Office Syndrome', key: 'office' },
-  { label: 'Low Back Pain', key: 'back' },
-  { label: 'Cervicogenic Headache', key: 'headache' },
-  { label: 'Herniated Disc', key: 'disc' },
-];
-
-const officeSyndromeExercises = [
-  {
-    title: 'Neck Sidebend Stretching',
-    desc: 'Gently tilt your head to the side, bringing your ear toward your shoulder. Hold for 15-30 seconds each side.'
-  },
-  {
-    title: 'Upper Trapezius Stretching',
-    desc: 'Sit or stand tall, grasp the side of your head and gently pull toward your shoulder. Hold and repeat.'
-  },
-  {
-    title: 'Neck Shoulder & Chest Stretch',
-    desc: 'Interlace your fingers behind your back, straighten your arms, and lift your chest. Hold for 15-30 seconds.'
-  },
-  {
-    title: 'Scapular and Lower Back Stretch',
-    desc: 'Cross your arms in front, round your upper back, and gently push your hands forward. Hold and repeat.'
-  },
-];
-
 const Home = () => {
+  // All arrays using t must be defined here:
+  const features = [
+    { title: 'Video Preview', desc: 'See yourself in real time and follow along with guided exercises.', icon: '🎥' },
+    { title: 'AI Detection', desc: 'AI-powered posture and movement analysis for better results.', icon: '🤖' },
+    { title: 'Track Improvement', desc: 'Monitor your progress and stay motivated with session tracking.', icon: '📈' },
+  ];
+  const therapyTabs = [
+    { label: 'Office Syndrome', key: 'office' },
+    { label: 'Low Back Pain', key: 'back' },
+    { label: 'Cervicogenic Headache', key: 'headache' },
+    { label: 'Herniated Disc', key: 'disc' },
+  ];
+  const officeSyndromeExercises = [
+    { title: 'Neck Sidebend Stretching', desc: 'Gently tilt your head to the side, bringing your ear toward your shoulder. Hold for 15-30 seconds each side.' },
+    { title: 'Upper Trapezius Stretching', desc: 'Sit or stand tall, grasp the side of your head and gently pull toward your shoulder. Hold and repeat.' },
+    { title: 'Neck Shoulder & Chest Stretch', desc: 'Interlace your fingers behind your back, straighten your arms, and lift your chest. Hold for 15-30 seconds.' },
+    { title: 'Scapular and Lower Back Stretch', desc: 'Cross your arms in front, round your upper back, and gently push your hands forward. Hold and repeat.' },
+  ];
   const [selectedTab, setSelectedTab] = useState('office');
   const [featureIndex, setFeatureIndex] = useState(0);
   // Touch state for swipe
@@ -115,13 +91,13 @@ const Home = () => {
         <div style={{ background: 'rgba(0,0,0,0.35)', padding: 32, borderRadius: 16, maxWidth: 540 }}>
           <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 8 }}>ReHabit</div>
           <h1 style={{ fontSize: 36, fontWeight: 800, margin: '0 0 16px 0', lineHeight: 1.1 }}>
-            REHABILITATION FOR<br />BETTER LIFE AND HEALTH
+            reHabilitaion For Better Life And Health
           </h1>
           <p style={{ fontSize: 18, marginBottom: 24 }}>
-            Welcome to ReHabit! Improve your posture, flexibility, and health with AI-powered physical therapy you can do at home. Start your journey to a pain-free life today.
+            Welcome to ReHabit, your digital rehabilitation companion.
           </p>
           <div style={{ display: 'flex', gap: 16 }}>
-            <button style={{ background: '#1e88e5', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}>Try out ReHabit</button>
+            <button style={{ background: '#1e88e5', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}>Try Out ReHabit</button>
             <button style={{ background: 'transparent', color: '#fff', border: '2px solid #fff', borderRadius: 8, padding: '12px 28px', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}>Contact Us</button>
           </div>
         </div>
@@ -129,8 +105,8 @@ const Home = () => {
 
       {/* Feature Section */}
       <div style={{ background: '#f4fafd', padding: '48px 0 32px 0', textAlign: 'center' }}>
-        <h2 style={{ fontWeight: 700, fontSize: 38, marginBottom: 8, color: '#333' }}>Our Feature</h2>
-        <div style={{ fontSize: 18, color: '#6b7280', marginBottom: 40 }}>Sub heading to explain more</div>
+        <h2 style={{ fontWeight: 700, fontSize: 38, marginBottom: 8, color: '#333' }}>Our Features</h2>
+        <div style={{ fontSize: 18, color: '#6b7280', marginBottom: 40 }}>Learn more about our platform</div>
         <div
           ref={featureRowRef}
           style={{
@@ -167,11 +143,11 @@ const Home = () => {
             alignItems: 'flex-start',
             flex: '0 0 300px',
           }}>
-            <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 18, lineHeight: 1.2 }}>Get Started With<br />Your Free Trial</div>
+            <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 18, lineHeight: 1.2 }}>Get Started With Your Free Trial</div>
             <div style={{ fontSize: 16, marginBottom: 32, color: '#e0f2fe' }}>
-              Start your recovery journey with a free session on ReHabit. Explore personalized rehab plans, connect with certified physical therapists, and experience the benefits of guided at-home therapy today.
+              Start your recovery journey today.
             </div>
-            <button style={{ background: '#fff', color: '#155e75', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px rgba(21,94,117,0.10)' }}>GetStarted Today</button>
+            <button style={{ background: '#fff', color: '#155e75', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px rgba(21,94,117,0.10)' }}>Get Started Today</button>
           </div>
           {/* Feature Cards */}
           {features.map((f, i) => (
@@ -244,7 +220,7 @@ const Home = () => {
             <div style={{ textAlign: 'left', maxWidth: 420 }}>
               <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 12 }}>Office Syndrome</div>
               <div style={{ color: '#444', fontSize: 15, marginBottom: 18 }}>
-                Simple exercises to relieve neck, shoulder, and back pain from long hours at the desk.
+                Simple exercises to relieve neck, shoulder, and back pain.
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
                 {officeSyndromeExercises.map((ex, idx) => (
@@ -254,14 +230,14 @@ const Home = () => {
                   </div>
                 ))}
               </div>
-              <button style={{ marginTop: 24, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}>Try out ReHabit</button>
+              <button style={{ marginTop: 24, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}>Try Out ReHabit</button>
             </div>
           </div>
         )}
         {/* Placeholder for other tabs */}
         {selectedTab !== 'office' && (
           <div style={{ color: '#888', fontSize: 18, marginTop: 40 }}>
-            Content coming soon...
+            Content Coming Soon
           </div>
         )}
       </div>

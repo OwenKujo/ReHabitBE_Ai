@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PlayCircle, ChevronDown, List, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 function OfficeSyndromePage() {
   const navigate = useNavigate();
+  const [openMovement, setOpenMovement] = useState(null);
   const movements = [
-    { id: 1, name: 'เงยหน้าแหงนไฝ่', duration: '2 min' },
-    { id: 2, name: 'ทรงตัวทรวงอกยื่น', duration: '2 min' },
-    { id: 3, name: 'หักปีกไก่ขวา', duration: '2 min' },
-    { id: 4, name: 'กดบ่าซ้าย', duration: '2 min' },
+    { id: 1, name: 'Neck Extension', duration: '2 min' },
+    { id: 2, name: 'Chest Out Posture', duration: '2 min' },
+    { id: 3, name: 'Right Wing Stretch', duration: '2 min' },
+    { id: 4, name: 'Left Shoulder Press', duration: '2 min' },
   ];
 
   return (
@@ -183,18 +184,18 @@ function OfficeSyndromePage() {
         <div className="info-box">
           <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <List size={20} style={{ color: '#1976d2' }} />
-            5 movements
+            4 movements
           </div>
           <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Clock size={20} style={{ color: '#1976d2' }} />
-            7 minutes
+            8 minutes
           </div>
         </div>
       </div>
 
       {/* Detail Section */}
       <div className="section">
-        <h2>Detail</h2>
+        <h2>Details</h2>
         <div className="detail-container">
           <div className="preview-video">
             <img src="/neck-stretch-preview.jpg" alt="Preview" />
@@ -203,14 +204,14 @@ function OfficeSyndromePage() {
             </div>
           </div>
           <div className="video-text">
-            <h3>Detail preview video</h3>
+            <h3>Preview Video Details</h3>
             <p>
-              detail ที่1 .....................................................<br />
-              detail ที่2 .....................................................<br />
-              detail ที่3 .....................................................<br />
-              detail ที่4 .....................................................<br />
-              detail ที่5 .....................................................<br />
-              <strong>แพทย์ชื่อปิงปอง</strong>
+              • Neck and shoulder stretching exercises to relieve tension.<br />
+              • Proper sitting posture techniques to reduce neck strain.<br />
+              • Upper back muscle strengthening routines.<br />
+              • Shoulder and scapular relaxation methods.<br />
+              • Tips for eye rest and changing work positions regularly.<br />
+              <strong>By: Dr. Pingpong Suksomboon</strong>
             </p>
           </div>
         </div>
@@ -221,14 +222,39 @@ function OfficeSyndromePage() {
         <h2>Movement List</h2>
         <div className="movement-box">
           {movements.map((move) => (
-            <div className="movement-item" key={move.id}>
-              <div className="movement-name">
-                {move.id}. {move.name}
+            <div key={move.id}>
+              <div
+                className="movement-item"
+                style={{ cursor: 'pointer' }}
+                onClick={() => setOpenMovement(openMovement === move.id ? null : move.id)}
+              >
+                <div className="movement-name">
+                  {move.id}. {move.name}
+                </div>
+                <div className="movement-right">
+                  <span>{move.duration}</span>
+                  <ChevronDown
+                    size={16}
+                    style={{
+                      transform: openMovement === move.id ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.2s',
+                    }}
+                  />
+                </div>
               </div>
-              <div className="movement-right">
-                <span>{move.duration}</span>
-                <ChevronDown size={16} />
-              </div>
+              {openMovement === move.id && (
+                <div style={{
+                  background: '#f6fbff',
+                  borderRadius: '8px',
+                  margin: '8px 0 8px 0',
+                  padding: '16px 24px',
+                  color: '#333',
+                  fontSize: '15px',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+                }}>
+                  <strong>Movement details coming soon</strong>
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { Bell, ChevronDown, User, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function ReHabitNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const navItems = [
-    { name: 'Home', href: '/', active: true },
-    { name: 'Physical Therapy', href: 'MediaPipefull', active: false },
-    { name: 'About', href: '#', active: false },
-    { name: 'Contact', href: '#', active: false },
+    { name: t('home'), href: '/', active: true },
+    { name: t('physicalTherapy'), href: 'MediaPipefull', active: false },
+    { name: t('about'), href: '#', active: false },
+    { name: t('contact'), href: '#', active: false },
   ];
 
   const navStyle = {
@@ -215,80 +217,98 @@ function ReHabitNavbar() {
             </div>
           )}
 
-          {/* Right side - Notifications and Profile */}
-          {mediaQuery && (
-            <div style={rightSectionStyle}>
-              {/* Notification Bell */}
+          {/* Right Section */}
+          <div style={rightSectionStyle}>
+            {/* Language Switcher */}
+            <select
+              value={i18n.language}
+              onChange={e => i18n.changeLanguage(e.target.value)}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: '1px solid #d1d5db',
+                background: '#fff',
+                color: '#374151',
+                fontWeight: 500,
+                marginRight: '12px',
+                cursor: 'pointer',
+                outline: 'none',
+                fontSize: '14px',
+              }}
+            >
+              <option value="en">EN</option>
+              <option value="th">TH</option>
+            </select>
+            {/* Notification Bell */}
+            <button
+              style={iconButtonStyle}
+              onMouseEnter={(e) => {
+                e.target.style.color = 'white';
+                e.target.style.backgroundColor = '#374151';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = '#9ca3af';
+                e.target.style.backgroundColor = 'transparent';
+              }}
+            >
+              <Bell size={20} />
+              <span style={notificationDotStyle}></span>
+            </button>
+
+            {/* Profile Dropdown */}
+            <div style={{ position: 'relative' }}>
               <button
-                style={iconButtonStyle}
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                style={profileButtonStyle}
                 onMouseEnter={(e) => {
                   e.target.style.color = 'white';
                   e.target.style.backgroundColor = '#374151';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.color = '#9ca3af';
+                  e.target.style.color = '#d1d5db';
                   e.target.style.backgroundColor = 'transparent';
                 }}
               >
-                <Bell size={20} />
-                <span style={notificationDotStyle}></span>
+                <div style={profileIconStyle}>
+                  <User size={20} />
+                </div>
+                <ChevronDown size={16} />
               </button>
 
-              {/* Profile Dropdown */}
-              <div style={{ position: 'relative' }}>
-                <button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  style={profileButtonStyle}
-                  onMouseEnter={(e) => {
-                    e.target.style.color = 'white';
-                    e.target.style.backgroundColor = '#374151';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.color = '#d1d5db';
-                    e.target.style.backgroundColor = 'transparent';
-                  }}
-                >
-                  <div style={profileIconStyle}>
-                    <User size={20} />
-                  </div>
-                  <ChevronDown size={16} />
-                </button>
+              {/* Profile Dropdown Menu */}
+              {isProfileOpen && (
+                <div style={dropdownStyle}>
+                  <Link
+                    to="#"
+                    style={dropdownItemStyle}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                  >
+                    {t('yourProfile')}
+                  </Link>
 
-                {/* Profile Dropdown Menu */}
-                {isProfileOpen && (
-                  <div style={dropdownStyle}>
-                    <Link
-                      to="#"
-                      style={dropdownItemStyle}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                    >
-                      Your Profile
-                    </Link>
+                  <Link
+                    to="/edit-profile"
+                    style={dropdownItemStyle}
+                    onClick={() => setIsProfileOpen(false)} // ปิด dropdown หลังคลิก
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                  >
+                    {t('editProfile')}
+                  </Link>
 
-                    <Link
-                      to="/edit-profile"
-                      style={dropdownItemStyle}
-                      onClick={() => setIsProfileOpen(false)} // ปิด dropdown หลังคลิก
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                    >
-                      Edit Profile
-                    </Link>
-
-                    <Link
-                      to="#"
-                      style={dropdownItemStyle}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                    >
-                      Sign out
-                    </Link>
-                  </div>
-                )}
-              </div>
+                  <Link
+                    to="#"
+                    style={dropdownItemStyle}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                  >
+                    {t('signOut')}
+                  </Link>
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           {/* Mobile menu button */}
           {!mediaQuery && (
@@ -345,8 +365,8 @@ function ReHabitNavbar() {
               <User size={24} />
             </div>
             <div style={{ marginLeft: '12px', flex: 1 }}>
-              <div style={{ fontSize: '16px', fontWeight: '500', color: 'white' }}>User Name</div>
-              <div style={{ fontSize: '14px', color: '#9ca3af' }}>user@example.com</div>
+              <div style={{ fontSize: '16px', fontWeight: '500', color: 'white' }}>{t('userName')}</div>
+              <div style={{ fontSize: '14px', color: '#9ca3af' }}>{t('userEmail')}</div>
             </div>
             <button style={iconButtonStyle}>
               <Bell size={24} />
