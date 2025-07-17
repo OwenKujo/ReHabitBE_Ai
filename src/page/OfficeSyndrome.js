@@ -216,7 +216,7 @@ function OfficeSyndromePage() {
             className="header-image"
           />
           <div className="overlay">
-            <a href="#" style={{ textDecoration: 'underline', color: 'white', fontSize: '1.15rem', fontWeight: 700, alignSelf: 'flex-start', marginBottom: 24, letterSpacing: 0.5 }}>
+            <a href="/PhysicalMenu" style={{ textDecoration: 'underline', color: 'white', fontSize: '1.15rem', fontWeight: 700, alignSelf: 'flex-start', marginBottom: 24, letterSpacing: 0.5 }}>
               ← Go Back
             </a>
             <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginTop: 80 }}>Office Syndrome</h1>

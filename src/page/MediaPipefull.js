@@ -1082,7 +1082,7 @@ function PoseAngleDetector() {
             </div>
           </div>
         </div>
-        <button onClick={() => speak('สวัสดีค่ะ นี่คือระบบแปลงข้อความเป็นเสียงภาษาไทย')}
+        <button onClick={() => speak('สวัสดีครับ นี่คือระบบแปลงข้อความเป็นเสียงภาษาไทย')}
           style={{ margin: '16px 0', padding: '10px 24px', fontSize: 16, borderRadius: 8, background: '#1976d2', color: '#fff', border: 'none', cursor: 'pointer' }}>
           🔊 ทดสอบเสียงภาษาไทย
         </button>
