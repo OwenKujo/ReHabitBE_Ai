@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useLang } from '../App';
 // Remove useTranslation import and usage
 // Restore all hardcoded English text for headings, buttons, features, tabs, and exercises
 
@@ -12,6 +13,7 @@ if (typeof document !== 'undefined' && !document.getElementById('kanit-prompt-fo
 }
 
 const Home = () => {
+  const { lang } = useLang();
   // All arrays using t must be defined here:
   const features = [
     { title: 'Video Preview', desc: 'See yourself in real time and follow along with guided exercises.', icon: '🎥' },
@@ -74,469 +76,935 @@ const Home = () => {
     node.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
   };
 
-  return (
-    <div className="home-page" style={{ fontFamily: 'Kanit, Prompt, Arial, sans-serif', background: '#f8fafc' }}>
-      <style>{`
-        .home-hero {
-          background: url(/balance.webp) center/cover;
-          min-height: 600px;
-          color: #fff;
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: flex-start;
-          padding: 60px 40px;
-        }
-        .home-hero-content {
-          background: rgba(0,0,0,0.35);
-          padding: 32px;
-          border-radius: 16px;
-          max-width: 540px;
-        }
-        .home-hero-title {
-          font-weight: 700;
-          font-size: 22px;
-          margin-bottom: 8px;
-        }
-        .home-hero-h1 {
-          font-size: 36px;
-          font-weight: 800;
-          margin: 0 0 16px 0;
-          line-height: 1.1;
-        }
-        .home-hero-p {
-          font-size: 18px;
-          margin-bottom: 24px;
-        }
-        .home-hero-btns {
-          display: flex;
-          gap: 16px;
-        }
-        .home-hero-btn-primary {
-          background: #1e88e5;
-          color: #fff;
-          border: none;
-          border-radius: 8px;
-          padding: 12px 28px;
-          font-weight: 600;
-          font-size: 16px;
-          cursor: pointer;
-        }
-        .home-hero-btn-secondary {
-          background: transparent;
-          color: #fff;
-          border: 2px solid #fff;
-          border-radius: 8px;
-          padding: 12px 28px;
-          font-weight: 600;
-          font-size: 16px;
-          cursor: pointer;
-        }
-        .home-features-section {
-          background: #f4fafd;
-          padding: 48px 0 32px 0;
-          text-align: center;
-        }
-        .home-features-title {
-          font-weight: 700;
-          font-size: 38px;
-          margin-bottom: 8px;
-          color: #333;
-        }
-        .home-features-desc {
-          font-size: 18px;
-          color: #6b7280;
-          margin-bottom: 40px;
-        }
-        .feature-scroll-row {
-          display: flex;
-          gap: 36px;
-          align-items: stretch;
-          overflow-x: auto;
-          overflow-y: visible;
-          width: calc(3.5 * 350px + 3 * 36px);
-          max-width: 100vw;
-          margin: 0 auto;
-          padding-bottom: 8px;
-          padding-left: 0;
-          padding-right: 40px;
-          scroll-behavior: smooth;
-          scrollbar-width: none;
-          ms-overflow-style: none;
-        }
-        .feature-card, .get-started-card {
-          border-radius: 24px;
-          box-shadow: 0 4px 16px 0 rgba(30,136,229,0.08);
-          padding: 36px 32px;
-          min-width: 260px;
-          max-width: 300px;
-          text-align: center;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: space-between;
-          flex: 0 0 300px;
-        }
-        .get-started-card {
-          background: #155e75;
-          color: #fff;
-          text-align: left;
-          align-items: flex-start;
-        }
-        .feature-card {
-          background: #d1f3fa;
-          color: #155e75;
-        }
-        .feature-card-icon {
-          font-size: 48px;
-          margin-bottom: 18px;
-          color: #155e75;
-        }
-        .feature-card-title {
-          font-weight: 700;
-          font-size: 20px;
-          margin-bottom: 10px;
-        }
-        .feature-card-desc {
-          font-size: 16px;
-          margin-bottom: 24px;
-        }
-        .feature-card-btn {
-          background: #fff;
-          color: #155e75;
-          border: 1px solid #b6e0f2;
-          border-radius: 8px;
-          padding: 10px 24px;
-          font-weight: 600;
-          font-size: 15px;
-          cursor: pointer;
-          box-shadow: 0 1px 4px rgba(30,136,229,0.06);
-        }
-        .feature-arrows {
-          display: flex;
-          justify-content: flex-end;
-          gap: 18px;
-          margin-top: 36px;
-          max-width: 1200px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-        .feature-arrow-btn {
-          background: #e0f2fe;
-          border: none;
-          border-radius: 50%;
-          width: 40px;
-          height: 40px;
-          font-size: 22px;
-          color: #155e75;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .therapy-section {
-          padding: 40px 0 0 0;
-        }
-        .therapy-tabs {
-          display: flex;
-          gap: 18px;
-          justify-content: center;
-          margin-bottom: 32px;
-        }
-        .therapy-tab {
-          background: #e0f2fe;
-          color: #1976d2;
-          border: none;
-          border-radius: 8px;
-          padding: 10px 24px;
-          font-weight: 600;
-          font-size: 16px;
-          cursor: pointer;
-          transition: background 0.2s, color 0.2s;
-        }
-        .therapy-tab.active {
-          background: #1976d2;
-          color: #fff;
-        }
-        .therapy-tab:hover {
-          background: #b6e0f2;
-        }
-        .therapy-content {
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          gap: 40px;
-          flex-wrap: wrap;
-        }
-        .therapy-img {
-          width: 260px;
-          height: 260px;
-          object-fit: cover;
-          border-radius: 16px;
-          box-shadow: 0 2px 12px rgba(30,136,229,0.10);
-        }
-        .therapy-details {
-          text-align: left;
-          max-width: 420px;
-        }
-        .therapy-title {
-          font-weight: 700;
-          font-size: 20px;
-          margin-bottom: 12px;
-        }
-        .therapy-desc {
-          color: #444;
-          font-size: 15px;
-          margin-bottom: 18px;
-        }
-        .therapy-exercises {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 18px;
-        }
-        .therapy-exercise-card {
-          background: #e3f2fd;
-          border-radius: 10px;
-          padding: 16px;
-          min-height: 90px;
-        }
-        .therapy-exercise-title {
-          font-weight: 700;
-          font-size: 16px;
-          margin-bottom: 4px;
-        }
-        .therapy-exercise-desc {
-          font-size: 14px;
-          color: #333;
-        }
-        .therapy-btn {
-          margin-top: 24px;
-          background: #1976d2;
-          color: #fff;
-          border: none;
-          border-radius: 8px;
-          padding: 12px 28px;
-          font-weight: 600;
-          font-size: 16px;
-          cursor: pointer;
-        }
-        .therapy-coming-soon {
-          color: #888;
-          font-size: 18px;
-          margin-top: 40px;
-        }
-        @media (max-width: 1200px) {
-          .feature-scroll-row {
-            width: 100vw;
-            padding-right: 0;
-          }
-          .therapy-content {
-            gap: 20px;
-          }
-        }
-        @media (max-width: 900px) {
+  if (lang === 'en') {
+    return (
+      <div className="home-page" style={{ fontFamily: 'Kanit, Prompt, Arial, sans-serif', background: '#f8fafc' }}>
+        <style>{`
           .home-hero {
-            padding: 40px 10px;
-            min-height: 400px;
-          }
-          .home-hero-content {
-            padding: 18px;
-            max-width: 100%;
-          }
-          .home-hero-h1 {
-            font-size: 26px;
-          }
-          .home-features-title {
-            font-size: 28px;
-          }
-          .therapy-content {
+            background: url(/balance.webp) center/cover;
+            min-height: 600px;
+            color: #fff;
+            position: relative;
+            display: flex;
             flex-direction: column;
-            align-items: center;
-          }
-          .therapy-details {
-            max-width: 100%;
-          }
-        }
-        @media (max-width: 600px) {
-          .home-hero {
-            padding: 18px 2vw;
-            min-height: 220px;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px 40px;
           }
           .home-hero-content {
-            padding: 8px;
+            background: rgba(0,0,0,0.35);
+            padding: 32px;
+            border-radius: 16px;
+            max-width: 540px;
           }
           .home-hero-title {
-            font-size: 16px;
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 8px;
           }
           .home-hero-h1 {
-            font-size: 18px;
+            font-size: 36px;
+            font-weight: 800;
+            margin: 0 0 16px 0;
+            line-height: 1.1;
           }
           .home-hero-p {
-            font-size: 12px;
+            font-size: 18px;
+            margin-bottom: 24px;
           }
-          .home-hero-btn-primary, .home-hero-btn-secondary {
-            font-size: 12px;
-            padding: 8px 12px;
+          .home-hero-btns {
+            display: flex;
+            gap: 16px;
+          }
+          .home-hero-btn-primary {
+            background: #1e88e5;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+          }
+          .home-hero-btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+          }
+          .home-features-section {
+            background: #f4fafd;
+            padding: 48px 0 32px 0;
+            text-align: center;
           }
           .home-features-title {
-            font-size: 18px;
+            font-weight: 700;
+            font-size: 38px;
+            margin-bottom: 8px;
+            color: #333;
           }
           .home-features-desc {
-            font-size: 12px;
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 40px;
+          }
+          .feature-scroll-row {
+            display: flex;
+            gap: 36px;
+            align-items: stretch;
+            overflow-x: auto;
+            overflow-y: visible;
+            width: calc(3.5 * 350px + 3 * 36px);
+            max-width: 100vw;
+            margin: 0 auto;
+            padding-bottom: 8px;
+            padding-left: 0;
+            padding-right: 40px;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            ms-overflow-style: none;
           }
           .feature-card, .get-started-card {
-            min-width: 180px;
-            max-width: 220px;
-            padding: 16px 8px;
+            border-radius: 24px;
+            box-shadow: 0 4px 16px 0 rgba(30,136,229,0.08);
+            padding: 36px 32px;
+            min-width: 260px;
+            max-width: 300px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            flex: 0 0 300px;
+          }
+          .get-started-card {
+            background: #155e75;
+            color: #fff;
+            text-align: left;
+            align-items: flex-start;
+          }
+          .feature-card {
+            background: #d1f3fa;
+            color: #155e75;
           }
           .feature-card-icon {
-            font-size: 28px;
+            font-size: 48px;
+            margin-bottom: 18px;
+            color: #155e75;
           }
           .feature-card-title {
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 10px;
           }
           .feature-card-desc {
-            font-size: 12px;
+            font-size: 16px;
+            margin-bottom: 24px;
           }
           .feature-card-btn {
-            font-size: 12px;
-            padding: 6px 10px;
+            background: #fff;
+            color: #155e75;
+            border: 1px solid #b6e0f2;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(30,136,229,0.06);
           }
           .feature-arrows {
-            gap: 8px;
-            margin-top: 16px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 18px;
+            margin-top: 36px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
           }
           .feature-arrow-btn {
-            width: 28px;
-            height: 28px;
-            font-size: 14px;
+            background: #e0f2fe;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 22px;
+            color: #155e75;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
           }
           .therapy-section {
-            padding: 18px 0 0 0;
+            padding: 40px 0 0 0;
           }
           .therapy-tabs {
-            gap: 8px;
-            margin-bottom: 12px;
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            margin-bottom: 32px;
           }
           .therapy-tab {
-            font-size: 12px;
-            padding: 6px 10px;
+            background: #e0f2fe;
+            color: #1976d2;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+          }
+          .therapy-tab.active {
+            background: #1976d2;
+            color: #fff;
+          }
+          .therapy-tab:hover {
+            background: #b6e0f2;
+          }
+          .therapy-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            flex-wrap: wrap;
           }
           .therapy-img {
-            width: 120px;
-            height: 120px;
+            width: 260px;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(30,136,229,0.10);
+          }
+          .therapy-details {
+            text-align: left;
+            max-width: 420px;
           }
           .therapy-title {
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 12px;
           }
           .therapy-desc {
-            font-size: 10px;
+            color: #444;
+            font-size: 15px;
+            margin-bottom: 18px;
           }
           .therapy-exercises {
-            grid-template-columns: 1fr;
-            gap: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+          }
+          .therapy-exercise-card {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 16px;
+            min-height: 90px;
           }
           .therapy-exercise-title {
-            font-size: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
           }
           .therapy-exercise-desc {
-            font-size: 10px;
+            font-size: 14px;
+            color: #333;
           }
           .therapy-btn {
-            font-size: 12px;
-            padding: 8px 12px;
+            margin-top: 24px;
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
           }
           .therapy-coming-soon {
-            font-size: 12px;
-            margin-top: 18px;
+            color: #888;
+            font-size: 18px;
+            margin-top: 40px;
           }
-        }
-      `}</style>
-      {/* Hero Section */}
-      <div className="home-hero">
-        <div className="home-hero-content">
-          <div className="home-hero-title">ReHabit</div>
-          <h1 className="home-hero-h1">reHabilitaion For Better Life And Health</h1>
-          <p className="home-hero-p">Welcome to ReHabit, your digital rehabilitation companion.</p>
-          <div className="home-hero-btns">
-            <button className="home-hero-btn-primary">Try Out ReHabit</button>
-            <button className="home-hero-btn-secondary">Contact Us</button>
+          @media (max-width: 1200px) {
+            .feature-scroll-row {
+              width: 100vw;
+              padding-right: 0;
+            }
+            .therapy-content {
+              gap: 20px;
+            }
+          }
+          @media (max-width: 900px) {
+            .home-hero {
+              padding: 40px 10px;
+              min-height: 400px;
+            }
+            .home-hero-content {
+              padding: 18px;
+              max-width: 100%;
+            }
+            .home-hero-h1 {
+              font-size: 26px;
+            }
+            .home-features-title {
+              font-size: 28px;
+            }
+            .therapy-content {
+              flex-direction: column;
+              align-items: center;
+            }
+            .therapy-details {
+              max-width: 100%;
+            }
+          }
+          @media (max-width: 600px) {
+            .home-hero {
+              padding: 18px 2vw;
+              min-height: 220px;
+            }
+            .home-hero-content {
+              padding: 8px;
+            }
+            .home-hero-title {
+              font-size: 16px;
+            }
+            .home-hero-h1 {
+              font-size: 18px;
+            }
+            .home-hero-p {
+              font-size: 12px;
+            }
+            .home-hero-btn-primary, .home-hero-btn-secondary {
+              font-size: 12px;
+              padding: 8px 12px;
+            }
+            .home-features-title {
+              font-size: 18px;
+            }
+            .home-features-desc {
+              font-size: 12px;
+            }
+            .feature-card, .get-started-card {
+              min-width: 180px;
+              max-width: 220px;
+              padding: 16px 8px;
+            }
+            .feature-card-icon {
+              font-size: 28px;
+            }
+            .feature-card-title {
+              font-size: 14px;
+            }
+            .feature-card-desc {
+              font-size: 12px;
+            }
+            .feature-card-btn {
+              font-size: 12px;
+              padding: 6px 10px;
+            }
+            .feature-arrows {
+              gap: 8px;
+              margin-top: 16px;
+            }
+            .feature-arrow-btn {
+              width: 28px;
+              height: 28px;
+              font-size: 14px;
+            }
+            .therapy-section {
+              padding: 18px 0 0 0;
+            }
+            .therapy-tabs {
+              gap: 8px;
+              margin-bottom: 12px;
+            }
+            .therapy-tab {
+              font-size: 12px;
+              padding: 6px 10px;
+            }
+            .therapy-img {
+              width: 120px;
+              height: 120px;
+            }
+            .therapy-title {
+              font-size: 14px;
+            }
+            .therapy-desc {
+              font-size: 10px;
+            }
+            .therapy-exercises {
+              grid-template-columns: 1fr;
+              gap: 8px;
+            }
+            .therapy-exercise-title {
+              font-size: 12px;
+            }
+            .therapy-exercise-desc {
+              font-size: 10px;
+            }
+            .therapy-btn {
+              font-size: 12px;
+              padding: 8px 12px;
+            }
+            .therapy-coming-soon {
+              font-size: 12px;
+              margin-top: 18px;
+            }
+          }
+        `}</style>
+        {/* Hero Section */}
+        <div className="home-hero">
+          <div className="home-hero-content">
+            <div className="home-hero-title">ReHabit</div>
+            <h1 className="home-hero-h1">reHabilitaion For Better Life And Health</h1>
+            <p className="home-hero-p">Welcome to ReHabit, your digital rehabilitation companion.</p>
+            <div className="home-hero-btns">
+              <button className="home-hero-btn-primary">Try Out ReHabit</button>
+              <button className="home-hero-btn-secondary">Contact Us</button>
+            </div>
           </div>
         </div>
-      </div>
-      {/* Feature Section */}
-      <div className="home-features-section">
-        <h2 className="home-features-title">Our Features</h2>
-        <div className="home-features-desc">Learn more about our platform</div>
-        <div ref={featureRowRef} className="feature-scroll-row">
-          {/* Get Started Card */}
-          <div className="get-started-card">
-            <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 18, lineHeight: 1.2 }}>Get Started With Your Free Trial</div>
-            <div style={{ fontSize: 16, marginBottom: 32, color: '#e0f2fe' }}>
-              Start your recovery journey today.
-            </div>
-            <button style={{ background: '#fff', color: '#155e75', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px rgba(21,94,117,0.10)' }}>Get Started Today</button>
-          </div>
-          {/* Feature Cards */}
-          {features.map((f, i) => (
-            <div key={f.title} className="feature-card">
-              <div className="feature-card-icon">{f.icon}</div>
-              <div className="feature-card-title">{f.title}</div>
-              <div className="feature-card-desc">{f.desc}</div>
-              <button className="feature-card-btn">Learn More</button>
-            </div>
-          ))}
-        </div>
-        {/* Navigation Arrows */}
-        <div className="feature-arrows">
-          <button onClick={() => scrollFeatureRow(-1)} className="feature-arrow-btn">&#8592;</button>
-          <button onClick={() => scrollFeatureRow(1)} className="feature-arrow-btn">&#8594;</button>
-        </div>
-      </div>
-      {/* Therapy Section */}
-      <div className="therapy-section">
-        <div className="therapy-tabs">
-          {therapyTabs.map(tab => (
-            <button
-              key={tab.key}
-              className={`therapy-tab${selectedTab === tab.key ? ' active' : ''}`}
-              onClick={() => setSelectedTab(tab.key)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="therapy-content">
-          {selectedTab === 'office' && (
-            <>
-              <img
-                src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80"
-                alt="Neck Stretch"
-                className="therapy-img"
-              />
-              <div className="therapy-details">
-                <div className="therapy-title">Office Syndrome</div>
-                <div className="therapy-desc">Simple exercises to relieve neck, shoulder, and back pain.</div>
-                <div className="therapy-exercises">
-                  {officeSyndromeExercises.map((ex, idx) => (
-                    <div key={ex.title} className="therapy-exercise-card">
-                      <div className="therapy-exercise-title">{idx + 1}. {ex.title}</div>
-                      <div className="therapy-exercise-desc">{ex.desc}</div>
-                    </div>
-                  ))}
-                </div>
-                <button className="therapy-btn">Try Out ReHabit</button>
+        {/* Feature Section */}
+        <div className="home-features-section">
+          <h2 className="home-features-title">Our Features</h2>
+          <div className="home-features-desc">Learn more about our platform</div>
+          <div ref={featureRowRef} className="feature-scroll-row">
+            {/* Get Started Card */}
+            <div className="get-started-card">
+              <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 18, lineHeight: 1.2 }}>Get Started With Your Free Trial</div>
+              <div style={{ fontSize: 16, marginBottom: 32, color: '#e0f2fe' }}>
+                Start your recovery journey today.
               </div>
-            </>
-          )}
-          {selectedTab !== 'office' && (
-            <div className="therapy-coming-soon">Content Coming Soon</div>
-          )}
+              <button style={{ background: '#fff', color: '#155e75', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px rgba(21,94,117,0.10)' }}>Get Started Today</button>
+            </div>
+            {/* Feature Cards */}
+            {features.map((f, i) => (
+              <div key={f.title} className="feature-card">
+                <div className="feature-card-icon">{f.icon}</div>
+                <div className="feature-card-title">{f.title}</div>
+                <div className="feature-card-desc">{f.desc}</div>
+                <button className="feature-card-btn">Learn More</button>
+              </div>
+            ))}
+          </div>
+          {/* Navigation Arrows */}
+          <div className="feature-arrows">
+            <button onClick={() => scrollFeatureRow(-1)} className="feature-arrow-btn">&#8592;</button>
+            <button onClick={() => scrollFeatureRow(1)} className="feature-arrow-btn">&#8594;</button>
+          </div>
+        </div>
+        {/* Therapy Section */}
+        <div className="therapy-section">
+          <div className="therapy-tabs">
+            {therapyTabs.map(tab => (
+              <button
+                key={tab.key}
+                className={`therapy-tab${selectedTab === tab.key ? ' active' : ''}`}
+                onClick={() => setSelectedTab(tab.key)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <div className="therapy-content">
+            {selectedTab === 'office' && (
+              <>
+                <img
+                  src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80"
+                  alt="Neck Stretch"
+                  className="therapy-img"
+                />
+                <div className="therapy-details">
+                  <div className="therapy-title">Office Syndrome</div>
+                  <div className="therapy-desc">Simple exercises to relieve neck, shoulder, and back pain.</div>
+                  <div className="therapy-exercises">
+                    {officeSyndromeExercises.map((ex, idx) => (
+                      <div key={ex.title} className="therapy-exercise-card">
+                        <div className="therapy-exercise-title">{idx + 1}. {ex.title}</div>
+                        <div className="therapy-exercise-desc">{ex.desc}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <button className="therapy-btn">Try Out ReHabit</button>
+                </div>
+              </>
+            )}
+            {selectedTab !== 'office' && (
+              <div className="therapy-coming-soon">Content Coming Soon</div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div className="home-page" style={{ fontFamily: 'Kanit, Prompt, Arial, sans-serif', background: '#f8fafc' }}>
+        <style>{`
+          .home-hero {
+            background: url(/balance.webp) center/cover;
+            min-height: 600px;
+            color: #fff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px 40px;
+          }
+          .home-hero-content {
+            background: rgba(0,0,0,0.35);
+            padding: 32px;
+            border-radius: 16px;
+            max-width: 540px;
+          }
+          .home-hero-title {
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 8px;
+          }
+          .home-hero-h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin: 0 0 16px 0;
+            line-height: 1.1;
+          }
+          .home-hero-p {
+            font-size: 18px;
+            margin-bottom: 24px;
+          }
+          .home-hero-btns {
+            display: flex;
+            gap: 16px;
+          }
+          .home-hero-btn-primary {
+            background: #1e88e5;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+          }
+          .home-hero-btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+          }
+          .home-features-section {
+            background: #f4fafd;
+            padding: 48px 0 32px 0;
+            text-align: center;
+          }
+          .home-features-title {
+            font-weight: 700;
+            font-size: 38px;
+            margin-bottom: 8px;
+            color: #333;
+          }
+          .home-features-desc {
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 40px;
+          }
+          .feature-scroll-row {
+            display: flex;
+            gap: 36px;
+            align-items: stretch;
+            overflow-x: auto;
+            overflow-y: visible;
+            width: calc(3.5 * 350px + 3 * 36px);
+            max-width: 100vw;
+            margin: 0 auto;
+            padding-bottom: 8px;
+            padding-left: 0;
+            padding-right: 40px;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            ms-overflow-style: none;
+          }
+          .feature-card, .get-started-card {
+            border-radius: 24px;
+            box-shadow: 0 4px 16px 0 rgba(30,136,229,0.08);
+            padding: 36px 32px;
+            min-width: 260px;
+            max-width: 300px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            flex: 0 0 300px;
+          }
+          .get-started-card {
+            background: #155e75;
+            color: #fff;
+            text-align: left;
+            align-items: flex-start;
+          }
+          .feature-card {
+            background: #d1f3fa;
+            color: #155e75;
+          }
+          .feature-card-icon {
+            font-size: 48px;
+            margin-bottom: 18px;
+            color: #155e75;
+          }
+          .feature-card-title {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 10px;
+          }
+          .feature-card-desc {
+            font-size: 16px;
+            margin-bottom: 24px;
+          }
+          .feature-card-btn {
+            background: #fff;
+            color: #155e75;
+            border: 1px solid #b6e0f2;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(30,136,229,0.06);
+          }
+          .feature-arrows {
+            display: flex;
+            justify-content: flex-end;
+            gap: 18px;
+            margin-top: 36px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+          }
+          .feature-arrow-btn {
+            background: #e0f2fe;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 22px;
+            color: #155e75;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .therapy-section {
+            padding: 40px 0 0 0;
+          }
+          .therapy-tabs {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            margin-bottom: 32px;
+          }
+          .therapy-tab {
+            background: #e0f2fe;
+            color: #1976d2;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+          }
+          .therapy-tab.active {
+            background: #1976d2;
+            color: #fff;
+          }
+          .therapy-tab:hover {
+            background: #b6e0f2;
+          }
+          .therapy-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            flex-wrap: wrap;
+          }
+          .therapy-img {
+            width: 260px;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(30,136,229,0.10);
+          }
+          .therapy-details {
+            text-align: left;
+            max-width: 420px;
+          }
+          .therapy-title {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 12px;
+          }
+          .therapy-desc {
+            color: #444;
+            font-size: 15px;
+            margin-bottom: 18px;
+          }
+          .therapy-exercises {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+          }
+          .therapy-exercise-card {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 16px;
+            min-height: 90px;
+          }
+          .therapy-exercise-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+          }
+          .therapy-exercise-desc {
+            font-size: 14px;
+            color: #333;
+          }
+          .therapy-btn {
+            margin-top: 24px;
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+          }
+          .therapy-coming-soon {
+            color: #888;
+            font-size: 18px;
+            margin-top: 40px;
+          }
+          @media (max-width: 1200px) {
+            .feature-scroll-row {
+              width: 100vw;
+              padding-right: 0;
+            }
+            .therapy-content {
+              gap: 20px;
+            }
+          }
+          @media (max-width: 900px) {
+            .home-hero {
+              padding: 40px 10px;
+              min-height: 400px;
+            }
+            .home-hero-content {
+              padding: 18px;
+              max-width: 100%;
+            }
+            .home-hero-h1 {
+              font-size: 26px;
+            }
+            .home-features-title {
+              font-size: 28px;
+            }
+            .therapy-content {
+              flex-direction: column;
+              align-items: center;
+            }
+            .therapy-details {
+              max-width: 100%;
+            }
+          }
+          @media (max-width: 600px) {
+            .home-hero {
+              padding: 18px 2vw;
+              min-height: 220px;
+            }
+            .home-hero-content {
+              padding: 8px;
+            }
+            .home-hero-title {
+              font-size: 16px;
+            }
+            .home-hero-h1 {
+              font-size: 18px;
+            }
+            .home-hero-p {
+              font-size: 12px;
+            }
+            .home-hero-btn-primary, .home-hero-btn-secondary {
+              font-size: 12px;
+              padding: 8px 12px;
+            }
+            .home-features-title {
+              font-size: 18px;
+            }
+            .home-features-desc {
+              font-size: 12px;
+            }
+            .feature-card, .get-started-card {
+              min-width: 180px;
+              max-width: 220px;
+              padding: 16px 8px;
+            }
+            .feature-card-icon {
+              font-size: 28px;
+            }
+            .feature-card-title {
+              font-size: 14px;
+            }
+            .feature-card-desc {
+              font-size: 12px;
+            }
+            .feature-card-btn {
+              font-size: 12px;
+              padding: 6px 10px;
+            }
+            .feature-arrows {
+              gap: 8px;
+              margin-top: 16px;
+            }
+            .feature-arrow-btn {
+              width: 28px;
+              height: 28px;
+              font-size: 14px;
+            }
+            .therapy-section {
+              padding: 18px 0 0 0;
+            }
+            .therapy-tabs {
+              gap: 8px;
+              margin-bottom: 12px;
+            }
+            .therapy-tab {
+              font-size: 12px;
+              padding: 6px 10px;
+            }
+            .therapy-img {
+              width: 120px;
+              height: 120px;
+            }
+            .therapy-title {
+              font-size: 14px;
+            }
+            .therapy-desc {
+              font-size: 10px;
+            }
+            .therapy-exercises {
+              grid-template-columns: 1fr;
+              gap: 8px;
+            }
+            .therapy-exercise-title {
+              font-size: 12px;
+            }
+            .therapy-exercise-desc {
+              font-size: 10px;
+            }
+            .therapy-btn {
+              font-size: 12px;
+              padding: 8px 12px;
+            }
+            .therapy-coming-soon {
+              font-size: 12px;
+              margin-top: 18px;
+            }
+          }
+        `}</style>
+        {/* Hero Section */}
+        <div className="home-hero">
+          <div className="home-hero-content">
+            <div className="home-hero-title">ReHabit</div>
+            <h1 className="home-hero-h1">ยินดีต้อนรับสู่ ReHabit</h1>
+            <p className="home-hero-p">เพื่อนคู่ใจด้านการฟื้นฟูสุขภาพของคุณ</p>
+            <div className="home-hero-btns">
+              <button className="home-hero-btn-primary">Try Out ReHabit</button>
+              <button className="home-hero-btn-secondary">Contact Us</button>
+            </div>
+          </div>
+        </div>
+        {/* Feature Section */}
+        <div className="home-features-section">
+          <h2 className="home-features-title">Our Features</h2>
+          <div className="home-features-desc">Learn more about our platform</div>
+          <div ref={featureRowRef} className="feature-scroll-row">
+            {/* Get Started Card */}
+            <div className="get-started-card">
+              <div style={{ fontWeight: 700, fontSize: 22, marginBottom: 18, lineHeight: 1.2 }}>Get Started With Your Free Trial</div>
+              <div style={{ fontSize: 16, marginBottom: 32, color: '#e0f2fe' }}>
+                Start your recovery journey today.
+              </div>
+              <button style={{ background: '#fff', color: '#155e75', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 8px rgba(21,94,117,0.10)' }}>Get Started Today</button>
+            </div>
+            {/* Feature Cards */}
+            {features.map((f, i) => (
+              <div key={f.title} className="feature-card">
+                <div className="feature-card-icon">{f.icon}</div>
+                <div className="feature-card-title">{f.title}</div>
+                <div className="feature-card-desc">{f.desc}</div>
+                <button className="feature-card-btn">Learn More</button>
+              </div>
+            ))}
+          </div>
+          {/* Navigation Arrows */}
+          <div className="feature-arrows">
+            <button onClick={() => scrollFeatureRow(-1)} className="feature-arrow-btn">&#8592;</button>
+            <button onClick={() => scrollFeatureRow(1)} className="feature-arrow-btn">&#8594;</button>
+          </div>
+        </div>
+        {/* Therapy Section */}
+        <div className="therapy-section">
+          <div className="therapy-tabs">
+            {therapyTabs.map(tab => (
+              <button
+                key={tab.key}
+                className={`therapy-tab${selectedTab === tab.key ? ' active' : ''}`}
+                onClick={() => setSelectedTab(tab.key)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <div className="therapy-content">
+            {selectedTab === 'office' && (
+              <>
+                <img
+                  src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80"
+                  alt="Neck Stretch"
+                  className="therapy-img"
+                />
+                <div className="therapy-details">
+                  <div className="therapy-title">Office Syndrome</div>
+                  <div className="therapy-desc">Simple exercises to relieve neck, shoulder, and back pain.</div>
+                  <div className="therapy-exercises">
+                    {officeSyndromeExercises.map((ex, idx) => (
+                      <div key={ex.title} className="therapy-exercise-card">
+                        <div className="therapy-exercise-title">{idx + 1}. {ex.title}</div>
+                        <div className="therapy-exercise-desc">{ex.desc}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <button className="therapy-btn">Try Out ReHabit</button>
+                </div>
+              </>
+            )}
+            {selectedTab !== 'office' && (
+              <div className="therapy-coming-soon">Content Coming Soon</div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 };
 
 export default Home;

@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Bell, ChevronDown, User, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useLang } from '../App';
 
 function ReHabitNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { t, i18n } = useTranslation();
+  const { lang, changeLang } = useLang();
 
   const navItems = [
     { name: t('home'), href: '/', active: true },
@@ -216,25 +218,36 @@ function ReHabitNavbar() {
           {/* Right Section */}
           <div className="navbar-right-section">
             {/* Language Switcher */}
-            <select
-              value={i18n.language}
-              onChange={e => i18n.changeLanguage(e.target.value)}
-              style={{
-                padding: '6px 12px',
-                borderRadius: '6px',
-                border: '1px solid #d1d5db',
-                background: '#fff',
-                color: '#374151',
-                fontWeight: 500,
-                marginRight: '12px',
-                cursor: 'pointer',
-                outline: 'none',
-                fontSize: '14px',
-              }}
-            >
-              <option value="en">EN</option>
-              <option value="th">TH</option>
-            </select>
+            <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginLeft: 12 }}>
+              <button
+                onClick={() => changeLang('en')}
+                style={{
+                  background: lang === 'en' ? '#1976d2' : '#fff',
+                  color: lang === 'en' ? '#fff' : '#1976d2',
+                  border: '1px solid #1976d2',
+                  borderRadius: 6,
+                  padding: '4px 12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontSize: 14
+                }}
+                disabled={lang === 'en'}
+              >EN</button>
+              <button
+                onClick={() => changeLang('th')}
+                style={{
+                  background: lang === 'th' ? '#1976d2' : '#fff',
+                  color: lang === 'th' ? '#fff' : '#1976d2',
+                  border: '1px solid #1976d2',
+                  borderRadius: 6,
+                  padding: '4px 12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontSize: 14
+                }}
+                disabled={lang === 'th'}
+              >TH</button>
+            </div>
             {/* Notification Bell */}
             <button className="navbar-icon-btn">
               <Bell size={20} />

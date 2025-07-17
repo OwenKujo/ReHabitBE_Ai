@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLang } from '../App';
 
 function ReHabitNavbarGuest() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { lang, changeLang } = useLang();
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -155,6 +157,36 @@ function ReHabitNavbarGuest() {
             <Link to="/login">
               <button className="navbar-login-btn">Login</button>
             </Link>
+            <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginLeft: 12 }}>
+              <button
+                onClick={() => changeLang('en')}
+                style={{
+                  background: lang === 'en' ? '#1976d2' : '#fff',
+                  color: lang === 'en' ? '#fff' : '#1976d2',
+                  border: '1px solid #1976d2',
+                  borderRadius: 6,
+                  padding: '4px 12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontSize: 14
+                }}
+                disabled={lang === 'en'}
+              >EN</button>
+              <button
+                onClick={() => changeLang('th')}
+                style={{
+                  background: lang === 'th' ? '#1976d2' : '#fff',
+                  color: lang === 'th' ? '#fff' : '#1976d2',
+                  border: '1px solid #1976d2',
+                  borderRadius: 6,
+                  padding: '4px 12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontSize: 14
+                }}
+                disabled={lang === 'th'}
+              >TH</button>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
