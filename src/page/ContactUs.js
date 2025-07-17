@@ -101,11 +101,13 @@ function ContactUs() {
             background: #fff;
             border-radius: 18px;
             box-shadow: 0 2px 12px rgba(30,136,229,0.10);
-            padding: 36px 32px;
-            max-width: 420px;
-            flex: 1 1 340px;
+            padding: 36px 36px;
+            max-width: 520px;
+            flex: 1 1 480px;
             position: relative;
             font-size: 15px;
+            padding-right: 64px;
+            margin-right: 32px;
           }
           .contact-form h2 {
             color: #003049;
@@ -491,10 +493,12 @@ function ContactUs() {
             border-radius: 18px;
             box-shadow: 0 2px 12px rgba(30,136,229,0.10);
             padding: 36px 32px;
-            max-width: 420px;
-            flex: 1 1 340px;
+            max-width: 520px;
+            flex: 1 1 480px;
             position: relative;
             font-size: 15px;
+            padding-right: 64px;
+            margin-right: 32px;
           }
           .contact-form h2 {
             color: #003049;
