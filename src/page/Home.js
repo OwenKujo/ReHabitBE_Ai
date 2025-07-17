@@ -266,16 +266,6 @@ const Home = () => {
         )}
       </div>
 
-      {/* Footer */}
-      <footer style={{ background: '#e3f2fd', padding: '24px 0', textAlign: 'center', color: '#1976d2', fontWeight: 500, fontSize: 15, marginTop: 40 }}>
-        <div style={{ marginBottom: 8 }}>
-          <span style={{ margin: '0 16px' }}>ReHabit</span>
-          <span style={{ margin: '0 16px', color: '#1976d2', opacity: 0.7 }}>Home</span>
-          <span style={{ margin: '0 16px', color: '#1976d2', opacity: 0.7 }}>Physical Therapy</span>
-          <span style={{ margin: '0 16px', color: '#1976d2', opacity: 0.7 }}>Contact</span>
-        </div>
-        <div style={{ fontSize: 13, color: '#1976d2', opacity: 0.7 }}>© Copyright 2024 | All rights reserved</div>
-      </footer>
     </div>
   );
 };

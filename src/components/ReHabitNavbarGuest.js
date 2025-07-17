@@ -8,8 +8,8 @@ function ReHabitNavbarGuest() {
   const navItems = [
     { name: 'Home', href: '/' },
     { name: 'Physical Therapy', href: '/PhysicalMenu' },
-    { name: 'About', href: '#' },
-    { name: 'Contact', href: '#' }
+    { name: 'About', href: '/contact' },
+    { name: 'Contact', href: '/contact' }
   ];
 
   const styles = {
