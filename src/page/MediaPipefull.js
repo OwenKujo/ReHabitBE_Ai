@@ -2,18 +2,18 @@ import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function PoseAngleDetector() {
-  // Text-to-speech utility
+  // Browser-native Thai TTS
   function speak(text) {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel(); // Stop any current speech
       const utter = new window.SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      utter.rate = 1;
-      utter.pitch = 1;
-      // Try to use an English voice if available
+      // Try to select a Thai voice if available
       const voices = window.speechSynthesis.getVoices();
-      const enVoice = voices.find(v => v.lang.startsWith('en'));
-      if (enVoice) utter.voice = enVoice;
+      const thaiVoice = voices.find(v => v.lang && v.lang.startsWith('th'));
+      if (thaiVoice) utter.voice = thaiVoice;
+      utter.lang = thaiVoice ? thaiVoice.lang : 'th-TH';
+      utter.rate = 0.95;
+      utter.pitch = 1;
       window.speechSynthesis.speak(utter);
     }
   }
@@ -803,6 +803,18 @@ function PoseAngleDetector() {
     };
   }, [phase, mode]);
 
+  // Read instructions out loud once after camera access is granted and phase is idle
+  useEffect(() => {
+    if (permissionState === 'granted' && phase === 'idle') {
+      if (!window.__rehabit_instruction_read) {
+        speak('1. ปรับมุมกล้องให้เห็นครึ่งตัวด้านบน และแสงในห้องพอดี 2. ปรับมุมการนั่งเป็นแนวข้าง ให้แขนขวาของคุณเข้าหากล้อง');
+        window.__rehabit_instruction_read = true;
+      }
+    } else if (permissionState !== 'granted') {
+      window.__rehabit_instruction_read = false;
+    }
+  }, [permissionState, phase]);
+
   if (mode === "face") {
     // When 5 reps are done, stop camera, hide canvas, and show summary
     if (showFaceSummary) {
@@ -882,110 +894,217 @@ function PoseAngleDetector() {
   }
 
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h1>OfficeSyndrome Rehabilitation</h1>
-      {error && (
-        <div style={{ 
-          color: "red", 
-          backgroundColor: "#ffebee", 
-          padding: "10px", 
-          borderRadius: "4px",
-          margin: "10px 0"
-        }}>
-          {error}
+    <div className="mpfull-root">
+      <style>{`
+        .mpfull-root {
+          min-height: 100vh;
+          background: #eaf6fd;
+          font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+          position: relative;
+        }
+        .mpfull-horizontal {
+          display: flex;
+          flex-direction: row;
+          align-items: flex-start;
+          justify-content: center;
+          gap: 32px;
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        .mpfull-vertical {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+        }
+        .mpfull-video-panel {
+          flex: 1 1 640px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-width: 320px;
+          max-width: 700px;
+        }
+        .mpfull-control-panel {
+          flex: 1 1 320px;
+          background: #fff;
+          border-radius: 18px;
+          box-shadow: 0 4px 16px 0 rgba(30,136,229,0.08);
+          padding: 32px 24px;
+          max-width: 400px;
+          width: 100%;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .mpfull-title {
+          font-size: 28px;
+          font-weight: 700;
+          color: #1976d2;
+          margin-bottom: 18px;
+        }
+        .mpfull-canvas {
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          max-width: 100%;
+          height: auto;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 900px) {
+          .mpfull-horizontal {
+            flex-direction: column;
+            gap: 0;
+          }
+          .mpfull-control-panel {
+            max-width: 98vw;
+            padding: 16px 4px;
+          }
+          .mpfull-title {
+            font-size: 18px;
+          }
+        }
+        @media (max-width: 600px) {
+          .mpfull-control-panel {
+            padding: 8px 2px;
+          }
+          .mpfull-title {
+            font-size: 14px;
+          }
+        }
+      `}</style>
+      <div className={window.innerWidth > 900 ? 'mpfull-horizontal' : 'mpfull-vertical'}>
+        <div className="mpfull-video-panel">
+          <video 
+            ref={videoRef} 
+            style={{ display: "none" }} 
+            autoPlay 
+            playsInline
+          />
+          <canvas 
+            ref={canvasRef} 
+            width="640" 
+            height="480"
+            className="mpfull-canvas"
+          />
         </div>
-      )}
-      {isLoading && (
-        <div style={{ color: "#1976d2", margin: "10px 0" }}>
-          Loading MediaPipe Pose...
-        </div>
-      )}
-      <div style={{ marginBottom: "20px" }}>
-        {phase === "idle" && (
-          <button onClick={startCountdown} disabled={phase !== "idle" || isLoading} style={{ fontSize: "18px", padding: "10px 30px" }}>
-            Start Rehabilitation
-          </button>
-        )}
-        {['countdown', 'challenge', 'rest', 'finished', 'getready', 'showfinal'].includes(phase) && (
-          <div style={{
-            margin: "16px auto 0 auto",
-            maxWidth: 640,
-            background: "#f5f5f5",
-            borderRadius: 8,
-            padding: 20,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-            fontSize: 18,
-            color: feedback === "Correct" ? "#00CC00" : "#FF0000"
-          }}>
-        {phase === "countdown" && (
+        <div className="mpfull-control-panel">
+          {/* Place all control/status UI here, e.g. phase, feedback, buttons, stats, etc. */}
+          {/* ...existing control panel JSX (copy from your return) ... */}
+          <h1 className="mpfull-title">OfficeSyndrome Rehabilitation</h1>
+          {error && (
+            <div style={{ 
+              color: "red", 
+              backgroundColor: "#ffebee", 
+              padding: "10px", 
+              borderRadius: "4px",
+              margin: "10px 0"
+            }}>
+              {error}
+            </div>
+          )}
+          {isLoading && (
+            <div style={{ color: "#1976d2", margin: "10px 0" }}>
+              Loading MediaPipe Pose...
+            </div>
+          )}
+          <div style={{ marginBottom: "20px" }}>
+            {phase === "idle" && (
               <>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready</div>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {countdown} s</div>
-              </>
-        )}
-        {phase === "challenge" && (
-              <>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet} / {totalSets}</div>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {challengeCountdown} s</div>
-                <div style={{ marginBottom: 8 }}>{feedback === "Correct" ? "Great! Keep holding the correct pose!" : "Adjust your pose to the correct position!"}</div>
-               {feedback === "Incorrect" && (
-                 <div style={{ color: "#ff9800", fontSize: 16, marginTop: 8 }}>
-                   Tip: {poseTip}
-          </div>
-               )}
-              </>
-            )}
-            {phase === "rest" && (
-              <>
-                <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet - 1} Complete!</div>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Rest Time: {restCountdown} s</div>
-                <div style={{ marginBottom: 8 }}>Next: Set {currentSet} / {totalSets}</div>
-              </>
-        )}
-        {phase === "finished" && (
-              <>
-                <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>All Sets Complete!</div>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>See your results below.</div>
-              </>
-            )}
-            {phase === "getready" && (
-              <>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready for Next Step</div>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {getReadyCountdown} s</div>
-              </>
-            )}
-            {phase === "showfinal" && (
-              <>
-                <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>Summary</div>
-                <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
-            {finalMessage}
+                <button onClick={startCountdown} disabled={phase !== "idle" || isLoading} style={{ fontSize: "18px", padding: "10px 30px" }}>
+                  Start Rehabilitation
+                </button>
+                <div style={{
+                  marginTop: 16,
+                  background: '#fffbe7',
+                  color: '#b45309',
+                  border: '1px solid #fde68a',
+                  borderRadius: 8,
+                  padding: '16px 20px',
+                  fontSize: 16,
+                  fontWeight: 500,
+                  maxWidth: 480,
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  boxShadow: '0 2px 8px rgba(251,191,36,0.08)'
+                }}>
+                  <div>1. ปรับมุมกล้องให้เห็นครึ่งตัวด้านบน และแสงในห้องพอดี</div>
+                  <div>2. ปรับมุมการนั่งเป็นแนวข้าง ให้แขนขวาของคุณเข้าหากล้อง</div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 18 }}>
+                  <img src="/1.1.jpg" alt="ตัวอย่างท่าทาง" style={{ maxWidth: 320, width: '100%', borderRadius: 12, border: '2px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }} />
+                  <div style={{ fontSize: 14, color: '#555', marginTop: 8 }}>ตัวอย่างท่าทางที่ถูกต้อง</div>
                 </div>
               </>
             )}
+            {["countdown", "challenge", "rest", "finished", "getready", "showfinal"].includes(phase) && (
+              <div style={{
+                margin: "16px auto 0 auto",
+                maxWidth: 640,
+                background: "#f5f5f5",
+                borderRadius: 8,
+                padding: 20,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                fontSize: 18,
+                color: feedback === "Correct" ? "#00CC00" : "#FF0000"
+              }}>
+                {/* ...existing phase/feedback UI... */}
+                {phase === "countdown" && (
+                  <>
+                    <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready</div>
+                    <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {countdown} s</div>
+                  </>
+                )}
+                {phase === "challenge" && (
+                  <>
+                    <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet} / {totalSets}</div>
+                    <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {challengeCountdown} s</div>
+                    <div style={{ marginBottom: 8 }}>{feedback === "Correct" ? "Great! Keep holding the correct pose!" : "Adjust your pose to the correct position!"}</div>
+                    {feedback === "Incorrect" && (
+                      <div style={{ color: "#ff9800", fontSize: 16, marginTop: 8 }}>
+                        Tip: {poseTip}
+                      </div>
+                    )}
+                  </>
+                )}
+                {phase === "rest" && (
+                  <>
+                    <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet - 1} Complete!</div>
+                    <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Rest Time: {restCountdown} s</div>
+                    <div style={{ marginBottom: 8 }}>Next: Set {currentSet} / {totalSets}</div>
+                  </>
+                )}
+                {phase === "finished" && (
+                  <>
+                    <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>All Sets Complete!</div>
+                    <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>See your results below.</div>
+                  </>
+                )}
+                {phase === "getready" && (
+                  <>
+                    <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready for Next Step</div>
+                    <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {getReadyCountdown} s</div>
+                  </>
+                )}
+                {phase === "showfinal" && (
+                  <>
+                    <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>Summary</div>
+                    <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
+                      {finalMessage}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
-        )}
-        
+        </div>
       </div>
-      <div style={{ position: "relative", display: "inline-block" }}>
-        <video 
-          ref={videoRef} 
-          style={{ display: "none" }} 
-          autoPlay 
-          playsInline
-        />
-        <canvas 
-          ref={canvasRef} 
-          width="640" 
-          height="480"
-          style={{ 
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-          }}
-        />
-      </div>
-      
-     
+      <button onClick={() => speak('สวัสดีค่ะ นี่คือระบบแปลงข้อความเป็นเสียงภาษาไทย')}
+        style={{ margin: '16px 0', padding: '10px 24px', fontSize: 16, borderRadius: 8, background: '#1976d2', color: '#fff', border: 'none', cursor: 'pointer' }}>
+        🔊 ทดสอบเสียงภาษาไทย
+      </button>
     </div>
   );
 }

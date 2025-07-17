@@ -239,6 +239,12 @@ function ContactUs() {
           background: #155e75;
           transform: translateY(-2px) scale(1.03);
         }
+        @media (max-width: 1200px) {
+          .contact-main-section {
+            gap: 24px;
+            padding: 36px 8px 24px 8px;
+          }
+        }
         @media (max-width: 900px) {
           .contact-main-section {
             flex-direction: column;
@@ -249,6 +255,85 @@ function ContactUs() {
             max-width: 100%;
             border-radius: 14px;
             padding: 24px 12px;
+          }
+        }
+        @media (max-width: 600px) {
+          .contact-header h1 {
+            font-size: 20px;
+          }
+          .contact-header p {
+            font-size: 12px;
+          }
+          .icon-row {
+            gap: 16px;
+          }
+          .icon-item {
+            width: 100px;
+            font-size: 11px;
+            padding: 10px 4px 8px 4px;
+          }
+          .icon-item img {
+            width: 28px;
+            height: 28px;
+          }
+          .contact-main-section {
+            padding: 12px 2vw 12px 2vw;
+            gap: 10px;
+          }
+          .contact-form {
+            padding: 12px 4px;
+            font-size: 12px;
+          }
+          .contact-form h2 {
+            font-size: 14px;
+          }
+          .floating-label-group input,
+          .floating-label-group textarea {
+            font-size: 12px;
+            padding: 8px 6px 8px 6px;
+          }
+          .floating-label {
+            font-size: 10px;
+            left: 8px;
+            top: 8px;
+          }
+          .floating-label-group input:not(:placeholder-shown) + .floating-label,
+          .floating-label-group textarea:not(:placeholder-shown) + .floating-label,
+          .floating-label-group input:focus + .floating-label,
+          .floating-label-group textarea:focus + .floating-label {
+            top: -8px;
+            left: 6px;
+            font-size: 9px;
+            padding: 0 2px;
+          }
+          .contact-form button {
+            font-size: 12px;
+            padding: 8px 16px;
+          }
+          .success-message {
+            font-size: 11px;
+            padding: 8px 0;
+          }
+          .contact-image {
+            padding: 8px 2px 8px 2px;
+          }
+          .contact-image img {
+            max-width: 120px;
+          }
+          .cta-section {
+            padding: 18px 4px;
+            font-size: 12px;
+          }
+          .cta-section h3 {
+            font-size: 14px;
+          }
+          .cta-section p {
+            font-size: 10px;
+            margin-bottom: 12px;
+          }
+          .cta-section button {
+            font-size: 12px;
+            padding: 8px 16px;
           }
         }
       `}</style>

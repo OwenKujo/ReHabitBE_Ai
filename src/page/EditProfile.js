@@ -117,10 +117,56 @@ const EditProfile = () => {
         .cancel-btn:hover {
           background-color: #cbd5e1;
         }
-
+        @media (max-width: 1200px) {
+          .edit-container {
+            padding: 12px;
+          }
+        }
+        @media (max-width: 900px) {
+          .edit-header h2 {
+            font-size: 18px;
+          }
+          .edit-header img {
+            width: 48px;
+            height: 48px;
+          }
+          .edit-form {
+            gap: 10px;
+          }
+        }
         @media (max-width: 768px) {
           .edit-form {
             grid-template-columns: 1fr;
+          }
+        }
+        @media (max-width: 600px) {
+          .edit-container {
+            margin: 10px auto;
+            padding: 4px;
+          }
+          .edit-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+          .edit-header h2 {
+            font-size: 14px;
+          }
+          .edit-header img {
+            width: 32px;
+            height: 32px;
+          }
+          .edit-form label {
+            font-size: 12px;
+          }
+          .edit-form input,
+          .edit-form select {
+            font-size: 12px;
+            padding: 6px 8px;
+          }
+          .edit-buttons button {
+            font-size: 12px;
+            padding: 6px 10px;
           }
         }
       `}</style>

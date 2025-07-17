@@ -127,6 +127,246 @@ const PhysicalTherapyMenu = () => {
           ))}
         </div>
       </main>
+      <style>{`
+        .pt-menu-root {
+          display: flex;
+          min-height: 100vh;
+          background: #f4fafd;
+          font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+        }
+        .pt-menu-sidebar {
+          width: 280px;
+          background: #fff;
+          box-shadow: 2px 0 16px 0 rgba(30,136,229,0.06);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 32px 0;
+        }
+        .pt-menu-logo {
+          display: flex;
+          align-items: center;
+          margin-bottom: 36px;
+        }
+        .pt-menu-logo-img {
+          width: 38px;
+          height: 38px;
+          margin-right: 10px;
+        }
+        .pt-menu-logo-text {
+          font-weight: 700;
+          font-size: 24px;
+          color: #1976d2;
+          letter-spacing: 1px;
+        }
+        .pt-menu-search {
+          width: 80%;
+          margin-bottom: 24px;
+          position: relative;
+        }
+        .pt-menu-search-icon {
+          position: absolute;
+          left: 16px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #1976d2;
+          pointer-events: none;
+          display: flex;
+          align-items: center;
+          font-size: 20px;
+        }
+        .pt-menu-search-input {
+          width: 100%;
+          padding: 12px 16px 12px 44px;
+          border-radius: 16px;
+          border: none;
+          background: #e0f2fe;
+          font-size: 16px;
+          outline: none;
+          font-family: 'Kanit', 'Prompt';
+        }
+        .pt-menu-nav {
+          width: 80%;
+        }
+        .pt-menu-nav-item {
+          background: transparent;
+          color: #1976d2;
+          border-radius: 10px;
+          padding: 12px 18px;
+          margin-bottom: 10px;
+          font-weight: 600;
+          font-size: 17px;
+          cursor: pointer;
+          transition: background 0.2s;
+          text-align: left;
+        }
+        .pt-menu-nav-item.active {
+          background: #1976d2;
+          color: #fff;
+        }
+        .pt-menu-main {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+          padding: 32px 0;
+        }
+        .pt-menu-hero-img {
+          width: 100%;
+          max-width: 900px;
+          border-radius: 28px;
+          overflow: hidden;
+          margin-bottom: 36px;
+        }
+        .pt-menu-hero-img img {
+          width: 100%;
+          height: 220px;
+          object-fit: cover;
+          display: block;
+        }
+        .pt-menu-section-title {
+          font-weight: 700;
+          font-size: 28px;
+          color: #222;
+          margin-bottom: 24px;
+        }
+        .pt-menu-suggestions {
+          display: flex;
+          gap: 32px;
+          flex-wrap: wrap;
+        }
+        .pt-menu-suggestion-card {
+          background: #fff;
+          border-radius: 18px;
+          box-shadow: 0 4px 16px 0 rgba(30,136,229,0.08);
+          width: 300px;
+          padding: 0;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+        }
+        .pt-menu-suggestion-img {
+          width: 100%;
+          height: 140px;
+          object-fit: cover;
+        }
+        .pt-menu-suggestion-content {
+          padding: 18px 18px 12px 18px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        .pt-menu-suggestion-title {
+          font-weight: 700;
+          font-size: 16px;
+          color: #222;
+          margin-bottom: 8px;
+        }
+        .pt-menu-suggestion-desc {
+          font-size: 14px;
+          color: #555;
+          margin-bottom: 18px;
+        }
+        .pt-menu-suggestion-btn {
+          align-self: flex-end;
+          background: #19c2d2;
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          padding: 8px 24px;
+          font-weight: 600;
+          font-size: 15px;
+          cursor: pointer;
+          box-shadow: 0 1px 4px rgba(30,136,229,0.06);
+        }
+        @media (max-width: 1200px) {
+          .pt-menu-sidebar {
+            width: 200px;
+            padding: 16px 0;
+          }
+          .pt-menu-hero-img {
+            max-width: 100vw;
+          }
+          .pt-menu-suggestions {
+            gap: 16px;
+          }
+        }
+        @media (max-width: 900px) {
+          .pt-menu-root {
+            flex-direction: column;
+          }
+          .pt-menu-sidebar {
+            width: 100%;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding: 8px 0;
+            box-shadow: none;
+            border-radius: 0;
+          }
+          .pt-menu-logo {
+            margin-bottom: 0;
+            margin-right: 24px;
+          }
+          .pt-menu-nav {
+            width: auto;
+            display: flex;
+            gap: 8px;
+          }
+          .pt-menu-nav-item {
+            font-size: 14px;
+            padding: 8px 10px;
+            margin-bottom: 0;
+          }
+        }
+        @media (max-width: 600px) {
+          .pt-menu-sidebar {
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 0;
+          }
+          .pt-menu-logo-text {
+            font-size: 16px;
+          }
+          .pt-menu-logo-img {
+            width: 24px;
+            height: 24px;
+          }
+          .pt-menu-search-input {
+            font-size: 12px;
+            padding: 6px 8px 6px 28px;
+            border-radius: 8px;
+          }
+          .pt-menu-section-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+          }
+          .pt-menu-suggestions {
+            gap: 6px;
+          }
+          .pt-menu-suggestion-card {
+            width: 140px;
+            border-radius: 8px;
+          }
+          .pt-menu-suggestion-img {
+            height: 60px;
+          }
+          .pt-menu-suggestion-title {
+            font-size: 10px;
+          }
+          .pt-menu-suggestion-desc {
+            font-size: 8px;
+            margin-bottom: 6px;
+          }
+          .pt-menu-suggestion-btn {
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+          }
+        }
+      `}</style>
     </div>
   );
 };
