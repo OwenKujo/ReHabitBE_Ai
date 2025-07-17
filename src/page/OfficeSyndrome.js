@@ -12,12 +12,6 @@ function OfficeSyndromePage() {
     { id: 3, name: 'Right Wing Stretch', duration: '2 min' },
     { id: 4, name: 'Left Shoulder Press', duration: '2 min' },
   ];
-  const movementsTH = [
-    { id: 1, name: 'ท่ายืดคอ', duration: '2 นาที' },
-    { id: 2, name: 'ท่าอกผาย', duration: '2 นาที' },
-    { id: 3, name: 'ท่ายืดปีกขวา', duration: '2 นาที' },
-    { id: 4, name: 'ท่ากดไหล่ซ้าย', duration: '2 นาที' },
-  ];
   const { lang } = useLang();
 
   if (lang === 'en') {
@@ -222,6 +216,10 @@ function OfficeSyndromePage() {
             className="header-image"
           />
           <div className="overlay">
+            <a href="#" style={{ textDecoration: 'underline', color: 'white', fontSize: '1.15rem', fontWeight: 700, alignSelf: 'flex-start', marginBottom: 24, letterSpacing: 0.5 }}>
+              ← Go Back
+            </a>
+            <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginTop: 80 }}>Office Syndrome</h1>
             <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ Start</button>
           </div>
 
@@ -504,45 +502,49 @@ function OfficeSyndromePage() {
         <div className="header">
           <img
             src="/office-syndrome-header.jpg" // แก้ path ให้ตรงกับภาพจริง
-            alt="ออฟฟิศซินโดรม"
+            alt="Office Syndrome"
             className="header-image"
           />
           <div className="overlay">
-            <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ เริ่ม</button>
+            <a href="#" style={{ textDecoration: 'underline', color: 'white', fontSize: '1.15rem', fontWeight: 700, alignSelf: 'flex-start', marginBottom: 24, letterSpacing: 0.5 }}>
+              ← Go Back
+            </a>
+            <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginTop: 80 }}>ออฟฟิศซินโดรม</h1>
+            <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ Start</button>
           </div>
 
           {/* Summary cards */}
           <div className="info-box">
             <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <List size={20} style={{ color: '#1976d2' }} />
-              4 ท่า
+              4 movements
             </div>
             <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <Clock size={20} style={{ color: '#1976d2' }} />
-              8 นาที
+              8 minutes
             </div>
           </div>
         </div>
 
         {/* Detail Section */}
         <div className="section">
-          <h2>รายละเอียด</h2>
+          <h2>Details</h2>
           <div className="detail-container">
             <div className="preview-video">
-              <img src="/neck-stretch-preview.jpg" alt="ตัวอย่าง" />
+              <img src="/neck-stretch-preview.jpg" alt="Preview" />
               <div className="play-icon">
                 <PlayCircle size={64} />
               </div>
             </div>
             <div className="video-text">
-              <h3>รายละเอียดวิดีโอตัวอย่าง</h3>
+              <h3>Preview Video Details</h3>
               <p>
-                • ท่ายืดคอและไหล่เพื่อคลายความตึง<br />
-                • เทคนิคการนั่งที่ถูกต้องเพื่อลดอาการปวดคอ<br />
-                • ท่าเสริมสร้างกล้ามเนื้อหลังส่วนบน<br />
-                • วิธีผ่อนคลายไหล่และสะบัก<br />
-                • เคล็ดลับการพักสายตาและเปลี่ยนอิริยาบถ<br />
-                <strong>โดย: นพ.ปิงปอง สุขสมบูรณ์</strong>
+                • Neck and shoulder stretching exercises to relieve tension.<br />
+                • Proper sitting posture techniques to reduce neck strain.<br />
+                • Upper back muscle strengthening routines.<br />
+                • Shoulder and scapular relaxation methods.<br />
+                • Tips for eye rest and changing work positions regularly.<br />
+                <strong>By: Dr. Pingpong Suksomboon</strong>
               </p>
             </div>
           </div>
@@ -550,28 +552,30 @@ function OfficeSyndromePage() {
 
         {/* Movement List Section */}
         <div className="section">
-          <h2>รายการท่าบริหาร</h2>
+          <h2>Movement List</h2>
           <div className="movement-box">
-            {movementsTH.map((m) => (
-              <div key={m.id}>
+            {movements.map((move) => (
+              <div key={move.id}>
                 <div
                   className="movement-item"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => setOpenMovement(openMovement === m.id ? null : m.id)}
+                  onClick={() => setOpenMovement(openMovement === move.id ? null : move.id)}
                 >
-                  <div className="movement-name">{m.id}. {m.name}</div>
+                  <div className="movement-name">
+                    {move.id}. {move.name}
+                  </div>
                   <div className="movement-right">
-                    <span>{m.duration}</span>
+                    <span>{move.duration}</span>
                     <ChevronDown
                       size={16}
                       style={{
-                        transform: openMovement === m.id ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transform: openMovement === move.id ? 'rotate(180deg)' : 'rotate(0deg)',
                         transition: 'transform 0.2s',
                       }}
                     />
                   </div>
                 </div>
-                {openMovement === m.id && (
+                {openMovement === move.id && (
                   <div style={{
                     background: '#f6fbff',
                     borderRadius: '8px',
@@ -581,7 +585,7 @@ function OfficeSyndromePage() {
                     fontSize: '15px',
                     boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
                   }}>
-                    <strong>รายละเอียดท่าจะมาเร็วๆ นี้</strong>
+                    <strong>Movement details coming soon</strong>
                   </div>
                 )}
               </div>
