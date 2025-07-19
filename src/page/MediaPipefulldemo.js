@@ -452,29 +452,26 @@ function PoseAngleDetector() {
     });
   };
 
-  const calculateAngle = (a, b, c) => {
-    if (!a || !b || !c) return null;
-    
-    const v1 = [a.x - b.x, a.y - b.y];
-    const v2 = [c.x - b.x, c.y - b.y];
-    const dot = v1[0] * v2[0] + v1[1] * v2[1];
-    const magV1 = Math.sqrt(v1[0] ** 2 + v1[1] ** 2);
-    const magV2 = Math.sqrt(v2[0] ** 2 + v2[1] ** 2);
-
-    if (magV1 * magV2 === 0) {
-      return null;
-    }
-
-    const cosAngle = Math.max(-1.0, Math.min(1.0, dot / (magV1 * magV2)));
-    return Math.degrees(Math.acos(cosAngle));
-  };
-
-  Math.degrees = (radians) => radians * (180 / Math.PI);
-
-  function isRightArmCorrect(angle) {
-    return angle !== null && angle >= 50 && angle <= 90;
+  // New neck extensor stretch detection function
+  function detectNeckExtensorStretch(landmarks) {
+    if (!landmarks || landmarks.length < 17) return false;
+    const nose = landmarks[0];
+    const leftShoulder = landmarks[11];
+    const rightShoulder = landmarks[12];
+    // Average shoulder Y and Z
+    const shoulderAvgY = (leftShoulder.y + rightShoulder.y) / 2;
+    const shoulderAvgZ = (leftShoulder.z + rightShoulder.z) / 2;
+    // Condition 1: Head bent forward (nose lower than shoulders)
+    const isFlexedDown = nose.y > shoulderAvgY - 0.03;
+    // Condition 2: Head pushed forward (nose.z is smaller = closer to camera)
+    const isHeadForward = nose.z < shoulderAvgZ - 0.05;
+    // Shoulders roughly level
+    const shoulderDiffY = Math.abs(leftShoulder.y - rightShoulder.y);
+    const isSpineStraight = shoulderDiffY < 0.05;
+    return isFlexedDown && isHeadForward && isSpineStraight;
   }
 
+  // Updated onResults function with neck extensor stretch detection
   function onResults(results) {
     const canvasElement = canvasRef.current;
     if (!canvasElement) return;
@@ -485,90 +482,31 @@ function PoseAngleDetector() {
     const { width, height } = canvasElement;
     
     try {
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, width, height);
-    
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, width, height);
+      
       if (results.image) {
-    canvasCtx.scale(-1, 1);
-    canvasCtx.translate(-width, 0);
-    canvasCtx.drawImage(results.image, 0, 0, width, height);
-    canvasCtx.scale(-1, 1);
-    canvasCtx.translate(-width, 0);
+        canvasCtx.scale(-1, 1);
+        canvasCtx.translate(-width, 0);
+        canvasCtx.drawImage(results.image, 0, 0, width, height);
+        canvasCtx.scale(-1, 1);
+        canvasCtx.translate(-width, 0);
       }
-
+      
       if (results.poseLandmarks && results.poseLandmarks.length >= 17) {
-      const landmarks = results.poseLandmarks;
-      
-        // Check if required landmarks exist
-        if (!landmarks[12] || !landmarks[14] || !landmarks[16] || 
-            !landmarks[11] || !landmarks[13] || !landmarks[15]) {
-          console.warn("Missing required landmarks");
-          return;
-        }
+        const landmarks = results.poseLandmarks;
         
-        const rightShoulder = { x: (1 - landmarks[12].x) * width, y: landmarks[12].y * height };
-      const rightElbow = { x: (1 - landmarks[14].x) * width, y: landmarks[14].y * height };
-      const rightWrist = { x: (1 - landmarks[16].x) * width, y: landmarks[16].y * height };
-      
-      const leftShoulder = { x: (1 - landmarks[11].x) * width, y: landmarks[11].y * height };
-      const leftElbow = { x: (1 - landmarks[13].x) * width, y: landmarks[13].y * height };
-      const leftWrist = { x: (1 - landmarks[15].x) * width, y: landmarks[15].y * height };
-
-      const rightAngle = calculateAngle(
-        landmarks[14], // elbow
-        landmarks[12], // shoulder
-        landmarks[16]  // wrist
-      );
-      
-      const leftAngle = calculateAngle(
-        landmarks[13], // elbow
-        landmarks[11], // shoulder
-        landmarks[15]  // wrist
-      );
-
-      setAngles({ left: leftAngle, right: rightAngle });
-
-      canvasCtx.font = "16px Arial";
-      canvasCtx.fillStyle = "#00FF00";
-      
-      if (rightAngle !== null) {
-        canvasCtx.fillText(
-          `Right: ${Math.round(rightAngle)}°`,
-          rightShoulder.x - 50,
-          rightShoulder.y - 20
-        );
-      }
-      
-      if (leftAngle !== null) {
-        canvasCtx.fillText(
-          `Left: ${Math.round(leftAngle)}°`,
-          leftShoulder.x - 50,
-          leftShoulder.y - 20
-        );
-      }
-
-      let feedbackText = "";
-      let feedbackColor = "#FF0000";
-      
-      if (rightAngle !== null && leftAngle !== null) {
-        if (isRightArmCorrect(rightAngle)) {
-          feedbackText = "Correct";
-          feedbackColor = "#00FF00";
-          setIsHolding(true);
-        } else {
-          feedbackText = "Incorrect";
-          feedbackColor = "#FF0000";
-          setIsHolding(false);
-        }
-      }
-
-      if (feedbackText) {
-        canvasCtx.font = "24px Arial";
-        canvasCtx.fillStyle = feedbackColor;
-        canvasCtx.fillText(feedbackText, 50, 50);
-      }
-      
-      setFeedback(feedbackText);
+        // Only check for neck extensor stretch
+        const stretchDetected = detectNeckExtensorStretch(landmarks);
+        const statusText = stretchDetected ? "Stretching Neck Extensors!" : "Fix your posture";
+        
+        // Draw status text on canvas
+        canvasCtx.font = "28px Arial";
+        canvasCtx.fillStyle = stretchDetected ? "#00FF00" : "#FF0000";
+        canvasCtx.fillText(statusText, 30, 80);
+        
+        setFeedback(statusText);
+        setIsHolding(stretchDetected);
       }
     } catch (error) {
       console.error("Error in onResults:", error);
@@ -760,11 +698,11 @@ function PoseAngleDetector() {
 
   // Recommendation tips
   const poseTips = [
-    "Make sure your right arm is bent between 50° and 90°. Try raising or lowering your elbow!",
-    "Keep your back straight and avoid leaning forward.",
-    "Relax your shoulders and keep them level.",
-    "Check your camera angle to ensure your full arm is visible.",
-    "Try to keep your wrist in line with your elbow for better accuracy."
+    "Bend your head forward and push it slightly toward the camera to stretch neck extensors.",
+    "Keep your shoulders level and relaxed.",
+    "Maintain good posture with your back straight.",
+    "Make sure your face is clearly visible to the camera.",
+    "Hold the stretch gently - don't force it too much."
   ];
   const faceTips = [
     "Tilt your head back until you feel a gentle stretch in your neck.",
@@ -774,12 +712,9 @@ function PoseAngleDetector() {
     "Make sure your face is clearly visible to the camera."
   ];
 
-  const [poseTip, setPoseTip] = useState(poseTips[0]);
-  const [faceTip, setFaceTip] = useState(faceTips[0]);
-
-  // Update pose tip when feedback changes to Incorrect
+  // Update pose tip when feedback changes to Fix your posture
   useEffect(() => {
-    if (phase === "challenge" && feedback === "Incorrect") {
+    if (phase === "challenge" && feedback === "Fix your posture") {
       const tip = poseTips[Math.floor(Math.random() * poseTips.length)];
       setPoseTip(tip);
       speak(tip);
@@ -802,192 +737,6 @@ function PoseAngleDetector() {
       }
     };
   }, [phase, mode]);
-
-  if (mode === "face") {
-    // When 5 reps are done, stop camera, hide canvas, and show summary
-    if (showFaceSummary) {
-      const totalScore = (poseScore || 0) + (faceScore || 0);
-      return (
-        <div style={{ textAlign: "center", padding: "40px 20px" }}>
-          <div style={{
-            margin: "0 auto",
-            maxWidth: 480,
-            background: "#f5f5f5",
-            borderRadius: 12,
-            padding: 32,
-            boxShadow: "0 2px 12px rgba(0,0,0,0.10)",
-            fontSize: 20
-          }}>
-            <div style={{ fontSize: 28, color: "#00CC00", fontWeight: "bold", marginBottom: 18 }}>
-              🎉 Rehabilitation Complete!
-            </div>
-            <div style={{ fontSize: 22, color: "#1976d2", marginBottom: 12 }}>
-              Pose Score: <b>{poseScore !== null ? poseScore : '-'}</b> / 10
-            </div>
-            <div style={{ fontSize: 22, color: "#1976d2", marginBottom: 12 }}>
-              Face Score: <b>{faceScore !== null ? faceScore : '-'}</b> / 10
-            </div>
-            <div style={{ fontSize: 24, color: "#ff9800", fontWeight: "bold", marginBottom: 20 }}>
-              Total Score: <b>{totalScore}</b> / 20
-            </div>
-            <button
-              onClick={() => navigate('/physicaltherapy')}
-              style={{
-                marginTop: 10,
-                padding: "12px 32px",
-                fontSize: "18px",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
-            >
-              Return to  PhysicalTherapy
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    // Otherwise, show the face rep tracker as before
-    return (
-      <div style={{ textAlign: "center", padding: "20px" }}>
-        <h1>Face Rep Tracker</h1>
-        <video ref={videoRef} style={{ display: "none" }} autoPlay playsInline />
-        <canvas ref={canvasRef} width="640" height="480" style={{ border: "1px solid #ccc", borderRadius: "8px" }} />
-        <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 40 }}>
-          <div style={{ background: '#007bff', color: 'white', padding: 15, borderRadius: 8, textAlign: 'center', minWidth: 120 }}>
-            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{repCount}</div>
-            <div style={{ fontSize: 14, marginTop: 5 }}>Reps Completed / 5</div>
-          </div>
-          <div style={{ background: '#007bff', color: 'white', padding: 15, borderRadius: 8, textAlign: 'center', minWidth: 120 }}>
-            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{holdTime.toFixed(1)}</div>
-            <div style={{ fontSize: 14, marginTop: 5 }}>Hold Time (s)</div>
-          </div>
-        </div>
-        <div style={{ marginTop: 20, padding: 15, background: '#e9ecef', borderRadius: 8, textAlign: 'center' }}>
-          <p><strong>Instructions:</strong> Tilt your head back and hold for 10 seconds. Target: 5 reps.</p>
-        </div>
-        <div style={{ marginTop: 10, padding: 10, borderRadius: 5, textAlign: 'center', fontWeight: 'bold', backgroundColor: faceStatus.type === 'error' ? '#dc3545' : faceStatus.type === 'loading' ? '#ffc107' : '#28a745', color: faceStatus.type === 'error' ? '#fff' : faceStatus.type === 'loading' ? '#856404' : '#fff' }}>
-          {faceStatus.message || faceError}
-        </div>
-        {holdTime === 0 && repCount < targetReps && (
-          <div style={{ color: '#ff9800', fontSize: 16, marginTop: 10 }}>
-             Tip: {faceTip}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h1>OfficeSyndrome Rehabilitation</h1>
-      {error && (
-        <div style={{ 
-          color: "red", 
-          backgroundColor: "#ffebee", 
-          padding: "10px", 
-          borderRadius: "4px",
-          margin: "10px 0"
-        }}>
-          {error}
-        </div>
-      )}
-      {isLoading && (
-        <div style={{ color: "#1976d2", margin: "10px 0" }}>
-          Loading MediaPipe Pose...
-        </div>
-      )}
-      <div style={{ marginBottom: "20px" }}>
-        {phase === "idle" && (
-          <button onClick={startCountdown} disabled={phase !== "idle" || isLoading} style={{ fontSize: "18px", padding: "10px 30px" }}>
-            Start Rehabilitation
-          </button>
-        )}
-        {['countdown', 'challenge', 'rest', 'finished', 'getready', 'showfinal'].includes(phase) && (
-          <div style={{
-            margin: "16px auto 0 auto",
-            maxWidth: 640,
-            background: "#f5f5f5",
-            borderRadius: 8,
-            padding: 20,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-            fontSize: 18,
-            color: feedback === "Correct" ? "#00CC00" : "#FF0000"
-          }}>
-        {phase === "countdown" && (
-              <>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready</div>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {countdown} s</div>
-              </>
-        )}
-        {phase === "challenge" && (
-              <>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet} / {totalSets}</div>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {challengeCountdown} s</div>
-                <div style={{ marginBottom: 8 }}>{feedback === "Correct" ? "Great! Keep holding the correct pose!" : "Adjust your pose to the correct position!"}</div>
-               {feedback === "Incorrect" && (
-                 <div style={{ color: "#ff9800", fontSize: 16, marginTop: 8 }}>
-                   Tip: {poseTip}
-          </div>
-               )}
-              </>
-            )}
-            {phase === "rest" && (
-              <>
-                <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginBottom: 8 }}>Set {currentSet - 1} Complete!</div>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Rest Time: {restCountdown} s</div>
-                <div style={{ marginBottom: 8 }}>Next: Set {currentSet} / {totalSets}</div>
-              </>
-        )}
-        {phase === "finished" && (
-              <>
-                <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>All Sets Complete!</div>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>See your results below.</div>
-              </>
-            )}
-            {phase === "getready" && (
-              <>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Get Ready for Next Step</div>
-                <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>Countdown: {getReadyCountdown} s</div>
-              </>
-            )}
-            {phase === "showfinal" && (
-              <>
-                <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>Summary</div>
-                <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
-            {finalMessage}
-                </div>
-              </>
-            )}
-          </div>
-        )}
-        
-      </div>
-      <div style={{ position: "relative", display: "inline-block" }}>
-        <video 
-          ref={videoRef} 
-          style={{ display: "none" }} 
-          autoPlay 
-          playsInline
-        />
-        <canvas 
-          ref={canvasRef} 
-          width="640" 
-          height="480"
-          style={{ 
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-          }}
-        />
-      </div>
-      
-     
-    </div>
-  );
 }
 
 export default PoseAngleDetector;
