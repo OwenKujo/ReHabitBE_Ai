@@ -791,6 +791,39 @@ function PoseAngleDetector() {
     }
   }, [permissionState, phase]);
 
+  // Track last spoken countdown to avoid repeats
+  const lastSpokenCountdownRef = useRef(null);
+
+  // Voice countdown effect for challenge phase
+  useEffect(() => {
+    if (phase === "challenge" && challengeCountdown <= 3 && challengeCountdown > 0 && heldTime < holdTimePerSet) {
+      if (lastSpokenCountdownRef.current !== challengeCountdown) {
+        speak(String(challengeCountdown));
+        lastSpokenCountdownRef.current = challengeCountdown;
+      }
+    } else if (phase === "rest") {
+      if (lastSpokenCountdownRef.current !== 0) {
+        const finishText = lang === 'th'
+          ? `จบเซ็ตที่ ${currentSet-1}`
+          : `Finish set ${currentSet-1}`;
+        speak(finishText);
+        lastSpokenCountdownRef.current = 0;
+      }
+    }
+  }, [phase, challengeCountdown, heldTime, currentSet, lang]);
+
+  // Speak summary when phase is 'finished'
+  useEffect(() => {
+    if (phase === 'finished') {
+      const maxCorrect = totalSets * holdTimePerSet;
+      const score = Math.round((totalCorrectTime / maxCorrect) * 10);
+      const summaryText = lang === 'th'
+        ? `เวลาท่าถูกต้องทั้งหมด: ${totalCorrectTime} วินาที\nเวลาท่าผิดทั้งหมด: ${totalIncorrectTime} วินาที\nคะแนน: ${score} / 10`
+        : `Total correct time: ${totalCorrectTime} seconds\nTotal incorrect time: ${totalIncorrectTime} seconds\nScore: ${score} / 10`;
+      speak(summaryText);
+    }
+  }, [phase, totalCorrectTime, totalIncorrectTime, lang]);
+
   if (mode === "face") {
     // When 5 reps are done, stop camera, hide canvas, and show summary
     if (showFaceSummary) {
