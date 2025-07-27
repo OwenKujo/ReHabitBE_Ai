@@ -2,225 +2,148 @@ import React from 'react';
 import { Instagram, Facebook, Youtube } from 'lucide-react';
 
 const ReHabitFooter = () => {
-  const footerStyle = {
-    backgroundColor: '#D6E9F7',
-    padding: '0',
-    fontFamily: 'Arial, sans-serif',
-    display: 'flex',
-    flexDirection: 'column',
-    marginTop: 'auto'
-  };
-
-  const topSectionStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '30px 60px'
-  };
-
-  const logoSectionStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px'
-  };
-
-  const logoIconStyle = {
-    width: '45px',
-    height: '45px',
-    backgroundColor: '#2E7BC9',
-    borderRadius: '10px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white',
-    fontSize: '24px',
-    fontWeight: 'bold'
-  };
-
-  const logoTextStyle = {
-    fontSize: '28px',
-    fontWeight: '600',
-    color: '#1a1a1a',
-    letterSpacing: '0.5px'
-  };
-
-  const navStyle = {
-    display: 'flex',
-    gap: '40px',
-    alignItems: 'center'
-  };
-
-  const navLinkStyle = {
-    color: '#2a2a2a',
-    textDecoration: 'none',
-    fontSize: '16px',
-    fontWeight: '500',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    transition: 'all 0.3s ease',
-    position: 'relative'
-  };
-
-  const bottomSectionStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '18px 60px',
-    borderTop: '1px solid rgba(0,0,0,0.08)',
-    backgroundColor: 'rgba(255,255,255,0.3)'
-  };
-
-  const socialLinksStyle = {
-    display: 'flex',
-    gap: '15px',
-    alignItems: 'center'
-  };
-
-  const socialIconStyle = {
-    width: '26px',
-    height: '26px',
-    color: '#555',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    padding: '4px',
-    borderRadius: '50%'
-  };
-
-  const copyrightStyle = {
-    fontSize: '14px',
-    color: '#555',
-    fontWeight: '400'
-  };
-
   return (
-    <footer style={footerStyle}>
-      <div style={topSectionStyle}>
-        <div style={logoSectionStyle}>
-          <div style={logoIconStyle}>
-            R
-          </div>
-          <span style={logoTextStyle}>ReHabit</span>
+    <footer className="rehabit-footer">
+      <style>{`
+        .rehabit-footer {
+          background-color: #D6E9F7;
+          padding: 0;
+          font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+          display: flex;
+          flex-direction: column;
+          margin-top: auto;
+        }
+        .footer-top-section {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 30px 60px;
+        }
+        .footer-logo-section {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .footer-logo-icon {
+          width: 45px;
+          height: 45px;
+          background-color: #2E7BC9;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 24px;
+          font-weight: bold;
+        }
+        .footer-logo-text {
+          font-size: 28px;
+          font-weight: 600;
+          color: #1a1a1a;
+          letter-spacing: 0.5px;
+        }
+        .footer-nav {
+          display: flex;
+          gap: 40px;
+          align-items: center;
+        }
+        .footer-nav-link {
+          color: #2a2a2a;
+          text-decoration: none;
+          font-size: 16px;
+          font-weight: 500;
+          padding: 10px 20px;
+          border-radius: 5px;
+          transition: all 0.3s ease;
+          position: relative;
+        }
+        .footer-nav-link:hover {
+          background-color: rgba(46, 123, 201, 0.1);
+          color: #2E7BC9;
+        }
+        .footer-bottom-section {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 18px 60px;
+          border-top: 1px solid rgba(0,0,0,0.08);
+          background-color: rgba(255,255,255,0.3);
+        }
+        .footer-social-links {
+          display: flex;
+          gap: 15px;
+          align-items: center;
+        }
+        .footer-social-icon {
+          width: 26px;
+          height: 26px;
+          color: #555;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          padding: 4px;
+          border-radius: 50%;
+        }
+        .footer-social-icon:hover {
+          color: #2E7BC9;
+          background-color: rgba(46, 123, 201, 0.1);
+        }
+        .footer-copyright {
+          font-size: 14px;
+          color: #555;
+          font-weight: 400;
+        }
+        @media (max-width: 900px) {
+          .footer-top-section, .footer-bottom-section {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 24px 20px;
+            gap: 18px;
+          }
+          .footer-nav {
+            gap: 20px;
+            margin-top: 12px;
+          }
+        }
+        @media (max-width: 600px) {
+          .footer-logo-text {
+            font-size: 20px;
+          }
+          .footer-logo-icon {
+            width: 32px;
+            height: 32px;
+            font-size: 18px;
+          }
+          .footer-nav-link {
+            font-size: 14px;
+            padding: 8px 12px;
+          }
+          .footer-bottom-section {
+            padding: 12px 10px;
+          }
+          .footer-top-section {
+            padding: 16px 8px;
+          }
+        }
+      `}</style>
+      <div className="footer-top-section">
+        <div className="footer-logo-section">
+          <div className="footer-logo-icon">R</div>
+          <span className="footer-logo-text">ReHabit</span>
         </div>
-        
-        <nav style={navStyle}>
-          <a 
-            href="#home" 
-            style={navLinkStyle}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = 'rgba(46, 123, 201, 0.1)';
-              e.target.style.color = '#2E7BC9';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = 'transparent';
-              e.target.style.color = '#2a2a2a';
-            }}
-          >
-            Home
-          </a>
-          <a 
-            href="#physical-therapy" 
-            style={navLinkStyle}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = 'rgba(46, 123, 201, 0.1)';
-              e.target.style.color = '#2E7BC9';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = 'transparent';
-              e.target.style.color = '#2a2a2a';
-            }}
-          >
-            Physical therapy
-          </a>
-          <a 
-            href="#about" 
-            style={navLinkStyle}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = 'rgba(46, 123, 201, 0.1)';
-              e.target.style.color = '#2E7BC9';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = 'transparent';
-              e.target.style.color = '#2a2a2a';
-            }}
-          >
-            About
-          </a>
-          <a 
-            href="#contact" 
-            style={navLinkStyle}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = 'rgba(46, 123, 201, 0.1)';
-              e.target.style.color = '#2E7BC9';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = 'transparent';
-              e.target.style.color = '#2a2a2a';
-            }}
-          >
-            Contact
-          </a>
+        <nav className="footer-nav">
+          <a href="#home" className="footer-nav-link">Home</a>
+          <a href="#physical-therapy" className="footer-nav-link">Physical therapy</a>
+          <a href="#about" className="footer-nav-link">About</a>
+          <a href="#contact" className="footer-nav-link">Contact</a>
         </nav>
       </div>
-      
-      <div style={bottomSectionStyle}>
-        <div style={socialLinksStyle}>
-          <Instagram 
-            style={socialIconStyle} 
-            onMouseEnter={(e) => {
-              e.target.style.color = '#E4405F';
-              e.target.style.backgroundColor = 'rgba(228, 64, 95, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#555';
-              e.target.style.backgroundColor = 'transparent';
-            }}
-          />
-          <Facebook 
-            style={socialIconStyle}
-            onMouseEnter={(e) => {
-              e.target.style.color = '#1877F2';
-              e.target.style.backgroundColor = 'rgba(24, 119, 242, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#555';
-              e.target.style.backgroundColor = 'transparent';
-            }}
-          />
-          <svg 
-            width="26" 
-            height="26" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-            style={socialIconStyle}
-            onMouseEnter={(e) => {
-              e.target.style.color = '#1DA1F2';
-              e.target.style.backgroundColor = 'rgba(29, 161, 242, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#555';
-              e.target.style.backgroundColor = 'transparent';
-            }}
-          >
-            <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
-          </svg>
-          <Youtube 
-            style={socialIconStyle}
-            onMouseEnter={(e) => {
-              e.target.style.color = '#FF0000';
-              e.target.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#555';
-              e.target.style.backgroundColor = 'transparent';
-            }}
-          />
+      <div className="footer-bottom-section">
+        <div className="footer-social-links">
+          <Instagram className="footer-social-icon" />
+          <Facebook className="footer-social-icon" />
+          <Youtube className="footer-social-icon" />
         </div>
-        
-        <div style={copyrightStyle}>
+        <div className="footer-copyright">
           © Copyright 2025 | All rights Reserved
         </div>
       </div>

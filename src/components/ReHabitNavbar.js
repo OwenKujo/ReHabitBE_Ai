@@ -1,354 +1,311 @@
 import React, { useState } from 'react';
 import { Bell, ChevronDown, User, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLang } from '../App';
 
 function ReHabitNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { lang, changeLang } = useLang();
 
-  const navItems = [
+  const navItems = lang === 'th' ? [
+    { name: 'หน้าหลัก', href: '/', active: true },
+    { name: 'กายภาพบำบัด', href: 'MediaPipefull', active: false },
+    { name: 'เกี่ยวกับเรา', href: '#', active: false },
+    { name: 'ติดต่อ', href: '#', active: false },
+  ] : [
     { name: 'Home', href: '/', active: true },
     { name: 'Physical Therapy', href: 'MediaPipefull', active: false },
     { name: 'About', href: '#', active: false },
     { name: 'Contact', href: '#', active: false },
   ];
 
-  const navStyle = {
-    backgroundColor: '#1e293b',
-    color: 'white',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-  };
-
-  const containerStyle = {
-    maxWidth: '1280px',
-    margin: '0 auto',
-    padding: '0 1rem'
-  };
-
-  const flexStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: '64px'
-  };
-
-  const logoStyle = {
-    display: 'flex',
-    alignItems: 'center'
-  };
-
-  const logoIconStyle = {
-    width: '32px',
-    height: '32px',
-    backgroundColor: '#14b8a6',
-    borderRadius: '6px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: '12px'
-  };
-
-  const logoTextStyle = {
-    fontSize: '20px',
-    fontWeight: 'bold'
-  };
-
-  const desktopNavStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '32px'
-  };
-
-  const navItemStyle = {
-    padding: '8px 12px',
-    borderRadius: '6px',
-    fontSize: '14px',
-    fontWeight: '500',
-    textDecoration: 'none',
-    transition: 'all 0.2s',
-    cursor: 'pointer'
-  };
-
-  const activeNavItemStyle = {
-    ...navItemStyle,
-    color: '#5eead4',
-    backgroundColor: '#374151'
-  };
-
-  const inactiveNavItemStyle = {
-    ...navItemStyle,
-    color: '#d1d5db'
-  };
-
-  const rightSectionStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '16px'
-  };
-
-  const iconButtonStyle = {
-    position: 'relative',
-    padding: '8px',
-    color: '#9ca3af',
-    backgroundColor: 'transparent',
-    border: 'none',
-    borderRadius: '50%',
-    cursor: 'pointer',
-    transition: 'all 0.2s'
-  };
-
-  const profileButtonStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '8px',
-    color: '#d1d5db',
-    backgroundColor: 'transparent',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    transition: 'all 0.2s'
-  };
-
-  const profileIconStyle = {
-    width: '32px',
-    height: '32px',
-    backgroundColor: '#4b5563',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  };
-
-  const dropdownStyle = {
-    position: 'absolute',
-    right: '0',
-    top: '100%',
-    marginTop: '8px',
-    width: '192px',
-    backgroundColor: 'white',
-    borderRadius: '6px',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-    padding: '4px 0',
-    zIndex: 50
-  };
-
-  const dropdownItemStyle = {
-    display: 'block',
-    padding: '8px 16px',
-    fontSize: '14px',
-    color: '#374151',
-    textDecoration: 'none',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s'
-  };
-
-  const mobileMenuStyle = {
-    display: isMenuOpen ? 'block' : 'none',
-    backgroundColor: '#374151',
-    padding: '8px'
-  };
-
-  const mobileNavItemStyle = {
-    display: 'block',
-    padding: '8px 12px',
-    borderRadius: '6px',
-    fontSize: '16px',
-    fontWeight: '500',
-    textDecoration: 'none',
-    marginBottom: '4px',
-    cursor: 'pointer'
-  };
-
-  const notificationDotStyle = {
-    position: 'absolute',
-    top: '4px',
-    right: '4px',
-    width: '8px',
-    height: '8px',
-    backgroundColor: '#10b981',
-    borderRadius: '50%'
-  };
-
-  const mediaQuery = window.innerWidth >= 768;
-
   return (
-    <nav style={navStyle}>
-      <div style={containerStyle}>
-        <div style={flexStyle}>
+    <nav className="rehabit-navbar">
+      <style>{`
+        .rehabit-navbar {
+          background-color: #1e293b;
+          color: white;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+        }
+        .navbar-container {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 0 1rem;
+        }
+        .navbar-flex {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 64px;
+        }
+        .navbar-logo {
+          display: flex;
+          align-items: center;
+        }
+        .navbar-logo-icon {
+          width: 32px;
+          height: 32px;
+          background-color: #14b8a6;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 12px;
+        }
+        .navbar-logo-text {
+          font-size: 20px;
+          font-weight: bold;
+        }
+        .navbar-desktop-nav {
+          display: flex;
+          align-items: center;
+          gap: 32px;
+        }
+        .navbar-nav-item {
+          padding: 8px 12px;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 500;
+          text-decoration: none;
+          transition: all 0.2s;
+          cursor: pointer;
+          color: #d1d5db;
+        }
+        .navbar-nav-item.active {
+          color: #5eead4;
+          background-color: #374151;
+        }
+        .navbar-nav-item:hover {
+          color: white;
+          background-color: #374151;
+        }
+        .navbar-right-section {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+        .navbar-icon-btn {
+          position: relative;
+          padding: 8px;
+          color: #9ca3af;
+          background-color: transparent;
+          border: none;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .navbar-icon-btn:hover {
+          color: white;
+          background-color: #374151;
+        }
+        .navbar-profile-btn {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px;
+          color: #d1d5db;
+          background-color: transparent;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .navbar-profile-btn:hover {
+          color: white;
+          background-color: #374151;
+        }
+        .navbar-profile-icon {
+          width: 32px;
+          height: 32px;
+          background-color: #4b5563;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .navbar-dropdown {
+          position: absolute;
+          right: 0;
+          top: 100%;
+          margin-top: 8px;
+          width: 192px;
+          background-color: white;
+          border-radius: 6px;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+          padding: 4px 0;
+          z-index: 50;
+        }
+        .navbar-dropdown-item {
+          display: block;
+          padding: 8px 16px;
+          font-size: 14px;
+          color: #374151;
+          text-decoration: none;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+        .navbar-dropdown-item:hover {
+          background-color: #f3f4f6;
+        }
+        .navbar-notification-dot {
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          width: 8px;
+          height: 8px;
+          background-color: #10b981;
+          border-radius: 50%;
+        }
+        .navbar-mobile-menu-btn {
+          display: none;
+        }
+        .navbar-mobile-menu {
+          display: none;
+        }
+        @media (max-width: 900px) {
+          .navbar-desktop-nav {
+            display: none;
+          }
+          .navbar-mobile-menu-btn {
+            display: block;
+          }
+        }
+        @media (max-width: 900px) {
+          .navbar-mobile-menu {
+            display: ${isMenuOpen ? 'block' : 'none'};
+            background-color: #374151;
+            padding: 8px;
+          }
+        }
+        @media (max-width: 600px) {
+          .navbar-container {
+            padding: 0 0.5rem;
+          }
+          .navbar-flex {
+            height: 54px;
+          }
+          .navbar-logo-text {
+            font-size: 16px;
+          }
+        }
+      `}</style>
+      <div className="navbar-container">
+        <div className="navbar-flex">
           {/* Logo */}
-          <div style={logoStyle}>
-            <div style={logoIconStyle}>
+          <div className="navbar-logo">
+            <div className="navbar-logo-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <span style={logoTextStyle}>ReHabit</span>
+            <span className="navbar-logo-text">ReHabit</span>
           </div>
 
           {/* Desktop Navigation */}
-          {mediaQuery && (
-            <div style={desktopNavStyle}>
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  style={item.active ? activeNavItemStyle : inactiveNavItemStyle}
-                  onMouseEnter={(e) => {
-                    if (!item.active) {
-                      e.target.style.color = 'white';
-                      e.target.style.backgroundColor = '#374151';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!item.active) {
-                      e.target.style.color = '#d1d5db';
-                      e.target.style.backgroundColor = 'transparent';
-                    }
-                  }}
-                >
-                  {item.name}
-                </a>
-              ))}
-            </div>
-          )}
-
-          {/* Right side - Notifications and Profile */}
-          {mediaQuery && (
-            <div style={rightSectionStyle}>
-              {/* Notification Bell */}
-              <button
-                style={iconButtonStyle}
-                onMouseEnter={(e) => {
-                  e.target.style.color = 'white';
-                  e.target.style.backgroundColor = '#374151';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.color = '#9ca3af';
-                  e.target.style.backgroundColor = 'transparent';
-                }}
+          <div className="navbar-desktop-nav">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className={`navbar-nav-item${item.active ? ' active' : ''}`}
               >
-                <Bell size={20} />
-                <span style={notificationDotStyle}></span>
-              </button>
+                {item.name}
+              </a>
+            ))}
+          </div>
 
-              {/* Profile Dropdown */}
-              <div style={{ position: 'relative' }}>
-                <button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  style={profileButtonStyle}
-                  onMouseEnter={(e) => {
-                    e.target.style.color = 'white';
-                    e.target.style.backgroundColor = '#374151';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.color = '#d1d5db';
-                    e.target.style.backgroundColor = 'transparent';
-                  }}
-                >
-                  <div style={profileIconStyle}>
-                    <User size={20} />
-                  </div>
-                  <ChevronDown size={16} />
-                </button>
-
-                {/* Profile Dropdown Menu */}
-                {isProfileOpen && (
-                  <div style={dropdownStyle}>
-                    <Link
-                      to="#"
-                      style={dropdownItemStyle}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                    >
-                      Your Profile
-                    </Link>
-
-                    <Link
-                      to="/edit-profile"
-                      style={dropdownItemStyle}
-                      onClick={() => setIsProfileOpen(false)} // ปิด dropdown หลังคลิก
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                    >
-                      Edit Profile
-                    </Link>
-
-                    <Link
-                      to="#"
-                      style={dropdownItemStyle}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                    >
-                      Sign out
-                    </Link>
-                  </div>
-                )}
-              </div>
+          {/* Right Section */}
+          <div className="navbar-right-section">
+            {/* Language Switcher */}
+            <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginLeft: 12 }}>
+              <button
+                onClick={() => changeLang('en')}
+                style={{
+                  background: lang === 'en' ? '#1976d2' : '#fff',
+                  color: lang === 'en' ? '#fff' : '#1976d2',
+                  border: '1px solid #1976d2',
+                  borderRadius: 6,
+                  padding: '4px 12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontSize: 14
+                }}
+                disabled={lang === 'en'}
+              >EN</button>
+              <button
+                onClick={() => changeLang('th')}
+                style={{
+                  background: lang === 'th' ? '#1976d2' : '#fff',
+                  color: lang === 'th' ? '#fff' : '#1976d2',
+                  border: '1px solid #1976d2',
+                  borderRadius: 6,
+                  padding: '4px 12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontSize: 14
+                }}
+                disabled={lang === 'th'}
+              >TH</button>
             </div>
-          )}
-
-          {/* Mobile menu button */}
-          {!mediaQuery && (
+            {/* Notification Bell */}
+            <button className="navbar-icon-btn">
+              <Bell size={20} />
+              <span className="navbar-notification-dot"></span>
+            </button>
+            {/* Profile Dropdown */}
             <button
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              className="navbar-profile-btn"
+            >
+              <div className="navbar-profile-icon">
+                <User size={20} />
+              </div>
+              <ChevronDown size={16} />
+            </button>
+            {isProfileOpen && (
+              <div className="navbar-dropdown">
+                <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'โปรไฟล์ของคุณ' : 'Your Profile'}</Link>
+                <Link to="/edit-profile" className="navbar-dropdown-item" onClick={() => setIsProfileOpen(false)}>{lang === 'th' ? 'แก้ไขโปรไฟล์' : 'Edit Profile'}</Link>
+                <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'ออกจากระบบ' : 'Sign Out'}</Link>
+              </div>
+            )}
+            {/* Mobile menu button */}
+            <button
+              className="navbar-mobile-menu-btn"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              style={iconButtonStyle}
-              onMouseEnter={(e) => {
-                e.target.style.color = 'white';
-                e.target.style.backgroundColor = '#374151';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.color = '#9ca3af';
-                e.target.style.backgroundColor = 'transparent';
-              }}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-          )}
+          </div>
         </div>
       </div>
-
       {/* Mobile Menu */}
-      <div style={mobileMenuStyle}>
+      <div className="navbar-mobile-menu">
         {navItems.map((item) => (
           <a
             key={item.name}
             href={item.href}
-            style={{
-              ...mobileNavItemStyle,
-              color: item.active ? '#5eead4' : '#d1d5db',
-              backgroundColor: item.active ? '#4b5563' : 'transparent'
-            }}
-            onMouseEnter={(e) => {
-              if (!item.active) {
-                e.target.style.color = 'white';
-                e.target.style.backgroundColor = '#4b5563';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!item.active) {
-                e.target.style.color = '#d1d5db';
-                e.target.style.backgroundColor = 'transparent';
-              }
-            }}
+            className={`navbar-nav-item${item.active ? ' active' : ''}`}
+            style={{ display: 'block', fontSize: 16, marginBottom: 4 }}
           >
             {item.name}
           </a>
         ))}
-
         {/* Mobile Profile Section */}
-        <div style={{ paddingTop: '16px', borderTop: '1px solid #4b5563', marginTop: '12px' }}>
+        <div style={{ paddingTop: 16, borderTop: '1px solid #4b5563', marginTop: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', padding: '0 12px' }}>
-            <div style={{ ...profileIconStyle, width: '40px', height: '40px' }}>
+            <div className="navbar-profile-icon" style={{ width: 40, height: 40 }}>
               <User size={24} />
             </div>
-            <div style={{ marginLeft: '12px', flex: 1 }}>
-              <div style={{ fontSize: '16px', fontWeight: '500', color: 'white' }}>User Name</div>
-              <div style={{ fontSize: '14px', color: '#9ca3af' }}>user@example.com</div>
+            <div style={{ marginLeft: 12, flex: 1 }}>
+              <div style={{ fontSize: 16, fontWeight: 500, color: 'white' }}>{lang === 'th' ? 'ชื่อผู้ใช้' : 'User Name'}</div>
+              <div style={{ fontSize: 14, color: '#9ca3af' }}>{lang === 'th' ? 'อีเมลผู้ใช้' : 'User Email'}</div>
             </div>
-            <button style={iconButtonStyle}>
+            <button className="navbar-icon-btn">
               <Bell size={24} />
             </button>
           </div>
