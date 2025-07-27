@@ -452,26 +452,29 @@ function PoseAngleDetector() {
     });
   };
 
-  // New neck extensor stretch detection function
-  function detectNeckExtensorStretch(landmarks) {
-    if (!landmarks || landmarks.length < 17) return false;
-    const nose = landmarks[0];
-    const leftShoulder = landmarks[11];
-    const rightShoulder = landmarks[12];
-    // Average shoulder Y and Z
-    const shoulderAvgY = (leftShoulder.y + rightShoulder.y) / 2;
-    const shoulderAvgZ = (leftShoulder.z + rightShoulder.z) / 2;
-    // Condition 1: Head bent forward (nose lower than shoulders)
-    const isFlexedDown = nose.y > shoulderAvgY - 0.03;
-    // Condition 2: Head pushed forward (nose.z is smaller = closer to camera)
-    const isHeadForward = nose.z < shoulderAvgZ - 0.05;
-    // Shoulders roughly level
-    const shoulderDiffY = Math.abs(leftShoulder.y - rightShoulder.y);
-    const isSpineStraight = shoulderDiffY < 0.05;
-    return isFlexedDown && isHeadForward && isSpineStraight;
+  const calculateAngle = (a, b, c) => {
+    if (!a || !b || !c) return null;
+    
+    const v1 = [a.x - b.x, a.y - b.y];
+    const v2 = [c.x - b.x, c.y - b.y];
+    const dot = v1[0] * v2[0] + v1[1] * v2[1];
+    const magV1 = Math.sqrt(v1[0] ** 2 + v1[1] ** 2);
+    const magV2 = Math.sqrt(v2[0] ** 2 + v2[1] ** 2);
+
+    if (magV1 * magV2 === 0) {
+      return null;
+    }
+
+    const cosAngle = Math.max(-1.0, Math.min(1.0, dot / (magV1 * magV2)));
+    return Math.degrees(Math.acos(cosAngle));
+  };
+
+  Math.degrees = (radians) => radians * (180 / Math.PI);
+
+  function isRightArmCorrect(angle) {
+    return angle !== null && angle >= 50 && angle <= 90;
   }
 
-  // Updated onResults function with neck extensor stretch detection
   function onResults(results) {
     const canvasElement = canvasRef.current;
     if (!canvasElement) return;
@@ -482,31 +485,90 @@ function PoseAngleDetector() {
     const { width, height } = canvasElement;
     
     try {
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, width, height);
-      
+    canvasCtx.save();
+    canvasCtx.clearRect(0, 0, width, height);
+    
       if (results.image) {
-        canvasCtx.scale(-1, 1);
-        canvasCtx.translate(-width, 0);
-        canvasCtx.drawImage(results.image, 0, 0, width, height);
-        canvasCtx.scale(-1, 1);
-        canvasCtx.translate(-width, 0);
+    canvasCtx.scale(-1, 1);
+    canvasCtx.translate(-width, 0);
+    canvasCtx.drawImage(results.image, 0, 0, width, height);
+    canvasCtx.scale(-1, 1);
+    canvasCtx.translate(-width, 0);
+      }
+
+      if (results.poseLandmarks && results.poseLandmarks.length >= 17) {
+      const landmarks = results.poseLandmarks;
+      
+        // Check if required landmarks exist
+        if (!landmarks[12] || !landmarks[14] || !landmarks[16] || 
+            !landmarks[11] || !landmarks[13] || !landmarks[15]) {
+          console.warn("Missing required landmarks");
+          return;
+        }
+        
+        const rightShoulder = { x: (1 - landmarks[12].x) * width, y: landmarks[12].y * height };
+      const rightElbow = { x: (1 - landmarks[14].x) * width, y: landmarks[14].y * height };
+      const rightWrist = { x: (1 - landmarks[16].x) * width, y: landmarks[16].y * height };
+      
+      const leftShoulder = { x: (1 - landmarks[11].x) * width, y: landmarks[11].y * height };
+      const leftElbow = { x: (1 - landmarks[13].x) * width, y: landmarks[13].y * height };
+      const leftWrist = { x: (1 - landmarks[15].x) * width, y: landmarks[15].y * height };
+
+      const rightAngle = calculateAngle(
+        landmarks[14], // elbow
+        landmarks[12], // shoulder
+        landmarks[16]  // wrist
+      );
+      
+      const leftAngle = calculateAngle(
+        landmarks[13], // elbow
+        landmarks[11], // shoulder
+        landmarks[15]  // wrist
+      );
+
+      setAngles({ left: leftAngle, right: rightAngle });
+
+      canvasCtx.font = "16px Arial";
+      canvasCtx.fillStyle = "#00FF00";
+      
+      if (rightAngle !== null) {
+        canvasCtx.fillText(
+          `Right: ${Math.round(rightAngle)}°`,
+          rightShoulder.x - 50,
+          rightShoulder.y - 20
+        );
       }
       
-      if (results.poseLandmarks && results.poseLandmarks.length >= 17) {
-        const landmarks = results.poseLandmarks;
-        
-        // Only check for neck extensor stretch
-        const stretchDetected = detectNeckExtensorStretch(landmarks);
-        const statusText = stretchDetected ? "Stretching Neck Extensors!" : "Fix your posture";
-        
-        // Draw status text on canvas
-        canvasCtx.font = "28px Arial";
-        canvasCtx.fillStyle = stretchDetected ? "#00FF00" : "#FF0000";
-        canvasCtx.fillText(statusText, 30, 80);
-        
-        setFeedback(statusText);
-        setIsHolding(stretchDetected);
+      if (leftAngle !== null) {
+        canvasCtx.fillText(
+          `Left: ${Math.round(leftAngle)}°`,
+          leftShoulder.x - 50,
+          leftShoulder.y - 20
+        );
+      }
+
+      let feedbackText = "";
+      let feedbackColor = "#FF0000";
+      
+      if (rightAngle !== null && leftAngle !== null) {
+        if (isRightArmCorrect(rightAngle)) {
+          feedbackText = "Correct";
+          feedbackColor = "#00FF00";
+          setIsHolding(true);
+        } else {
+          feedbackText = "Incorrect";
+          feedbackColor = "#FF0000";
+          setIsHolding(false);
+        }
+      }
+
+      if (feedbackText) {
+        canvasCtx.font = "24px Arial";
+        canvasCtx.fillStyle = feedbackColor;
+        canvasCtx.fillText(feedbackText, 50, 50);
+      }
+      
+      setFeedback(feedbackText);
       }
     } catch (error) {
       console.error("Error in onResults:", error);
@@ -698,11 +760,11 @@ function PoseAngleDetector() {
 
   // Recommendation tips
   const poseTips = [
-    "Bend your head forward and push it slightly toward the camera to stretch neck extensors.",
-    "Keep your shoulders level and relaxed.",
-    "Maintain good posture with your back straight.",
-    "Make sure your face is clearly visible to the camera.",
-    "Hold the stretch gently - don't force it too much."
+    "Make sure your right arm is bent between 50° and 90°. Try raising or lowering your elbow!",
+    "Keep your back straight and avoid leaning forward.",
+    "Relax your shoulders and keep them level.",
+    "Check your camera angle to ensure your full arm is visible.",
+    "Try to keep your wrist in line with your elbow for better accuracy."
   ];
   const faceTips = [
     "Tilt your head back until you feel a gentle stretch in your neck.",
@@ -712,9 +774,12 @@ function PoseAngleDetector() {
     "Make sure your face is clearly visible to the camera."
   ];
 
-  // Update pose tip when feedback changes to Fix your posture
+  const [poseTip, setPoseTip] = useState(poseTips[0]);
+  const [faceTip, setFaceTip] = useState(faceTips[0]);
+
+  // Update pose tip when feedback changes to Incorrect
   useEffect(() => {
-    if (phase === "challenge" && feedback === "Fix your posture") {
+    if (phase === "challenge" && feedback === "Incorrect") {
       const tip = poseTips[Math.floor(Math.random() * poseTips.length)];
       setPoseTip(tip);
       speak(tip);
@@ -737,6 +802,222 @@ function PoseAngleDetector() {
       }
     };
   }, [phase, mode]);
+
+  // --- Improved UI for pose mode ---
+  return (
+    <div style={{ minHeight: '100vh', background: '#eaf6fd', fontFamily: 'Kanit, Prompt, sans-serif', position: 'relative' }}>
+      {/* Go Back Button (fixed under navbar) */}
+      <button
+        onClick={() => navigate('/office-syndrome')}
+        style={{
+          position: 'fixed',
+          top: 24,
+          left: 24,
+          zIndex: 100,
+          background: '#fff',
+          color: '#1976d2',
+          border: 'none',
+          borderRadius: 16,
+          fontWeight: 600,
+          fontSize: 16,
+          padding: '10px 22px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          cursor: 'pointer',
+          letterSpacing: 0.5,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8
+        }}
+      >
+        <span style={{ fontSize: 20, marginRight: 4 }}>&larr;</span> Go Back
+      </button>
+
+      {/* Centered main content */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        {/* Error/Loading overlays */}
+        {(error || isLoading) && (
+          <div style={{
+            background: error ? '#ffebee' : '#e0e7ef',
+            color: error ? '#e11d48' : '#1976d2',
+            borderRadius: 14,
+            padding: '18px 40px',
+            fontWeight: 600,
+            fontSize: 20,
+            boxShadow: '0 1px 4px rgba(0,0,0,0.07)',
+            minWidth: 340,
+            textAlign: 'center',
+            marginTop: 80
+          }}>
+            {error ? error : 'Loading MediaPipe Pose...'}
+          </div>
+        )}
+
+        {/* Start Button (centered, only in idle phase) */}
+        {phase === 'idle' && !isLoading && !error && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '70vh' }}>
+            <button
+              onClick={startCountdown}
+              style={{
+                fontSize: 24,
+                padding: '22px 60px',
+                background: '#14b8a6',
+                color: 'white',
+                border: 'none',
+                borderRadius: 12,
+                fontWeight: 700,
+                letterSpacing: 1,
+                boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
+                cursor: 'pointer',
+                transition: 'background 0.2s',
+              }}
+            >
+              Start Rehabilitation
+            </button>
+          </div>
+        )}
+
+        {/* Main Exercise Card (only after start) */}
+        {phase !== 'idle' && !isLoading && !error && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 80 }}>
+            <div style={{
+              position: 'relative',
+              background: '#fff',
+              borderRadius: 22,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.10)',
+              width: 540,
+              maxWidth: '97vw',
+              padding: 0,
+              overflow: 'hidden',
+              minHeight: 390
+            }}>
+              {/* Timer Badge */}
+              <div style={{
+                position: 'absolute',
+                top: 18,
+                left: 18,
+                background: '#dbeafe',
+                borderRadius: 14,
+                padding: '7px 18px',
+                fontWeight: 600,
+                fontSize: 17,
+                color: '#003d6a',
+                display: 'flex',
+                alignItems: 'center',
+                zIndex: 2,
+                boxShadow: '0 1px 4px rgba(0,0,0,0.06)'
+              }}>
+                <span style={{ marginRight: 7, fontSize: 18 }}>⏺️</span>
+                00:00/{holdTimePerSet < 10 ? `0${holdTimePerSet}` : holdTimePerSet}:00 min.
+              </div>
+              {/* Set/Exercise Badge */}
+              <div style={{
+                position: 'absolute',
+                top: 18,
+                right: 18,
+                background: '#dbeafe',
+                borderRadius: 14,
+                padding: '7px 22px',
+                fontWeight: 700,
+                fontSize: 18,
+                color: '#003d6a',
+                textAlign: 'center',
+                minWidth: 90,
+                boxShadow: '0 1px 4px rgba(0,0,0,0.06)'
+              }}>
+                Set {currentSet} / {totalSets}
+              </div>
+              {/* Main Exercise Image/Video with overlays */}
+              <div style={{ position: 'relative', width: 540, height: 340, background: '#e0e7ef', borderRadius: 22, overflow: 'hidden', marginTop: 60 }}>
+                {/* Small exercise icon (mock) */}
+                <div style={{
+                  position: 'absolute',
+                  top: 18,
+                  left: 18,
+                  width: 70,
+                  height: 70,
+                  background: '#fff',
+                  borderRadius: 12,
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 2
+                }}>
+                  {/* Replace with actual icon if available */}
+                  <img src="/logo192.png" alt="Exercise Icon" style={{ width: 50, height: 50 }} />
+                </div>
+                {/* Main video/canvas */}
+                <canvas
+                  ref={canvasRef}
+                  width={540}
+                  height={340}
+                  style={{
+                    width: 540,
+                    height: 340,
+                    borderRadius: 22,
+                    objectFit: 'cover',
+                    filter: 'brightness(0.92)'
+                  }}
+                />
+                {/* Circular countdown overlay */}
+                {phase === 'challenge' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 100,
+                    height: 100,
+                    background: 'rgba(0,0,0,0.18)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 3,
+                    border: '6px solid #fff',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.10)'
+                  }}>
+                    <span style={{ color: '#fff', fontSize: 36, fontWeight: 700 }}>{challengeCountdown}</span>
+                  </div>
+                )}
+              </div>
+              {/* Feedback/tips below the card */}
+              <div style={{
+                background: '#f5faff',
+                borderRadius: 14,
+                boxShadow: '0 1px 4px rgba(0,0,0,0.07)',
+                padding: '20px 36px',
+                minWidth: 320,
+                textAlign: 'center',
+                fontSize: 19,
+                color: feedback === 'Correct' ? '#14b8a6' : '#e11d48',
+                fontWeight: 600,
+                margin: '32px 24px 24px 24px'
+              }}>
+                {phase === 'challenge' && (
+                  <>
+                    {feedback === 'Correct' ? 'Great! Keep holding the correct pose!' : 'Adjust your pose to the correct position!'}
+                    {feedback === 'Incorrect' && (
+                      <div style={{ color: '#f59e42', fontSize: 16, marginTop: 8, fontWeight: 400 }}>Tip: {poseTip}</div>
+                    )}
+                  </>
+                )}
+                {phase === 'rest' && (
+                  <span style={{ color: '#1976d2' }}>Rest Time: {restCountdown} s</span>
+                )}
+                {phase === 'countdown' && (
+                  <span style={{ color: '#1976d2' }}>Get Ready: {countdown} s</span>
+                )}
+                {phase === 'finished' && (
+                  <span style={{ color: '#14b8a6' }}>All Sets Complete!</span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default PoseAngleDetector;
