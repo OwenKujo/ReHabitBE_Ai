@@ -114,12 +114,8 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   // Face mesh/rep tracker refs and state
   const faceMeshRef = useRef(null);
   const holdStartTimeRef = useRef(null);
-  const [repCount, setRepCount] = useState(0);
-  const [holdTime, setHoldTime] = useState(0);
-  const [faceStatus, setFaceStatus] = useState({ type: 'loading', message: 'Loading camera and face detection...' });
-  const [faceError, setFaceError] = useState(null);
-  const [showFaceSummary, setShowFaceSummary] = useState(false);
-  const [poseScore, setPoseScore] = useState(null);
+  // Remove old repCount/holdTime/faceStatus/faceError/showFaceSummary/poseScore for face tracker
+
 
   // Pose rep tracker refs and state
   const [poseRepCount, setPoseRepCount] = useState(0);
@@ -127,7 +123,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   const [isPoseRepActive, setIsPoseRepActive] = useState(false);
 
   // Face mesh logic
-  const pitchThreshold = 15;
+  const pitchThreshold = 2; // was 5, now 2 for much easier detection
   const targetReps = 5;
 
   const loadMediaPipeScriptsFace = () => {
@@ -173,20 +169,54 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     });
   };
 
+  // Fix the pitch calculation - when tilting head back, pitch should be negative
   const calculatePitch = (landmarks) => {
-    if (!landmarks || landmarks.length < 153) return 0;
+    if (!landmarks || landmarks.length < 153) {
+      console.log('Not enough landmarks:', landmarks?.length);
+      return 0;
+    }
     
     const nose = landmarks[1];
     const chin = landmarks[152];
     
-    if (!nose || !chin) return 0;
+    if (!nose || !chin) {
+      console.log('Missing nose or chin landmarks');
+      return 0;
+    }
     
-    const dz = nose.z - chin.z;
+    // When tilting head back (looking up):
+    // - nose moves up (smaller Y value)
+    // - chin moves down (larger Y value)
+    // - So (nose.y - chin.y) should be negative
     const dy = nose.y - chin.y;
-    const radians = Math.atan2(dz, dy);
-    return radians * (180 / Math.PI);
+    const dz = nose.z - chin.z;
+    
+    // Use atan2(dy, dz) instead of atan2(dz, dy) for correct angle
+    const radians = Math.atan2(dy, dz);
+    const pitch = radians * (180 / Math.PI);
+    
+    console.log('Pitch calculation:', { 
+      noseY: nose.y.toFixed(3), 
+      chinY: chin.y.toFixed(3), 
+      noseZ: nose.z.toFixed(3),
+      chinZ: chin.z.toFixed(3),
+      dy: dy.toFixed(3),
+      dz: dz.toFixed(3),
+      pitch: pitch.toFixed(2),
+      threshold: pitchThreshold,
+      isCorrect: pitch < -pitchThreshold // Negative when tilted back
+    });
+    
+    return pitch;
   };
 
+  // Fix the threshold logic - when tilted back, pitch should be negative
+  function isFacePoseCorrect(pitch) {
+    // When head is tilted back (looking up), pitch should be negative
+    return pitch < -pitchThreshold;
+  }
+
+  // Only keep the set-based face tracker version of onFaceResults (the one using facePhase, setFaceIsHolding, etc.)
   const onFaceResults = (results) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -203,10 +233,56 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       ctx.restore();
     }
 
+    // Debug: Check if we have any face landmarks
+    console.log('Face detection debug:', {
+      hasImage: !!results.image,
+      hasMultiFaceLandmarks: !!results.multiFaceLandmarks,
+      numFaces: results.multiFaceLandmarks?.length || 0,
+      landmarksLength: results.multiFaceLandmarks?.[0]?.length || 0,
+      facePhase: facePhase,
+      isHolding: faceIsHolding
+    });
+
     if (results.multiFaceLandmarks?.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
-      const pitch = calculatePitch(landmarks);
+      console.log('Landmarks received:', landmarks.length);
+      
+      // Visual debugging: Draw some key landmarks on the canvas
+      ctx.fillStyle = 'red';
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 2;
+      
+      // Draw nose (landmark 1)
+      if (landmarks[1]) {
+        ctx.beginPath();
+        ctx.arc(landmarks[1].x * canvas.width, landmarks[1].y * canvas.height, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillText('Nose', landmarks[1].x * canvas.width + 10, landmarks[1].y * canvas.height);
+      }
+      
+      // Draw chin (landmark 152)
+      if (landmarks[152]) {
+        ctx.fillStyle = 'blue';
+        ctx.beginPath();
+        ctx.arc(landmarks[152].x * canvas.width, landmarks[152].y * canvas.height, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillText('Chin', landmarks[152].x * canvas.width + 10, landmarks[152].y * canvas.height);
+      }
 
+      const pitch = calculatePitch(landmarks);
+      const isCorrect = isFacePoseCorrect(pitch);
+      
+      console.log('Face detection result:', { 
+        pitch: pitch.toFixed(2), 
+        threshold: pitchThreshold, 
+        isCorrect: isCorrect,
+        facePhase: facePhase,
+        currentIsHolding: faceIsHolding
+      });
+
+      // Show pitch value on frame
       ctx.fillStyle = 'white';
       ctx.font = '18px Arial';
       ctx.strokeStyle = 'black';
@@ -214,43 +290,52 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       ctx.strokeText(`Pitch: ${pitch.toFixed(2)}°`, 10, 30);
       ctx.fillText(`Pitch: ${pitch.toFixed(2)}°`, 10, 30);
 
-      if (pitch > pitchThreshold) {
-        if (!holdStartTimeRef.current) {
-          holdStartTimeRef.current = Date.now();
-        }
-
-        const elapsed = (Date.now() - holdStartTimeRef.current) / 1000;
-        setHoldTime(elapsed);
-
-        ctx.fillStyle = 'lime';
-        ctx.strokeStyle = 'darkgreen';
-        const holdText = `HOLD: ${elapsed.toFixed(1)}s`;
-        ctx.strokeText(holdText, 10, 60);
-        ctx.fillText(holdText, 10, 60);
-
-        if (elapsed >= 10 && repCount < targetReps) {
-          setRepCount((prev) => {
-            const newRep = prev + 1;
-            // If this was the last rep, calculate score
-            if (newRep >= targetReps) {
-              // Each rep: 2 points if held >= 10s, else partial (hold/10*2)
-              const score = newRep * 2; // Simplified score calculation
-              setPoseScore(Math.min(10, Math.round(score)));
-              setFaceStatus({ type: 'ready', message: '🎉 Congratulations! All 5 reps completed!' });
-            }
-            return newRep;
-          });
-          holdStartTimeRef.current = null;
-          setHoldTime(0);
+      // Only update faceIsHolding during challenge phase
+      if (facePhase === "challenge") {
+        console.log('Challenge phase - updating faceIsHolding:', isCorrect);
+        setFaceIsHolding(isCorrect);
+        
+        if (isCorrect) {
+          setFaceFeedback(lang === 'th' ? 'ถูกต้อง! ค้างท่าไว้' : 'Correct! Keep holding!');
+          setFaceFeedbackColor("#00FF00");
+          
+          // Show "Correct" on frame
+          ctx.fillStyle = 'lime';
+          ctx.strokeStyle = 'darkgreen';
+          ctx.lineWidth = 3;
+          ctx.font = '24px Arial';
+          ctx.strokeText('Correct', 10, 60);
+          ctx.fillText('Correct', 10, 60);
+        } else {
+          setFaceFeedback(lang === 'th' ? 'ปรับท่าให้ถูกต้อง' : 'Adjust your head position!');
+          setFaceFeedbackColor("#FF0000");
+          
+          // Show "Incorrect" on frame
+          ctx.fillStyle = 'red';
+          ctx.strokeStyle = 'darkred';
+          ctx.lineWidth = 3;
+          ctx.font = '24px Arial';
+          ctx.strokeText('Incorrect', 10, 60);
+          ctx.fillText('Incorrect', 10, 60);
         }
       } else {
-        holdStartTimeRef.current = null;
-        setHoldTime(0);
+        // Show instruction when not in challenge phase
         ctx.fillStyle = 'yellow';
         ctx.strokeStyle = 'orange';
+        ctx.lineWidth = 2;
+        ctx.font = '18px Arial';
         ctx.strokeText('Tilt head back to start', 10, 60);
         ctx.fillText('Tilt head back to start', 10, 60);
       }
+    } else {
+      // No face detected
+      console.log('No face landmarks detected - check camera and face visibility');
+      ctx.fillStyle = 'yellow';
+      ctx.strokeStyle = 'orange';
+      ctx.lineWidth = 2;
+      ctx.font = '18px Arial';
+      ctx.strokeText('No face detected - check camera', 10, 60);
+      ctx.fillText('No face detected - check camera', 10, 60);
     }
 
     ctx.restore();
@@ -282,43 +367,46 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     };
   
     const initFaceMesh = async () => {
-      setFaceStatus({ type: 'loading', message: 'Loading camera and face detection...' });
-  
+      console.log('Initializing face mesh...');
+      
       cleanup();
       await new Promise(resolve => setTimeout(resolve, 100));
-  
+
       try {
+        console.log('Loading MediaPipe scripts...');
         await loadMediaPipeScriptsFace();
         
         if (!window.FaceMesh) {
           throw new Error('FaceMesh not available after loading scripts');
         }
         
-        if (!videoRef.current || cancelled) {
-          setFaceError('Video not ready or cancelled.');
-          setFaceStatus({ type: 'error', message: 'Initialization failed' });
-          return;
+        if (!videoRef.current) {
+          throw new Error('Video element not ready');
         }
-  
+        
+        console.log('Creating FaceMesh instance...');
         const faceMesh = new window.FaceMesh({
           locateFile: (file) =>
             `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
         });
-  
+
+        console.log('Setting FaceMesh options...');
         faceMesh.setOptions({
           maxNumFaces: 1,
           refineLandmarks: true,
           minDetectionConfidence: 0.5,
           minTrackingConfidence: 0.5,
         });
-  
+
+        console.log('Setting FaceMesh onResults callback...');
         faceMesh.onResults(onFaceResults);
         faceMeshRef.current = faceMesh;
         
         if (!window.Camera) {
           throw new Error('Camera not available after loading scripts');
         }
-  
+
+        console.log('Creating Camera instance...');
         cameraRef.current = new window.Camera(videoRef.current, {
           onFrame: async () => {
             try {
@@ -332,17 +420,13 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
           width: 640,
           height: 480,
         });
-  
+
+        console.log('Starting camera...');
         await cameraRef.current.start();
-        if (!cancelled) {
-          setFaceStatus({ type: 'ready', message: 'Camera ready! Start your face exercises.' });
-        }
+        console.log('Face mesh initialization complete!');
       } catch (err) {
         console.error("FaceMesh init error:", err);
-        if (!cancelled) {
-          setFaceError(`Failed to initialize MediaPipe: ${err.message}`);
-          setFaceStatus({ type: 'error', message: 'Initialization failed' });
-        }
+        setError(`Failed to initialize MediaPipe: ${err.message}`);
       }
     };
   
@@ -729,7 +813,6 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
         : `Total correct time: ${totalCorrectTime} seconds\nScore: ${score} out of 10`;
       setPhase("showfinal");
       setFinalMessage(summaryText);
-      setPoseScore(score);
     }
   }, [phase, totalCorrectTime, totalIncorrectTime, lang]);
 
@@ -777,8 +860,166 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     };
   }, []);
 
+  // --- FACE MODE STATE (set-based tracker) ---
+  const [facePhase, setFacePhase] = useState("idle"); // idle, countdown, challenge, rest, finished, showfinal
+  const [faceCountdown, setFaceCountdown] = useState(10);
+  const [faceCurrentSet, setFaceCurrentSet] = useState(1);
+  const [faceHeldTime, setFaceHeldTime] = useState(0);
+  const [faceChallengeCountdown, setFaceChallengeCountdown] = useState(10);
+  const [faceRestCountdown, setFaceRestCountdown] = useState(5);
+  const [faceIsHolding, setFaceIsHolding] = useState(false);
+  const [faceIncorrectTime, setFaceIncorrectTime] = useState(0);
+  const [faceTotalCorrectTime, setFaceTotalCorrectTime] = useState(0);
+  const [faceTotalIncorrectTime, setFaceTotalIncorrectTime] = useState(0);
+  const [faceFinalMessage, setFaceFinalMessage] = useState("");
+  const [faceScore, setFaceScore] = useState(null);
+  const faceIntervalRef = useRef(null);
+
+  // Add the set-based face tracker startFaceCountdown function
+  function startFaceCountdown() {
+    setFacePhase("countdown");
+    setFaceCountdown(10);
+    setFaceCurrentSet(1);
+    setFaceHeldTime(0);
+    setFaceFinalMessage("");
+    setFaceIncorrectTime(0);
+    setFaceTotalCorrectTime(0);
+    setFaceTotalIncorrectTime(0);
+    faceIntervalRef.current = setInterval(() => {
+      setFaceCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(faceIntervalRef.current);
+          startFaceChallenge();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+
+  // Add the missing face tracker functions
+  function startFaceChallenge() {
+    setFacePhase("challenge");
+    setFaceHeldTime(0);
+    playBeep(800,1000,0.4);
+    setFaceFinalMessage("");
+    setFaceIsHolding(false);
+    setFaceChallengeCountdown(10);
+    setFaceIncorrectTime(0);
+  }
+
+  function startFaceRest() {
+    setFacePhase("rest");
+    setFaceRestCountdown(5);
+    setFaceHeldTime(0);
+    setFaceIsHolding(false);
+  }
+
+  // --- FACE MODE LOGIC ---
+  function isFacePoseCorrect(pitch) {
+    // When head is tilted back, pitch should be negative and less than -threshold
+    return pitch < -pitchThreshold;
+  }
+
+  // Face mesh initialization and cleanup
   useEffect(() => {
-    if (mode === "face" && repCount >= targetReps) {
+    if (mode !== "face") return;
+  
+    let cancelled = false;
+  
+    const cleanup = () => {
+      if (cameraRef.current) {
+        try {
+          cameraRef.current.stop();
+        } catch (e) {
+          console.warn("Error stopping camera:", e);
+        }
+        cameraRef.current = null;
+      }
+      if (faceMeshRef.current) {
+        try {
+          faceMeshRef.current.close?.();
+        } catch (e) {
+          console.warn("Error closing face mesh:", e);
+        }
+        faceMeshRef.current = null;
+      }
+    };
+  
+    const initFaceMesh = async () => {
+      console.log('Initializing face mesh...');
+      
+      cleanup();
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      try {
+        console.log('Loading MediaPipe scripts...');
+        await loadMediaPipeScriptsFace();
+        
+        if (!window.FaceMesh) {
+          throw new Error('FaceMesh not available after loading scripts');
+        }
+        
+        if (!videoRef.current) {
+          throw new Error('Video element not ready');
+        }
+        
+        console.log('Creating FaceMesh instance...');
+        const faceMesh = new window.FaceMesh({
+          locateFile: (file) =>
+            `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+        });
+
+        console.log('Setting FaceMesh options...');
+        faceMesh.setOptions({
+          maxNumFaces: 1,
+          refineLandmarks: true,
+          minDetectionConfidence: 0.5,
+          minTrackingConfidence: 0.5,
+        });
+
+        console.log('Setting FaceMesh onResults callback...');
+        faceMesh.onResults(onFaceResults);
+        faceMeshRef.current = faceMesh;
+        
+        if (!window.Camera) {
+          throw new Error('Camera not available after loading scripts');
+        }
+
+        console.log('Creating Camera instance...');
+        cameraRef.current = new window.Camera(videoRef.current, {
+          onFrame: async () => {
+            try {
+              if (faceMeshRef.current && videoRef.current && !cancelled) {
+                await faceMeshRef.current.send({ image: videoRef.current });
+              }
+            } catch (error) {
+              console.error("Error sending frame to face mesh:", error);
+            }
+          },
+          width: 640,
+          height: 480,
+        });
+
+        console.log('Starting camera...');
+        await cameraRef.current.start();
+        console.log('Face mesh initialization complete!');
+      } catch (err) {
+        console.error("FaceMesh init error:", err);
+        setError(`Failed to initialize MediaPipe: ${err.message}`);
+      }
+    };
+  
+    initFaceMesh();
+  
+    return () => {
+      cancelled = true;
+      cleanup();
+    };
+  }, [mode]);
+
+  useEffect(() => {
+    if (mode === "face" && challengeCountdown === 0 && heldTime < holdTimePerSet) {
       // Stop camera and face mesh
       if (cameraRef.current) {
         try { cameraRef.current.stop(); } catch (e) {}
@@ -788,9 +1029,9 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
         try { faceMeshRef.current.close?.(); } catch (e) {}
         faceMeshRef.current = null;
       }
-      setShowFaceSummary(true);
+      setFinalMessage(`Congratulations! You completed all ${totalSets} sets!`);
     }
-  }, [mode, repCount, targetReps]);
+  }, [mode, challengeCountdown, heldTime, totalSets]);
 
   // Recommendation tips
   const poseTips = [
@@ -840,14 +1081,14 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
 
   // Update face tip when user is not holding and in face mode
   useEffect(() => {
-    if (mode === "face" && holdTime === 0 && repCount < targetReps) {
+    if (mode === "face" && challengeCountdown === 0 && heldTime < holdTimePerSet) {
       const tip = lang === 'th'
         ? faceTipsTH[Math.floor(Math.random() * faceTipsTH.length)]
         : faceTips[Math.floor(Math.random() * faceTips.length)];
       setFaceTip(tip);
       speak(tip);
     }
-  }, [mode, holdTime, repCount, lang]);
+  }, [mode, challengeCountdown, heldTime, lang]);
 
   useEffect(() => {
     return () => {
@@ -906,79 +1147,191 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     }
   }, [phase, totalCorrectTime, totalIncorrectTime, lang]);
 
-  if (mode === "face") {
-    // When 5 reps are done, stop camera, hide canvas, and show summary
-    if (showFaceSummary) {
-      const totalScore = (poseScore || 0) + (repCount * 2); // Simplified score calculation
-      return (
-        <div style={{ textAlign: "center", padding: "40px 20px" }}>
-          <div style={{
-            margin: "0 auto",
-            maxWidth: 480,
-            background: "#f5f5f5",
-            borderRadius: 12,
-            padding: 32,
-            boxShadow: "0 2px 12px rgba(0,0,0,0.10)",
-            fontSize: 20
-          }}>
-            <div style={{ fontSize: 28, color: "#00CC00", fontWeight: "bold", marginBottom: 18 }}>
-              🎉 Rehabilitation Complete!
-            </div>
-            <div style={{ fontSize: 22, color: "#1976d2", marginBottom: 12 }}>
-              Pose Score: <b>{poseScore !== null ? poseScore : '-'}</b> / 10
-            </div>
-            <div style={{ fontSize: 22, color: "#1976d2", marginBottom: 12 }}>
-              Face Score: <b>{repCount * 2}</b> / 10
-            </div>
-            <div style={{ fontSize: 24, color: "#ff9800", fontWeight: "bold", marginBottom: 20 }}>
-              Total Score: <b>{totalScore}</b> / 20
-            </div>
-            <button
-              onClick={() => navigate('/physicaltherapy')}
-              style={{
-                marginTop: 10,
-                padding: "12px 32px",
-                fontSize: "18px",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
-            >
-              Return to  PhysicalTherapy
-            </button>
-          </div>
-        </div>
-      );
+  // Add the missing useEffect hooks for face tracker logic
+  // Challenge countdown effect
+  useEffect(() => {
+    if (facePhase === "challenge" && faceChallengeCountdown > 0 && faceHeldTime < 10) {
+      const interval = setInterval(() => {
+        setFaceChallengeCountdown((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
     }
+  }, [facePhase, faceChallengeCountdown, faceHeldTime]);
 
-    // Otherwise, show the face rep tracker as before
+  // Hold time tracking effect
+  useEffect(() => {
+    if (facePhase === "challenge" && faceIsHolding && faceHeldTime < 10 && faceChallengeCountdown > 0) {
+      const interval = setInterval(() => {
+        setFaceHeldTime((prev) => {
+          if (prev >= 9) {
+            clearInterval(interval);
+            setFaceTotalCorrectTime((t) => t + 10);
+            setFaceTotalIncorrectTime((t) => t + faceIncorrectTime);
+            if (faceCurrentSet < 5) {
+              setFaceCurrentSet(faceCurrentSet + 1);
+              startFaceRest();
+            } else {
+              setFacePhase("finished");
+              setFaceFinalMessage(`Congratulations! You completed all 5 sets!`);
+            }
+            return 10;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [facePhase, faceIsHolding, faceHeldTime, faceChallengeCountdown, faceCurrentSet, faceIncorrectTime]);
+
+  // Incorrect time tracking effect
+  useEffect(() => {
+    let interval;
+    if (facePhase === "challenge" && !faceIsHolding && faceChallengeCountdown > 0 && faceHeldTime < 10) {
+      interval = setInterval(() => {
+        setFaceIncorrectTime((prev) => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [facePhase, faceIsHolding, faceChallengeCountdown, faceHeldTime]);
+
+  // Rest countdown effect
+  useEffect(() => {
+    if (facePhase === "rest" && faceRestCountdown > 0) {
+      const interval = setInterval(() => {
+        setFaceRestCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            startFaceChallenge();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [facePhase, faceRestCountdown]);
+
+  // When challenge ends without completing the set
+  useEffect(() => {
+    if (facePhase === "challenge" && faceChallengeCountdown === 0 && faceHeldTime < 10) {
+      setFaceTotalCorrectTime((t) => t + faceHeldTime);
+      setFaceTotalIncorrectTime((t) => t + faceIncorrectTime);
+      if (faceCurrentSet < 5) {
+        setFaceCurrentSet(faceCurrentSet + 1);
+        startFaceRest();
+      } else {
+        setFacePhase("finished");
+        setFaceFinalMessage(`Congratulations! You completed all 5 sets!`);
+      }
+    }
+  }, [facePhase, faceChallengeCountdown, faceHeldTime, faceCurrentSet, faceIncorrectTime]);
+
+  // When finished, set summary and score
+  useEffect(() => {
+    if (facePhase === "finished") {
+      const maxCorrect = 5 * 10;
+      const score = Math.round((faceTotalCorrectTime / maxCorrect) * 10);
+      setFacePhase("showfinal");
+      setFaceFinalMessage(`Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${score} out of 10`);
+      setFaceScore(score);
+    }
+  }, [facePhase, faceTotalCorrectTime, faceTotalIncorrectTime]);
+
+  // Show final message for 10 seconds, then return to physicaltherapy
+  useEffect(() => {
+    if (facePhase === "showfinal") {
+      const timeout = setTimeout(() => {
+        navigate('/physicaltherapy');
+      }, 10000);
+      return () => clearTimeout(timeout);
+    }
+  }, [facePhase]);
+
+  // Automatically start face rehab when switching to face mode
+  useEffect(() => {
+    if (mode === 'face' && facePhase === 'idle') {
+      startFaceCountdown();
+    }
+    // eslint-disable-next-line
+  }, [mode, facePhase]);
+
+  // Add face feedback state and logic
+  const [faceFeedback, setFaceFeedback] = useState("");
+  const [faceFeedbackColor, setFaceFeedbackColor] = useState("#FF0000");
+
+  // Face feedback tips
+  const faceFeedbackTips = [
+    "Tilt your head back more - look up towards the ceiling",
+    "Keep your chin up and look slightly upwards",
+    "Make sure your face is clearly visible to the camera",
+    "Hold your head steady and avoid moving during the rep",
+    "Try to feel a gentle stretch in your neck"
+  ];
+
+  const faceFeedbackTipsTH = [
+    "เงยศีรษะไปด้านหลังมากขึ้น - มองขึ้นไปที่เพดาน",
+    "เชิดคางขึ้นและมองขึ้นเล็กน้อย",
+    "ให้ใบหน้าเห็นชัดเจนต่อกล้อง",
+    "อย่าขยับศีรษะขณะทำท่า",
+    "พยายามรู้สึกตึงที่คอเบาๆ"
+  ];
+
+
+
+  // Update face tip when feedback changes to incorrect
+  useEffect(() => {
+    if (facePhase === "challenge" && faceFeedback.includes('Adjust') || faceFeedback.includes('ปรับ')) {
+      const tip = lang === 'th'
+        ? faceFeedbackTipsTH[Math.floor(Math.random() * faceFeedbackTipsTH.length)]
+        : faceFeedbackTips[Math.floor(Math.random() * faceFeedbackTips.length)];
+      speak(tip);
+    }
+  }, [facePhase, faceFeedback, lang]);
+
+  if (mode === "face") {
+    // No start button, auto-starts
     return (
       <div style={{ textAlign: "center", padding: "20px" }}>
-        <h1>Face Rep Tracker</h1>
+        <h1>Face Rehabilitation</h1>
         <video ref={videoRef} style={{ display: "none" }} autoPlay playsInline />
         <canvas ref={canvasRef} width="640" height="480" style={{ border: "1px solid #ccc", borderRadius: "8px" }} />
         <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 40 }}>
           <div style={{ background: '#007bff', color: 'white', padding: 15, borderRadius: 8, textAlign: 'center', minWidth: 120 }}>
-            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{repCount}</div>
-            <div style={{ fontSize: 14, marginTop: 5 }}>Reps Completed / 5</div>
+            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{faceCurrentSet}</div>
+            <div style={{ fontSize: 14, marginTop: 5 }}>Set / 5</div>
           </div>
           <div style={{ background: '#007bff', color: 'white', padding: 15, borderRadius: 8, textAlign: 'center', minWidth: 120 }}>
-            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{holdTime.toFixed(1)}</div>
+            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{faceHeldTime}</div>
             <div style={{ fontSize: 14, marginTop: 5 }}>Hold Time (s)</div>
           </div>
         </div>
         <div style={{ marginTop: 20, padding: 15, background: '#e9ecef', borderRadius: 8, textAlign: 'center' }}>
-          <p><strong>Instructions:</strong> Tilt your head back and hold for 10 seconds. Target: 5 reps.</p>
+          <p><strong>Instructions:</strong> Tilt your head back and hold for 10 seconds. Complete 5 sets.</p>
         </div>
-        <div style={{ marginTop: 10, padding: 10, borderRadius: 5, textAlign: 'center', fontWeight: 'bold', backgroundColor: faceStatus.type === 'error' ? '#dc3545' : faceStatus.type === 'loading' ? '#ffc107' : '#28a745', color: faceStatus.type === 'error' ? '#fff' : faceStatus.type === 'loading' ? '#856404' : '#fff' }}>
-          {faceStatus.message || faceError}
-        </div>
-        {holdTime === 0 && repCount < targetReps && (
-          <div style={{ color: '#ff9800', fontSize: 16, marginTop: 10 }}>
-            Tip: {faceTip}
-          </div>
+        {facePhase === "countdown" && (
+          <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginTop: 20 }}>Get Ready! Countdown: {faceCountdown} s</div>
+        )}
+        {facePhase === "challenge" && (
+          <>
+            <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginTop: 20 }}>Set {faceCurrentSet} / 5<br/>Countdown: {faceChallengeCountdown} s</div>
+            <div style={{ 
+              fontSize: 18, 
+              color: faceFeedbackColor, 
+              fontWeight: "bold", 
+              marginTop: 10,
+              padding: "10px",
+              borderRadius: "5px",
+              backgroundColor: faceFeedbackColor === "#00FF00" ? "#e8f5e8" : "#ffe8e8"
+            }}>
+              {faceFeedback}
+            </div>
+          </>
+        )}
+        {facePhase === "rest" && (
+          <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginTop: 20 }}>Rest Time: {faceRestCountdown} s<br/>Next: Set {faceCurrentSet} / 5</div>
+        )}
+        {facePhase === "showfinal" && (
+          <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginTop: 20 }}>Summary<br/><span style={{ color: '#333', fontSize: 18, whiteSpace: 'pre-line' }}>{faceFinalMessage}</span></div>
         )}
       </div>
     );
