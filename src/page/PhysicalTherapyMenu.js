@@ -63,8 +63,7 @@ const PhysicalTherapyMenu = () => {
         <aside style={{ width: 280, background: '#fff', boxShadow: '2px 0 16px 0 rgba(30,136,229,0.06)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0' }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: 36 }}>
-            <img src="/logo192.png" alt="ReHabit Logo" style={{ width: 38, height: 38, marginRight: 10 }} />
-            <span style={{ fontWeight: 700, fontSize: 24, color: '#1976d2', letterSpacing: 1 }}>ReHabit</span>
+            <span style={{ fontWeight: 700, fontSize: 24, color: '#4392B1', letterSpacing: 1 }}>ReHabit</span>
           </div>
           {/* Search */}
           <div style={{ width: '50%', marginBottom: 32, position: 'relative', alignSelf: 'flex-start', marginLeft: 25 }}>
@@ -73,7 +72,7 @@ const PhysicalTherapyMenu = () => {
               left: 16,
               top: '50%',
               transform: 'translateY(-50%)',
-              color: '#1976d2',
+              color: '#4392B1',
               pointerEvents: 'none',
               display: 'flex',
               alignItems: 'center',
@@ -106,8 +105,8 @@ const PhysicalTherapyMenu = () => {
               <div
                 key={item.label}
                 style={{
-                  background: item.active ? '#1976d2' : 'transparent',
-                  color: item.active ? '#fff' : '#1976d2',
+                  background: item.active ? '#4392B1' : 'transparent',
+                  color: item.active ? '#fff' : '#4392B1',
                   borderRadius: 10,
                   padding: '12px 18px',
                   marginBottom: 10,
@@ -184,7 +183,7 @@ const PhysicalTherapyMenu = () => {
           .pt-menu-logo-text {
             font-weight: 700;
             font-size: 24px;
-            color: #1976d2;
+            color: #4392B1;
             letter-spacing: 1px;
           }
           .pt-menu-search {
@@ -197,7 +196,7 @@ const PhysicalTherapyMenu = () => {
             left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: #1976d2;
+            color: #4392B1;
             pointer-events: none;
             display: flex;
             align-items: center;
@@ -218,7 +217,7 @@ const PhysicalTherapyMenu = () => {
           }
           .pt-menu-nav-item {
             background: transparent;
-            color: #1976d2;
+            color: #4392B1;
             border-radius: 10px;
             padding: 12px 18px;
             margin-bottom: 10px;
@@ -229,7 +228,7 @@ const PhysicalTherapyMenu = () => {
             text-align: left;
           }
           .pt-menu-nav-item.active {
-            background: #1976d2;
+            background: #4392B1;
             color: #fff;
           }
           .pt-menu-main {
@@ -405,7 +404,7 @@ const PhysicalTherapyMenu = () => {
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: 36 }}>
             <img src="/logo192.png" alt="ReHabit Logo" style={{ width: 38, height: 38, marginRight: 10 }} />
-            <span style={{ fontWeight: 700, fontSize: 24, color: '#1976d2', letterSpacing: 1 }}>ReHabit</span>
+            <span style={{ fontWeight: 700, fontSize: 24, color: '#4392B1', letterSpacing: 1 }}>ReHabit</span>
           </div>
           {/* Search */}
           <div style={{ width: '50%', marginBottom: 32, position: 'relative', alignSelf: 'flex-start', marginLeft: 25 }}>
@@ -414,7 +413,7 @@ const PhysicalTherapyMenu = () => {
               left: 16,
               top: '50%',
               transform: 'translateY(-50%)',
-              color: '#1976d2',
+              color: '#4392B1',
               pointerEvents: 'none',
               display: 'flex',
               alignItems: 'center',
@@ -447,8 +446,8 @@ const PhysicalTherapyMenu = () => {
               <div
                 key={item.label}
                 style={{
-                  background: item.active ? '#1976d2' : 'transparent',
-                  color: item.active ? '#fff' : '#1976d2',
+                  background: item.active ? '#4392B1' : 'transparent',
+                  color: item.active ? '#fff' : '#4392B1',
                   borderRadius: 10,
                   padding: '12px 18px',
                   marginBottom: 10,
@@ -525,7 +524,7 @@ const PhysicalTherapyMenu = () => {
           .pt-menu-logo-text {
             font-weight: 700;
             font-size: 24px;
-            color: #1976d2;
+            color: #4392B1;
             letter-spacing: 1px;
           }
           .pt-menu-search {
@@ -538,7 +537,7 @@ const PhysicalTherapyMenu = () => {
             left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: #1976d2;
+            color: #4392B1;
             pointer-events: none;
             display: flex;
             align-items: center;
@@ -559,7 +558,7 @@ const PhysicalTherapyMenu = () => {
           }
           .pt-menu-nav-item {
             background: transparent;
-            color: #1976d2;
+            color: #4392B1;
             border-radius: 10px;
             padding: 12px 18px;
             margin-bottom: 10px;
@@ -570,7 +569,7 @@ const PhysicalTherapyMenu = () => {
             text-align: left;
           }
           .pt-menu-nav-item.active {
-            background: #1976d2;
+            background: #4392B1;
             color: #fff;
           }
           .pt-menu-main {

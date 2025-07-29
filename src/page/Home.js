@@ -268,7 +268,7 @@ const Home = () => {
           }
           .therapy-tab {
             background: #e0f2fe;
-            color: #1976d2;
+            color: #4392B1;
             border: none;
             border-radius: 8px;
             padding: 10px 24px;
@@ -278,7 +278,7 @@ const Home = () => {
             transition: background 0.2s, color 0.2s;
           }
           .therapy-tab.active {
-            background: #1976d2;
+            background: #4392B1;
             color: #fff;
           }
           .therapy-tab:hover {
@@ -334,7 +334,7 @@ const Home = () => {
           }
           .therapy-btn {
             margin-top: 24px;
-            background: #1976d2;
+            background: #4392B1;
             color: #fff;
             border: none;
             border-radius: 8px;
@@ -735,7 +735,7 @@ const Home = () => {
           }
           .therapy-tab {
             background: #e0f2fe;
-            color: #1976d2;
+            color: #4392B1;
             border: none;
             border-radius: 8px;
             padding: 10px 24px;
@@ -745,7 +745,7 @@ const Home = () => {
             transition: background 0.2s, color 0.2s;
           }
           .therapy-tab.active {
-            background: #1976d2;
+            background: #4392B1;
             color: #fff;
           }
           .therapy-tab:hover {
@@ -801,7 +801,7 @@ const Home = () => {
           }
           .therapy-btn {
             margin-top: 24px;
-            background: #1976d2;
+            background: #4392B1;
             color: #fff;
             border: none;
             border-radius: 8px;
