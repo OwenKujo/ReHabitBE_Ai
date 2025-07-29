@@ -9,16 +9,77 @@ function PoseAngleDetector() {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel(); // Stop any current speech
       const utter = new window.SpeechSynthesisUtterance(text);
-      // Try to select a Thai voice if available
       const voices = window.speechSynthesis.getVoices();
-      const thaiVoice = voices.find(v => v.lang && v.lang.startsWith('th'));
-      if (thaiVoice) utter.voice = thaiVoice;
-      utter.lang = thaiVoice ? thaiVoice.lang : 'th-TH';
-      utter.rate = 0.95;
+
+      // Simple language detection: if text contains Thai characters, use Thai voice
+      const isThai = /[ก-๙]/.test(text);
+
+      if (isThai) {
+        const thaiVoice = voices.find(v => v.lang && v.lang.startsWith('th'));
+        if (thaiVoice) utter.voice = thaiVoice;
+        utter.lang = thaiVoice ? thaiVoice.lang : 'th-TH';
+      } else {
+        // Prefer English voice
+        const enVoice = voices.find(v => v.lang && v.lang.startsWith('en'));
+        if (enVoice) utter.voice = enVoice;
+        utter.lang = enVoice ? enVoice.lang : 'en-US';
+      }
+
+      utter.rate = 0.8; // slower than default
       utter.pitch = 1;
       window.speechSynthesis.speak(utter);
     }
   }
+function playBeep(frequency = 800, duration = 300, volume = 0.3) {
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Create oscillator for the beep tone
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      // Connect oscillator to gain to destination
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // Configure the beep
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.type = 'sine';
+      
+      // Configure volume with fade out to avoid clicking
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+      
+      // Start and stop the oscillator
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration / 1000);
+      
+      // Clean up
+      setTimeout(() => {
+        try {
+          audioContext.close();
+        } catch (e) {
+          console.warn("Error closing audio context:", e);
+        }
+      }, duration + 100);
+      
+    } catch (error) {
+      console.warn("Could not play beep sound:", error);
+      // Fallback: try to play a system beep or alert sound
+      try {
+        // This might work in some browsers as a fallback
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp6KFMEAVOqOPxsGIcBTWOzu/Pfy0GII++7+OYSwsUXrXo557NjSCOze+9dy0FJqZyKBwAAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp6KFMEAVOqOPxsGIcBTWOzu/Pfy0GII++7+OYSwsUXrXo557NjS');
+        audio.play().catch(() => {
+          // Silent fail if audio can't play
+        });
+      } catch (e) {
+        // Silent fail for fallback too
+      }
+    }
+  }
+
+
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -135,7 +196,11 @@ function PoseAngleDetector() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (results.image) {
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.translate(-canvas.width, 0);
       ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+      ctx.restore();
     }
 
     if (results.multiFaceLandmarks?.length > 0) {
@@ -560,6 +625,7 @@ function PoseAngleDetector() {
   const startChallenge = () => {
     setPhase("challenge");
     setHeldTime(0);
+    playBeep(800,1000,0.4)
     setFinalMessage("");
     setIsHolding(false);
     setChallengeCountdown(holdTimePerSet);
@@ -653,19 +719,26 @@ function PoseAngleDetector() {
     }
   }, [phase, challengeCountdown, heldTime, currentSet, incorrectTime]);
 
-  // When all sets are finished
+  // When finished, just set the phase and summary
   useEffect(() => {
     if (phase === "finished") {
-      setPhase("showfinal");
-      // Calculate score out of 10
       const maxCorrect = totalSets * holdTimePerSet;
       const score = Math.round((totalCorrectTime / maxCorrect) * 10);
-      setFinalMessage(
-        `Total correct time: ${totalCorrectTime} seconds\nTotal incorrect time: ${totalIncorrectTime} seconds\nScore: ${score} / 10`
-      );
+      const summaryText = lang === 'th'
+        ? `เวลาท่าถูกต้องทั้งหมด: ${totalCorrectTime} วินาที\nคะแนน: ${score} เต็ม10`
+        : `Total correct time: ${totalCorrectTime} seconds\nScore: ${score} out of 10`;
+      setPhase("showfinal");
+      setFinalMessage(summaryText);
       setPoseScore(score);
     }
-  }, [phase, totalCorrectTime, totalIncorrectTime]);
+  }, [phase, totalCorrectTime, totalIncorrectTime, lang]);
+
+  // When showfinal phase is active, speak the summary
+  useEffect(() => {
+    if (phase === "showfinal" && finalMessage) {
+      speak(finalMessage);
+    }
+  }, [phase, finalMessage]);
 
   // Show final message for 5 seconds, then move to getready phase
   useEffect(() => {
@@ -673,7 +746,7 @@ function PoseAngleDetector() {
       const timeout = setTimeout(() => {
         setPhase("getready");
         setGetReadyCountdown(10);
-      }, 5000);
+      }, 10000);
       return () => clearTimeout(timeout);
     }
   }, [phase]);
@@ -686,6 +759,7 @@ function PoseAngleDetector() {
           if (prev <= 1) {
             clearInterval(interval);
             setGetReadyCountdown(0);
+            playBeep(800,1000,0.4)
             setMode("face");
             return 0;
           }
@@ -756,20 +830,24 @@ function PoseAngleDetector() {
   // Update pose tip when feedback changes to Incorrect
   useEffect(() => {
     if (phase === "challenge" && feedback === "Incorrect") {
-      const tip = poseTips[Math.floor(Math.random() * poseTips.length)];
+      const tip = lang === 'th'
+        ? poseTipsTH[Math.floor(Math.random() * poseTipsTH.length)]
+        : poseTips[Math.floor(Math.random() * poseTips.length)];
       setPoseTip(tip);
       speak(tip);
     }
-  }, [phase, feedback]);
+  }, [phase, feedback, lang]);
 
   // Update face tip when user is not holding and in face mode
   useEffect(() => {
     if (mode === "face" && holdTime === 0 && repCount < targetReps) {
-      const tip = faceTips[Math.floor(Math.random() * faceTips.length)];
+      const tip = lang === 'th'
+        ? faceTipsTH[Math.floor(Math.random() * faceTipsTH.length)]
+        : faceTips[Math.floor(Math.random() * faceTips.length)];
       setFaceTip(tip);
       speak(tip);
     }
-  }, [mode, holdTime, repCount]);
+  }, [mode, holdTime, repCount, lang]);
 
   useEffect(() => {
     return () => {
@@ -783,7 +861,11 @@ function PoseAngleDetector() {
   useEffect(() => {
     if (permissionState === 'granted' && phase === 'idle') {
       if (!window.__rehabit_instruction_read) {
+        // Speak both Thai and English instructions
         speak('1. ปรับมุมกล้องให้เห็นครึ่งตัวด้านบน และแสงในห้องพอดี 2. ปรับมุมการนั่งเป็นแนวข้าง ให้แขนขวาของคุณเข้าหากล้อง');
+        setTimeout(() => {
+          speak('1. Adjust the camera to see your upper body and ensure good lighting. 2. Sit sideways so your right arm faces the camera.');
+        }, 3000); // Wait 3 seconds before English version
         window.__rehabit_instruction_read = true;
       }
     } else if (permissionState !== 'granted') {
@@ -895,7 +977,7 @@ function PoseAngleDetector() {
         </div>
         {holdTime === 0 && repCount < targetReps && (
           <div style={{ color: '#ff9800', fontSize: 16, marginTop: 10 }}>
-             Tip: {faceTip}
+            Tip: {faceTip}
           </div>
         )}
       </div>
