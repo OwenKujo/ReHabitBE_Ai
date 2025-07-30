@@ -210,10 +210,12 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     return pitch;
   };
 
-  // Fix the threshold logic - when tilted back, pitch should be negative
+  // Fix the threshold logic - when tilted back, pitch should be positive
   function isFacePoseCorrect(pitch) {
-    // When head is tilted back (looking up), pitch should be negative
-    return pitch < -pitchThreshold;
+    // When head is tilted back (looking up), pitch should be positive
+    // Based on your values: straight=-110, down=-130, up=-80
+    // So we want pitch > -90 (or some threshold around there)
+    return pitch > -90;
   }
 
   // Only keep the set-based face tracker version of onFaceResults (the one using facePhase, setFaceIsHolding, etc.)
@@ -951,8 +953,10 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
 
   // --- FACE MODE LOGIC ---
   function isFacePoseCorrect(pitch) {
-    // When head is tilted back, pitch should be negative and less than -threshold
-    return pitch < -pitchThreshold;
+    // When head is tilted back, pitch should be positive
+    // Based on your values: straight=-110, down=-130, up=-80
+    // So we want pitch > -90 (or some threshold around there)
+    return pitch > -90;
   }
 
   // Face mesh initialization and cleanup
