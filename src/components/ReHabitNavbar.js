@@ -55,12 +55,12 @@ function ReHabitNavbar() {
         .navbar-flex {
           display: flex;
           align-items: center;
-          justify-content: space-between;
           height: 64px;
         }
         .navbar-logo {
           display: flex;
           align-items: center;
+          margin-right: 48px;
         }
         .navbar-logo-icon {
           width: 32px;
@@ -80,6 +80,7 @@ function ReHabitNavbar() {
           display: flex;
           align-items: center;
           gap: 32px;
+          margin-left: auto;
         }
         .navbar-nav-item {
           padding: 8px 12px;
@@ -103,6 +104,7 @@ function ReHabitNavbar() {
           display: flex;
           align-items: center;
           gap: 16px;
+          margin-left: 32px;
         }
         .navbar-icon-btn {
           position: relative;
