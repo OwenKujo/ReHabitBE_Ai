@@ -1398,7 +1398,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   // Automatically start face rehab when switching to face mode
   useEffect(() => {
     console.log("DEBUG: useEffect triggered - mode:", mode, "facePhase:", facePhase);
-    setMode("face");
+    // setMode("face");
     
     if (mode === 'face' && facePhase === 'idle') {
       console.log("DEBUG: Starting face countdown");
