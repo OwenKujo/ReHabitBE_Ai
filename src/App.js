@@ -8,6 +8,8 @@ import Home from './page/Home';
 import EditProfile from './page/EditProfile';
 import OfficeSyndromePage from './page/OfficeSyndrome';
 import ContactUs from './page/ContactUs';
+import Login from './page/Login';
+import Register from './page/Register';
 import Footer from './components/Footer';
 import MediaPipefullDemo from './page/MediaPipefulldemo'
 import './i18n';
@@ -38,6 +40,8 @@ function App() {
           <Route path="/edit-profile" element={<EditProfile />} />  
           <Route path="/office-syndrome" element={<OfficeSyndromePage />} />
           <Route path="/contact" element={<ContactUs />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/officesyndromerehab" element={<MediaPipefull />} />
           <Route path="/demo" element={<MediaPipefullDemo />} />
          

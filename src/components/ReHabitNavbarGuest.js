@@ -78,7 +78,7 @@ function ReHabitNavbarGuest() {
         }
         .navbar-login-btn {
           padding: 8px 16px;
-          background-color: #2563eb;
+          background-color: #4392B1;
           color: white;
           border: none;
           border-radius: 6px;
@@ -168,9 +168,9 @@ function ReHabitNavbarGuest() {
               <button
                 onClick={() => changeLang('en')}
                 style={{
-                  background: lang === 'en' ? '#1976d2' : '#fff',
-                  color: lang === 'en' ? '#fff' : '#1976d2',
-                  border: '1px solid #1976d2',
+                  background: lang === 'en' ? '#4392B1' : '#fff',
+                  color: lang === 'en' ? '#fff' : '#4392B1',
+                  border: '1px solid #4392B1',
                   borderRadius: 6,
                   padding: '4px 12px',
                   fontWeight: 700,
@@ -182,9 +182,9 @@ function ReHabitNavbarGuest() {
               <button
                 onClick={() => changeLang('th')}
                 style={{
-                  background: lang === 'th' ? '#1976d2' : '#fff',
-                  color: lang === 'th' ? '#fff' : '#1976d2',
-                  border: '1px solid #1976d2',
+                  background: lang === 'th' ? '#4392B1' : '#fff',
+                  color: lang === 'th' ? '#fff' : '#4392B1',
+                  border: '1px solid #4392B1',
                   borderRadius: 6,
                   padding: '4px 12px',
                   fontWeight: 700,
