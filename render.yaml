@@ -11,17 +11,29 @@ services:
     name: rehabit-backend
     env: node
     plan: free
-    buildCommand: npm run build:server
-    startCommand: npm run start:server
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGIN
-        value: https://your-frontend-domain.com
+        value: https://rehabit-frontend.onrender.com
       - key: DATABASE_URL
         fromService:
           name: rehabit-postgres
           type: pserv
-          property: connectionString 
+          property: connectionString
+
+  # Frontend React App
+  - type: web
+    name: rehabit-frontend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npx serve -s build -l $PORT
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://rehabit-backend.onrender.com 

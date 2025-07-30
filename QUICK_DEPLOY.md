@@ -10,21 +10,46 @@ Make sure your code is pushed to GitHub with the latest changes.
 2. Click "New" → "Blueprint"
 3. Connect your GitHub repository
 4. Render will automatically detect the `render.yaml` file
-5. Click "Apply" to deploy both the database and backend
+5. Click "Apply" to deploy:
+   - PostgreSQL Database
+   - Backend API
+   - Frontend React App
 
-### Step 3: Configure Environment Variables
-After deployment, update these in your Render dashboard:
+### Step 3: Service Configuration
 
-- `CORS_ORIGIN`: Set to your frontend domain (or `http://localhost:3000` for local testing)
-- `JWT_SECRET`: Should be auto-generated, but you can set a custom one
+**Backend Service (`rehabit-backend`):**
+- Root Directory: `server`
+- Build Command: `npm install`
+- Start Command: `npm start`
 
-### Step 4: Test the API
-Your API will be available at: `https://rehabit-backend.onrender.com`
+**Frontend Service (`rehabit-frontend`):**
+- Root Directory: `/` (root)
+- Build Command: `npm install && npm run build`
+- Start Command: `npx serve -s build -l $PORT`
 
-Test endpoints:
-- Health check: `GET https://rehabit-backend.onrender.com/api/health`
+### Step 4: Environment Variables
+
+**Backend Environment Variables:**
+```
+NODE_ENV=production
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
+CORS_ORIGIN=https://rehabit-frontend.onrender.com
+```
+
+**Frontend Environment Variables:**
+```
+REACT_APP_API_URL=https://rehabit-backend.onrender.com
+```
+
+### Step 5: Test the Deployment
+
+**Backend API URLs:**
+- Health check: `https://rehabit-backend.onrender.com/api/health`
 - Register: `POST https://rehabit-backend.onrender.com/api/auth/register`
 - Login: `POST https://rehabit-backend.onrender.com/api/auth/login`
+
+**Frontend URL:**
+- Main app: `https://rehabit-frontend.onrender.com`
 
 ## 🧪 Testing Commands
 
@@ -55,11 +80,12 @@ If deployment fails:
 1. Check the build logs in Render dashboard
 2. Ensure all files are committed to GitHub
 3. Verify the `render.yaml` is in the root directory
-4. Check that the `server` folder exists and contains `package.json`
+4. Check that both `server/` and root directories have their own `package.json`
 
-## 📝 Next Steps
+## ✅ Benefits of This Setup
 
-After successful deployment:
-1. Update your frontend to use the new API URL
-2. Deploy your frontend to a hosting service
-3. Update the `CORS_ORIGIN` to match your frontend domain 
+- ✅ **No conflicts** between frontend and backend builds
+- ✅ **Separate scaling** for each service
+- ✅ **Independent deployments** - update one without affecting the other
+- ✅ **Proper environment variables** for each service
+- ✅ **Clear separation** of concerns 
