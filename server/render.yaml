@@ -1,0 +1,27 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: rehabit-postgres
+    env: postgresql
+    plan: free
+    ipAllowList: []
+
+  # Backend API
+  - type: web
+    name: rehabit-backend
+    env: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://your-frontend-domain.com
+      - key: DATABASE_URL
+        fromService:
+          name: rehabit-postgres
+          type: pserv
+          property: connectionString 

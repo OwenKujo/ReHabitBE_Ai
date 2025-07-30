@@ -134,8 +134,8 @@ function ContactUs() {
           }
           .floating-label-group input:focus,
           .floating-label-group textarea:focus {
-            border: 1.5px solid #1976d2;
-            box-shadow: 0 2px 8px rgba(30,136,229,0.10);
+            border: 1.5px solid #4392B1;
+            box-shadow: 0 2px 8px rgba(67, 146, 177, 0.10);
           }
           .floating-label {
             position: absolute;
@@ -154,12 +154,12 @@ function ContactUs() {
             top: -10px;
             left: 10px;
             font-size: 12px;
-            color: #1976d2;
+            color: #4392B1;
             background: #fff;
             padding: 0 4px;
           }
           .contact-form button {
-            background-color: #1976d2;
+            background-color: #4392B1;
             color: white;
             padding: 14px 36px;
             border: none;
@@ -169,7 +169,7 @@ function ContactUs() {
             font-weight: 700;
             cursor: pointer;
             margin-top: 10px;
-            box-shadow: 0 2px 8px rgba(30,136,229,0.10);
+            box-shadow: 0 2px 8px rgba(67, 146, 177, 0.10);
             transition: background 0.2s, transform 0.1s;
           }
           .contact-form button:hover {
@@ -226,10 +226,10 @@ function ContactUs() {
           .cta-section p {
             font-size: 14px;
             margin-bottom: 28px;
-            color: #1976d2;
+            color: #4392B1;
           }
           .cta-section button {
-            background-color: #1976d2;
+            background-color: #4392B1;
             color: white;
             padding: 14px 36px;
             border-radius: 8px;
@@ -238,7 +238,7 @@ function ContactUs() {
             font-family: 'Kanit', 'Prompt', Arial, sans-serif;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(30,136,229,0.10);
+            box-shadow: 0 2px 8px rgba(67, 146, 177, 0.10);
             transition: background 0.2s, transform 0.1s;
           }
           .cta-section button:hover {
