@@ -896,7 +896,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   }, []);
 
   // --- FACE MODE STATE (set-based tracker) ---
-  const [facePhase, setFacePhase] = useState("idle"); // idle, countdown, challenge, rest, finished, showfinal
+  const [facePhase, setFacePhase] = useState("idle"); // idle, countdown, challenge, rest, finished, showfinal, conclusion
   const [faceCountdown, setFaceCountdown] = useState(10);
   const [faceCurrentSet, setFaceCurrentSet] = useState(1);
   const [faceHeldTime, setFaceHeldTime] = useState(0);
@@ -1202,11 +1202,12 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
               setFaceChallengeCountdown(10);
             } else {
               setFacePhase("finished");
-              const score = Math.round((faceTotalCorrectTime / 50) * 10);
+              const maxCorrect = 5 * 10;
+              const faceScore = Math.round((faceTotalCorrectTime / maxCorrect) * 10);
               setFaceFinalMessage(
                 lang === 'th'
-                  ? `เวลาท่าถูกต้องทั้งหมด: ${faceTotalCorrectTime} วินาที\nคะแนน: ${score} เต็ม 10`
-                  : `Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${score} out of 10`
+                  ? `เวลาท่าถูกต้องทั้งหมด: ${faceTotalCorrectTime} วินาที\nคะแนน: ${faceScore} เต็ม 10`
+                  : `Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${faceScore} out of 10`
               );
             }
             return 0;
@@ -1223,7 +1224,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [facePhase, faceChallengeCountdown, faceIsHolding, faceCurrentSet, faceTotalCorrectTime, lang]);
+  }, [facePhase, faceChallengeCountdown, faceIsHolding, faceCurrentSet, faceTotalCorrectTime, faceTotalIncorrectTime, lang]);
 
   // Hold time tracking effect
   useEffect(() => {
@@ -1297,15 +1298,41 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   useEffect(() => {
     if (facePhase === "finished") {
       const maxCorrect = 5 * 10;
-      const score = Math.round((faceTotalCorrectTime / maxCorrect) * 10);
+      const faceScore = Math.round((faceTotalCorrectTime / maxCorrect) * 10);
       setFacePhase("showfinal");
-      setFaceFinalMessage(`Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${score} out of 10`);
+      setFaceFinalMessage(
+        lang === 'th'
+          ? `เวลาท่าถูกต้องทั้งหมด: ${faceTotalCorrectTime} วินาที\nคะแนน: ${faceScore} เต็ม 10`
+          : `Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${faceScore} out of 10`
+      );
     }
-  }, [facePhase, faceTotalCorrectTime, faceTotalIncorrectTime]);
+  }, [facePhase, faceTotalCorrectTime, faceTotalIncorrectTime, lang]);
 
-  // Show final message for 10 seconds, then return to physicaltherapy
+  // Show final message for 5 seconds, then show conclusion with both scores
   useEffect(() => {
     if (facePhase === "showfinal") {
+      const timeout = setTimeout(() => {
+        setFacePhase("conclusion");
+        // Calculate both scores
+        const maxPoseCorrect = totalSets * holdTimePerSet;
+        const poseScore = Math.round((totalCorrectTime / maxPoseCorrect) * 10);
+        const maxFaceCorrect = 5 * 10;
+        const faceScore = Math.round((faceTotalCorrectTime / maxFaceCorrect) * 10);
+        
+        const conclusionMessage = lang === 'th'
+          ? `สรุปผลการทดสอบ:\n\nท่าทางแขน:\n- เวลาท่าถูกต้อง: ${totalCorrectTime} วินาที\n- คะแนน: ${poseScore} เต็ม 10\n\nท่าทางศีรษะ:\n- เวลาท่าถูกต้อง: ${faceTotalCorrectTime} วินาที\n- คะแนน: ${faceScore} เต็ม 10\n\nคะแนนรวม: ${Math.round((poseScore + faceScore) / 2)} เต็ม 10`
+          : `Test Results Summary:\n\nArm Pose:\n- Total correct time: ${totalCorrectTime} seconds\n- Score: ${poseScore} out of 10\n\nFace Pose:\n- Total correct time: ${faceTotalCorrectTime} seconds\n- Score: ${faceScore} out of 10\n\nOverall Score: ${Math.round((poseScore + faceScore) / 2)} out of 10`;
+        
+        setFaceFinalMessage(conclusionMessage);
+        speak(conclusionMessage);
+      }, 5000); // 5 second delay
+      return () => clearTimeout(timeout);
+    }
+  }, [facePhase, totalCorrectTime, faceTotalCorrectTime, lang]);
+
+  // Show conclusion for 5 seconds, then return to physicaltherapy
+  useEffect(() => {
+    if (facePhase === "conclusion") {
       const timeout = setTimeout(() => {
         navigate('/physicaltherapy');
       }, 10000);
@@ -1352,11 +1379,12 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
               setFaceChallengeCountdown(10);
             } else {
               setFacePhase("finished");
-              const score = Math.round((faceTotalCorrectTime / 50) * 10);
+              const maxCorrect = 5 * 10;
+              const faceScore = Math.round((faceTotalCorrectTime / maxCorrect) * 10);
               setFaceFinalMessage(
                 lang === 'th'
-                  ? `เวลาท่าถูกต้องทั้งหมด: ${faceTotalCorrectTime} วินาที\nคะแนน: ${score} เต็ม 10`
-                  : `Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${score} out of 10`
+                  ? `เวลาท่าถูกต้องทั้งหมด: ${faceTotalCorrectTime} วินาที\nคะแนน: ${faceScore} เต็ม 10`
+                  : `Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${faceScore} out of 10`
               );
             }
             return 0;
@@ -1373,7 +1401,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [mode, facePhase, faceChallengeCountdown, faceIsHolding, faceCurrentSet, faceTotalCorrectTime, lang]);
+  }, [mode, facePhase, faceChallengeCountdown, faceIsHolding, faceCurrentSet, faceTotalCorrectTime, faceTotalIncorrectTime, lang]);
 
   // Face rest timer effect
   useEffect(() => {
@@ -1398,7 +1426,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   // Automatically start face rehab when switching to face mode
   useEffect(() => {
     console.log("DEBUG: useEffect triggered - mode:", mode, "facePhase:", facePhase);
-    // setMode("face");
+     setMode("face");
     
     if (mode === 'face' && facePhase === 'idle') {
       console.log("DEBUG: Starting face countdown");
@@ -1568,6 +1596,32 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
                   </div>
                   <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
                     {faceFinalMessage}
+                  </div>
+                </div>
+              )}
+              {facePhase === "showfinal" && (
+                <div>
+                  <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>
+                    {lang === 'th' ? 'ผลการทดสอบท่าทางศีรษะ' : 'Face Pose Results'}
+                  </div>
+                  <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
+                    {faceFinalMessage}
+                  </div>
+                  <div style={{ fontSize: 16, color: "#1976d2", fontStyle: "italic" }}>
+                    {lang === 'th' ? 'รอ 5 วินาทีเพื่อดูสรุปผลรวม...' : 'Wait 5 seconds for complete summary...'}
+                  </div>
+                </div>
+              )}
+              {facePhase === "conclusion" && (
+                <div>
+                  <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>
+                    {lang === 'th' ? 'สรุปผลการทดสอบทั้งหมด' : 'Complete Test Summary'}
+                  </div>
+                  <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
+                    {faceFinalMessage}
+                  </div>
+                  <div style={{ fontSize: 16, color: "#1976d2", fontStyle: "italic" }}>
+                    {lang === 'th' ? 'กลับไปหน้าฟื้นฟูใน 5 วินาที...' : 'Returning to therapy page in 5 seconds...'}
                   </div>
                 </div>
               )}
