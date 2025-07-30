@@ -1,12 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Bell, ChevronDown, User, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useLang } from '../App';
+import { useLang, useAuth } from '../App';
+import LogoutConfirm from './LogoutConfirm';
 
 function ReHabitNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { lang, changeLang } = useLang();
+  const { user, logout } = useAuth();
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const navItems = lang === 'th' ? [
     { name: 'หน้าหลัก', href: '/', active: true },
@@ -37,12 +55,12 @@ function ReHabitNavbar() {
         .navbar-flex {
           display: flex;
           align-items: center;
-          justify-content: space-between;
           height: 64px;
         }
         .navbar-logo {
           display: flex;
           align-items: center;
+          margin-right: 48px;
         }
         .navbar-logo-icon {
           width: 32px;
@@ -62,6 +80,7 @@ function ReHabitNavbar() {
           display: flex;
           align-items: center;
           gap: 32px;
+          margin-left: auto;
         }
         .navbar-nav-item {
           padding: 8px 12px;
@@ -85,6 +104,7 @@ function ReHabitNavbar() {
           display: flex;
           align-items: center;
           gap: 16px;
+          margin-left: 32px;
         }
         .navbar-icon-btn {
           position: relative;
@@ -136,6 +156,7 @@ function ReHabitNavbar() {
           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
           padding: 4px 0;
           z-index: 50;
+          border: 1px solid #e5e7eb;
         }
         .navbar-dropdown-item {
           display: block;
@@ -145,6 +166,10 @@ function ReHabitNavbar() {
           text-decoration: none;
           cursor: pointer;
           transition: background-color 0.2s;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
         }
         .navbar-dropdown-item:hover {
           background-color: #f3f4f6;
@@ -171,8 +196,6 @@ function ReHabitNavbar() {
           .navbar-mobile-menu-btn {
             display: block;
           }
-        }
-        @media (max-width: 900px) {
           .navbar-mobile-menu {
             display: ${isMenuOpen ? 'block' : 'none'};
             background-color: #374151;
@@ -188,6 +211,10 @@ function ReHabitNavbar() {
           }
           .navbar-logo-text {
             font-size: 16px;
+          }
+          .navbar-nav-item {
+            font-size: 12px;
+            padding: 6px 8px;
           }
         }
       `}</style>
@@ -257,22 +284,33 @@ function ReHabitNavbar() {
               <span className="navbar-notification-dot"></span>
             </button>
             {/* Profile Dropdown */}
-            <button
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="navbar-profile-btn"
-            >
-              <div className="navbar-profile-icon">
-                <User size={20} />
-              </div>
-              <ChevronDown size={16} />
-            </button>
-            {isProfileOpen && (
-              <div className="navbar-dropdown">
-                <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'โปรไฟล์ของคุณ' : 'Your Profile'}</Link>
-                <Link to="/edit-profile" className="navbar-dropdown-item" onClick={() => setIsProfileOpen(false)}>{lang === 'th' ? 'แก้ไขโปรไฟล์' : 'Edit Profile'}</Link>
-                <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'ออกจากระบบ' : 'Sign Out'}</Link>
-              </div>
-            )}
+            <div style={{ position: 'relative' }} ref={dropdownRef}>
+              <button
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="navbar-profile-btn"
+              >
+                <div className="navbar-profile-icon">
+                  <User size={20} />
+                </div>
+                <ChevronDown size={16} />
+              </button>
+              {isProfileOpen && (
+                <div className="navbar-dropdown">
+                  <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'โปรไฟล์ของคุณ' : 'Your Profile'}</Link>
+                  <Link to="/edit-profile" className="navbar-dropdown-item" onClick={() => setIsProfileOpen(false)}>{lang === 'th' ? 'แก้ไขโปรไฟล์' : 'Edit Profile'}</Link>
+                  <button 
+                    onClick={() => {
+                      setShowLogoutConfirm(true);
+                      setIsProfileOpen(false);
+                    }} 
+                    className="navbar-dropdown-item"
+                    style={{ color: '#ef4444' }}
+                  >
+                    {lang === 'th' ? 'ออกจากระบบ' : 'Sign Out'}
+                  </button>
+                </div>
+              )}
+            </div>
             {/* Mobile menu button */}
             <button
               className="navbar-mobile-menu-btn"
@@ -302,15 +340,40 @@ function ReHabitNavbar() {
               <User size={24} />
             </div>
             <div style={{ marginLeft: 12, flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 500, color: 'white' }}>{lang === 'th' ? 'ชื่อผู้ใช้' : 'User Name'}</div>
-              <div style={{ fontSize: 14, color: '#9ca3af' }}>{lang === 'th' ? 'อีเมลผู้ใช้' : 'User Email'}</div>
+              <div style={{ fontSize: 16, fontWeight: 500, color: 'white' }}>{user?.name || (lang === 'th' ? 'ชื่อผู้ใช้' : 'User Name')}</div>
+              <div style={{ fontSize: 14, color: '#9ca3af' }}>{user?.email || (lang === 'th' ? 'อีเมลผู้ใช้' : 'User Email')}</div>
             </div>
             <button className="navbar-icon-btn">
               <Bell size={24} />
             </button>
           </div>
+          <div style={{ padding: '8px 12px', borderTop: '1px solid #4b5563', marginTop: 8 }}>
+            <Link to="/edit-profile" style={{ display: 'block', padding: '8px 12px', color: '#d1d5db', textDecoration: 'none', fontSize: 14 }}>
+              {lang === 'th' ? 'แก้ไขโปรไฟล์' : 'Edit Profile'}
+            </Link>
+            <button 
+              onClick={() => setShowLogoutConfirm(true)}
+              style={{
+                width: '100%',
+                padding: '8px 12px',
+                background: 'none',
+                border: 'none',
+                color: '#ef4444',
+                fontSize: 14,
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
+              {lang === 'th' ? 'ออกจากระบบ' : 'Sign Out'}
+            </button>
+          </div>
         </div>
       </div>
+      
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <LogoutConfirm onClose={() => setShowLogoutConfirm(false)} />
+      )}
     </nav>
   );
 }

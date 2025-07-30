@@ -183,29 +183,15 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       console.log('Missing nose or chin landmarks');
       return 0;
     }
-    
-    // When tilting head back (looking up):
-    // - nose moves up (smaller Y value)
-    // - chin moves down (larger Y value)
-    // - So (nose.y - chin.y) should be negative
+
     const dy = nose.y - chin.y;
     const dz = nose.z - chin.z;
     
-    // Use atan2(dy, dz) instead of atan2(dz, dy) for correct angle
+
     const radians = Math.atan2(dy, dz);
     const pitch = radians * (180 / Math.PI);
     
-    // console.log('Pitch calculation:', { 
-    //   noseY: nose.y.toFixed(3), 
-    //   chinY: chin.y.toFixed(3), 
-    //   noseZ: nose.z.toFixed(3),
-    //   chinZ: chin.z.toFixed(3),
-    //   dy: dy.toFixed(3),
-    //   dz: dz.toFixed(3),
-    //   pitch: pitch.toFixed(2),
-    //   threshold: pitchThreshold,
-    //   isCorrect: pitch < -pitchThreshold // Negative when tilted back
-    // });
+  
     
     return pitch;
   };
@@ -706,6 +692,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   }
 
   const startCountdown = () => {  //1
+    
     setPhase("countdown");
     setCountdown(10);
     setCurrentSet(1);
@@ -939,6 +926,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     setFaceIncorrectTime(0);
     setFaceTotalCorrectTime(0);
     setFaceTotalIncorrectTime(0);
+    playBeep(800,1000,0.4); // Beep when first set starts
     console.log("DEBUG: Face phase set to countdown, countdown set to 10");
   }
 
@@ -1150,20 +1138,21 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   useEffect(() => {
     if (permissionState === 'granted' && phase === 'idle') {
       if (!window.__rehabit_instruction_read) {
-        // Speak both Thai and English instructions
-        speak('1. ปรับมุมกล้องให้เห็นครึ่งตัวด้านบน และแสงในห้องพอดี 2. ปรับมุมการนั่งเป็นแนวข้าง ให้แขนขวาของคุณเข้าหากล้อง');
-        setTimeout(() => {
-          speak('1. Adjust the camera to see your upper body and ensure good lighting. 2. Sit sideways so your right arm faces the camera.');
-        }, 3000); // Wait 3 seconds before English version
+        // Speak instructions in the selected language only
+        const instructionText = lang === 'th'
+          ? '1. ปรับมุมกล้องให้เห็นครึ่งตัวด้านบน และแสงในห้องพอดี 2. ปรับมุมการนั่งเป็นแนวข้าง ให้แขนขวาของคุณเข้าหากล้อง'
+          : '1. Adjust the camera to see your upper body and ensure good lighting. 2. Sit sideways so your right arm faces the camera.';
+        speak(instructionText);
         window.__rehabit_instruction_read = true;
       }
     } else if (permissionState !== 'granted') {
       window.__rehabit_instruction_read = false;
     }
-  }, [permissionState, phase]);
+  }, [permissionState, phase, lang]);
 
   // Track last spoken countdown to avoid repeats
   const lastSpokenCountdownRef = useRef(null);
+  const lastFaceSpokenCountdownRef = useRef(null);
 
   // Voice countdown effect for challenge phase
   useEffect(() => {
@@ -1171,7 +1160,9 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       if (lastSpokenCountdownRef.current !== challengeCountdown) {
         speak(String(challengeCountdown));
         lastSpokenCountdownRef.current = challengeCountdown;
+        
       }
+      
     } else if (phase === "rest") {
       if (lastSpokenCountdownRef.current !== 0) {
         const finishText = lang === 'th'
@@ -1182,6 +1173,24 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       }
     }
   }, [phase, challengeCountdown, heldTime, currentSet, lang]);
+
+  // Voice countdown effect for face challenge phase
+  useEffect(() => {
+    if (mode === "face" && facePhase === "challenge" && faceChallengeCountdown <= 3 && faceChallengeCountdown > 0 && faceHeldTime < 10) {
+      if (lastFaceSpokenCountdownRef.current !== faceChallengeCountdown) {
+        speak(String(faceChallengeCountdown));
+        lastFaceSpokenCountdownRef.current = faceChallengeCountdown;
+      }
+    } else if (mode === "face" && facePhase === "rest") {
+      if (lastFaceSpokenCountdownRef.current !== 0) {
+        const finishText = lang === 'th'
+          ? `จบเซ็ตที่ ${faceCurrentSet-1}`
+          : `Finish set ${faceCurrentSet-1}`;
+        speak(finishText);
+        lastFaceSpokenCountdownRef.current = 0;
+      }
+    }
+  }, [mode, facePhase, faceChallengeCountdown, faceHeldTime, faceCurrentSet, lang]);
 
   // Speak summary when phase is 'finished'
   useEffect(() => {
@@ -1324,6 +1333,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
             setFaceChallengeCountdown(10);
             setFaceIsHolding(false);
             setFaceIncorrectTime(0);
+            playBeep(800,1000,0.4); // Beep when rest time ends
             return 0;
           }
           return prev - 1;
