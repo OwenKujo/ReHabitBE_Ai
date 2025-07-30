@@ -338,6 +338,17 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       ctx.fillText('No face detected - check camera', 10, 60);
     }
 
+    // In onFaceResults, after drawing the image and before any other text, add:
+    if (mode === 'face') {
+      ctx.save();
+      ctx.font = '16px Arial';
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.fillRect(8, 8, 120, 28);
+      ctx.fillStyle = 'white';
+      ctx.fillText('facePhase: ' + facePhase, 16, 28);
+      ctx.restore();
+    }
+
     ctx.restore();
   };
 
@@ -872,8 +883,11 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   const [faceTotalCorrectTime, setFaceTotalCorrectTime] = useState(0);
   const [faceTotalIncorrectTime, setFaceTotalIncorrectTime] = useState(0);
   const [faceFinalMessage, setFaceFinalMessage] = useState("");
-  const [faceScore, setFaceScore] = useState(null);
+  // const [faceTip, setFaceTip] = useState(faceTips[0]);
+  const [faceFeedback, setFaceFeedback] = useState("");
+  const [faceFeedbackColor, setFaceFeedbackColor] = useState("#FF0000");
   const faceIntervalRef = useRef(null);
+
 
   // Add the set-based face tracker startFaceCountdown function
   function startFaceCountdown() {
@@ -1041,6 +1055,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     "Check your camera angle to ensure your full arm is visible.",
     "Try to keep your wrist in line with your elbow for better accuracy."
   ];
+
   const faceTips = [
     "Tilt your head back until you feel a gentle stretch in your neck.",
     "Keep your chin up and look slightly upwards.",
@@ -1150,13 +1165,41 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   // Add the missing useEffect hooks for face tracker logic
   // Challenge countdown effect
   useEffect(() => {
-    if (facePhase === "challenge" && faceChallengeCountdown > 0 && faceHeldTime < 10) {
+    if (facePhase === "challenge" && faceChallengeCountdown > 0) {
       const interval = setInterval(() => {
-        setFaceChallengeCountdown((prev) => prev - 1);
+        setFaceChallengeCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            // After set ends, go to rest or finish
+            if (faceCurrentSet < 5) {
+              setFaceCurrentSet(faceCurrentSet + 1);
+              setFacePhase("rest");
+              setFaceRestCountdown(5);
+              setFaceChallengeCountdown(10);
+            } else {
+              setFacePhase("finished");
+              const score = Math.round((faceTotalCorrectTime / 50) * 10);
+              setFaceFinalMessage(
+                lang === 'th'
+                  ? `เวลาท่าถูกต้องทั้งหมด: ${faceTotalCorrectTime} วินาที\nคะแนน: ${score} เต็ม 10`
+                  : `Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${score} out of 10`
+              );
+            }
+            return 0;
+          } else {
+            // On each tick, check if user is correct
+            if (faceIsHolding) {
+              setFaceTotalCorrectTime((t) => t + 1);
+            } else {
+              setFaceTotalIncorrectTime((t) => t + 1);
+            }
+            return prev - 1;
+          }
+        });
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [facePhase, faceChallengeCountdown, faceHeldTime]);
+  }, [facePhase, faceChallengeCountdown, faceIsHolding, faceCurrentSet, faceTotalCorrectTime, lang]);
 
   // Hold time tracking effect
   useEffect(() => {
@@ -1233,7 +1276,6 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       const score = Math.round((faceTotalCorrectTime / maxCorrect) * 10);
       setFacePhase("showfinal");
       setFaceFinalMessage(`Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${score} out of 10`);
-      setFaceScore(score);
     }
   }, [facePhase, faceTotalCorrectTime, faceTotalIncorrectTime]);
 
@@ -1255,10 +1297,6 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     // eslint-disable-next-line
   }, [mode, facePhase]);
 
-  // Add face feedback state and logic
-  const [faceFeedback, setFaceFeedback] = useState("");
-  const [faceFeedbackColor, setFaceFeedbackColor] = useState("#FF0000");
-
   // Face feedback tips
   const faceFeedbackTips = [
     "Tilt your head back more - look up towards the ceiling",
@@ -1276,8 +1314,6 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     "พยายามรู้สึกตึงที่คอเบาๆ"
   ];
 
-
-
   // Update face tip when feedback changes to incorrect
   useEffect(() => {
     if (facePhase === "challenge" && faceFeedback.includes('Adjust') || faceFeedback.includes('ปรับ')) {
@@ -1289,50 +1325,144 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   }, [facePhase, faceFeedback, lang]);
 
   if (mode === "face") {
-    // No start button, auto-starts
     return (
-      <div style={{ textAlign: "center", padding: "20px" }}>
-        <h1>Face Rehabilitation</h1>
-        <video ref={videoRef} style={{ display: "none" }} autoPlay playsInline />
-        <canvas ref={canvasRef} width="640" height="480" style={{ border: "1px solid #ccc", borderRadius: "8px" }} />
-        <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 40 }}>
-          <div style={{ background: '#007bff', color: 'white', padding: 15, borderRadius: 8, textAlign: 'center', minWidth: 120 }}>
-            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{faceCurrentSet}</div>
-            <div style={{ fontSize: 14, marginTop: 5 }}>Set / 5</div>
-          </div>
-          <div style={{ background: '#007bff', color: 'white', padding: 15, borderRadius: 8, textAlign: 'center', minWidth: 120 }}>
-            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{faceHeldTime}</div>
-            <div style={{ fontSize: 14, marginTop: 5 }}>Hold Time (s)</div>
-          </div>
-        </div>
-        <div style={{ marginTop: 20, padding: 15, background: '#e9ecef', borderRadius: 8, textAlign: 'center' }}>
-          <p><strong>Instructions:</strong> Tilt your head back and hold for 10 seconds. Complete 5 sets.</p>
-        </div>
-        {facePhase === "countdown" && (
-          <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginTop: 20 }}>Get Ready! Countdown: {faceCountdown} s</div>
-        )}
-        {facePhase === "challenge" && (
-          <>
-            <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginTop: 20 }}>Set {faceCurrentSet} / 5<br/>Countdown: {faceChallengeCountdown} s</div>
-            <div style={{ 
-              fontSize: 18, 
-              color: faceFeedbackColor, 
-              fontWeight: "bold", 
-              marginTop: 10,
-              padding: "10px",
-              borderRadius: "5px",
-              backgroundColor: faceFeedbackColor === "#00FF00" ? "#e8f5e8" : "#ffe8e8"
-            }}>
-              {faceFeedback}
+      <div className="mpfull-root">
+        <style>{`
+          .mpfull-root {
+            min-height: 100vh;
+            background: #eaf6fd;
+            font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+            position: relative;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+          }
+          .mpfull-horizontal {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 32px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+          }
+          .mpfull-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+          }
+          .mpfull-video-panel {
+            flex: 1 1 640px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 320px;
+            max-width: 700px;
+          }
+          .mpfull-control-panel {
+            flex: 1 1 320px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 16px 0 rgba(30,136,229,0.08);
+            padding: 32px 24px;
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          .mpfull-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 18px;
+          }
+          .mpfull-canvas {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          }
+        `}</style>
+        <div className="mpfull-content-wrapper">
+          <div className={window.innerWidth > 900 ? 'mpfull-horizontal' : 'mpfull-vertical'}>
+            <div className="mpfull-video-panel" style={{ marginTop: 50, paddingTop: 0 }}>
+              <video ref={videoRef} style={{ display: "none" }} autoPlay playsInline />
+              <canvas ref={canvasRef} width="640" height="480" className="mpfull-canvas" />
             </div>
-          </>
-        )}
-        {facePhase === "rest" && (
-          <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginTop: 20 }}>Rest Time: {faceRestCountdown} s<br/>Next: Set {faceCurrentSet} / 5</div>
-        )}
-        {facePhase === "showfinal" && (
-          <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginTop: 20 }}>Summary<br/><span style={{ color: '#333', fontSize: 18, whiteSpace: 'pre-line' }}>{faceFinalMessage}</span></div>
-        )}
+            <div className="mpfull-control-panel" style={{ marginTop: 50, paddingTop: 0 }}>
+              <h1 className="mpfull-title">{lang === 'th' ? 'ฟื้นฟูท่าศีรษะ' : 'Face Rehabilitation'}</h1>
+              {facePhase === "countdown" && (
+                <div>
+                  <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>
+                    {lang === 'th' ? 'เตรียมตัว' : 'Get Ready'}
+                  </div>
+                  <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>
+                    Countdown: {faceCountdown} s
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    {lang === 'th'
+                      ? 'เงยหน้าขึ้นและค้างไว้ 10 วินาที ทำทั้งหมด 5 เซ็ต'
+                      : 'Tilt your head back and hold for 10 seconds. Complete 5 sets.'}
+                  </div>
+                </div>
+              )}
+              {facePhase === "challenge" && (
+                <>
+                  <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>
+                    {lang === 'th' ? `เซ็ต ${faceCurrentSet} / 5` : `Set ${faceCurrentSet} / 5`}
+                  </div>
+                  <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>
+                    {lang === 'th' ? `จับเวลา: ${faceChallengeCountdown} วินาที` : `Countdown: ${faceChallengeCountdown} s`}
+                  </div>
+                  <div style={{
+                    fontSize: 18,
+                    color: faceFeedbackColor,
+                    fontWeight: "bold",
+                    marginTop: 10,
+                    padding: "10px",
+                    borderRadius: "5px",
+                    backgroundColor: faceFeedbackColor === "#00FF00" ? "#e8f5e8" : "#ffe8e8"
+                  }}>
+                    {faceFeedback}
+                  </div>
+                  {faceFeedback === (lang === 'th' ? 'ปรับท่าให้ถูกต้อง' : 'Adjust your head position!') && (
+                    <div style={{ color: "#ff9800", fontSize: 16, marginTop: 8 }}>
+                      Tip: {faceTip}
+                    </div>
+                  )}
+                </>
+              )}
+              {facePhase === "rest" && (
+                <div>
+                  <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginBottom: 8 }}>
+                    {lang === 'th' ? 'เวลาพัก' : 'Rest Time'}: {faceRestCountdown} s
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    {lang === 'th' ? `ถัดไป: เซ็ต ${faceCurrentSet} / 5` : `Next: Set ${faceCurrentSet} / 5`}
+                  </div>
+                </div>
+              )}
+              {facePhase === "finished" && (
+                <div>
+                  <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>
+                    {lang === 'th' ? 'ครบทุกเซ็ต!' : 'All Sets Complete!'}
+                  </div>
+                  <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>
+                    {lang === 'th' ? 'ดูผลการทดสอบด้านล่าง' : 'See your results below.'}
+                  </div>
+                  <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
+                    {faceFinalMessage}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
