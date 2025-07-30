@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Activity } from 'lucide-react';
-import { useLang } from '../App';
+import { useLang, useAuth } from '../App';
 import { api, tokenManager } from '../utils/api';
 
 function Register() {
@@ -13,6 +13,7 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { lang } = useLang();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -36,6 +37,7 @@ function Register() {
       if (response.token) {
         console.log('✅ Registration successful, setting token and navigating...');
         tokenManager.setToken(response.token);
+        login(response.user, response.token);
         navigate('/');
       } else {
         console.log('❌ Registration failed:', response.message);

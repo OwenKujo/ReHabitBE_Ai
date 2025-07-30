@@ -131,4 +131,11 @@ export const tokenManager = {
   isAuthenticated: () => {
     return !!localStorage.getItem('rehabit_token');
   },
+
+  logout: () => {
+    localStorage.removeItem('rehabit_token');
+    // Clear any other user-related data
+    localStorage.removeItem('user_data');
+    console.log('🔐 User logged out successfully');
+  },
 }; 

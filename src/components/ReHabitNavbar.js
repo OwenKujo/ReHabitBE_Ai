@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Bell, ChevronDown, User, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useLang } from '../App';
+import { useLang, useAuth } from '../App';
+import LogoutConfirm from './LogoutConfirm';
 
 function ReHabitNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { lang, changeLang } = useLang();
+  const { user, logout } = useAuth();
 
   const navItems = lang === 'th' ? [
     { name: 'หน้าหลัก', href: '/', active: true },
@@ -270,7 +273,16 @@ function ReHabitNavbar() {
               <div className="navbar-dropdown">
                 <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'โปรไฟล์ของคุณ' : 'Your Profile'}</Link>
                 <Link to="/edit-profile" className="navbar-dropdown-item" onClick={() => setIsProfileOpen(false)}>{lang === 'th' ? 'แก้ไขโปรไฟล์' : 'Edit Profile'}</Link>
-                <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'ออกจากระบบ' : 'Sign Out'}</Link>
+                <button 
+                  onClick={() => {
+                    setShowLogoutConfirm(true);
+                    setIsProfileOpen(false);
+                  }} 
+                  className="navbar-dropdown-item"
+                  style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
+                >
+                  {lang === 'th' ? 'ออกจากระบบ' : 'Sign Out'}
+                </button>
               </div>
             )}
             {/* Mobile menu button */}
@@ -302,15 +314,37 @@ function ReHabitNavbar() {
               <User size={24} />
             </div>
             <div style={{ marginLeft: 12, flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 500, color: 'white' }}>{lang === 'th' ? 'ชื่อผู้ใช้' : 'User Name'}</div>
-              <div style={{ fontSize: 14, color: '#9ca3af' }}>{lang === 'th' ? 'อีเมลผู้ใช้' : 'User Email'}</div>
+              <div style={{ fontSize: 16, fontWeight: 500, color: 'white' }}>{user?.name || (lang === 'th' ? 'ชื่อผู้ใช้' : 'User Name')}</div>
+              <div style={{ fontSize: 14, color: '#9ca3af' }}>{user?.email || (lang === 'th' ? 'อีเมลผู้ใช้' : 'User Email')}</div>
             </div>
             <button className="navbar-icon-btn">
               <Bell size={24} />
             </button>
           </div>
+          <div style={{ padding: '8px 12px', borderTop: '1px solid #4b5563', marginTop: 8 }}>
+            <button 
+              onClick={() => setShowLogoutConfirm(true)}
+              style={{
+                width: '100%',
+                padding: '8px 12px',
+                background: 'none',
+                border: 'none',
+                color: '#ef4444',
+                fontSize: 14,
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
+              {lang === 'th' ? 'ออกจากระบบ' : 'Sign Out'}
+            </button>
+          </div>
         </div>
       </div>
+      
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <LogoutConfirm onClose={() => setShowLogoutConfirm(false)} />
+      )}
     </nav>
   );
 }
