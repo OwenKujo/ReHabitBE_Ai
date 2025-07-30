@@ -10,6 +10,7 @@ import OfficeSyndromePage from './page/OfficeSyndrome';
 import ContactUs from './page/ContactUs';
 import Login from './page/Login';
 import Register from './page/Register';
+import TestAPI from './page/TestAPI';
 import Footer from './components/Footer';
 import MediaPipefullDemo from './page/MediaPipefulldemo'
 import './i18n';
@@ -42,6 +43,7 @@ function App() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/test-api" element={<TestAPI />} />
           <Route path="/officesyndromerehab" element={<MediaPipefull />} />
           <Route path="/demo" element={<MediaPipefullDemo />} />
          

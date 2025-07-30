@@ -1,11 +1,21 @@
 // API configuration for ReHabit backend
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://rehabitbe.onrender.com';
 
+console.log('🔧 API Configuration:', { 
+  API_BASE_URL,
+  REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+  NODE_ENV: process.env.NODE_ENV,
+  allEnvVars: Object.keys(process.env).filter(key => key.startsWith('REACT_APP_'))
+});
+
 // API utility functions
 export const api = {
   // Authentication endpoints
   auth: {
     register: async (userData) => {
+      console.log('📤 Making registration request to:', `${API_BASE_URL}/api/auth/register`);
+      console.log('📤 Request data:', userData);
+      
       const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
@@ -13,10 +23,17 @@ export const api = {
         },
         body: JSON.stringify(userData),
       });
-      return response.json();
+      
+      console.log('📥 Registration response status:', response.status);
+      const data = await response.json();
+      console.log('📥 Registration response data:', data);
+      return data;
     },
 
     login: async (credentials) => {
+      console.log('📤 Making login request to:', `${API_BASE_URL}/api/auth/login`);
+      console.log('📤 Request data:', credentials);
+      
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
@@ -24,7 +41,11 @@ export const api = {
         },
         body: JSON.stringify(credentials),
       });
-      return response.json();
+      
+      console.log('📥 Login response status:', response.status);
+      const data = await response.json();
+      console.log('📥 Login response data:', data);
+      return data;
     },
 
     getProfile: async (token) => {

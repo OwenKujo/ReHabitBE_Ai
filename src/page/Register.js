@@ -24,21 +24,26 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('🚀 Form submitted with data:', formData);
     setLoading(true);
     setError('');
 
     try {
+      console.log('📞 Calling API register function...');
       const response = await api.auth.register(formData);
+      console.log('📥 API response received:', response);
       
       if (response.token) {
+        console.log('✅ Registration successful, setting token and navigating...');
         tokenManager.setToken(response.token);
         navigate('/');
       } else {
+        console.log('❌ Registration failed:', response.message);
         setError(response.message || 'Registration failed');
       }
     } catch (err) {
+      console.error('💥 Registration error:', err);
       setError('Network error. Please try again.');
-      console.error('Registration error:', err);
     } finally {
       setLoading(false);
     }
@@ -302,7 +307,7 @@ function Register() {
             {lang === 'th' ? 'สมัครสมาชิก' : 'Register'}
           </h1>
           
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} id="register-form">
             <div className="form-group">
               <label className="form-label">
                 {lang === 'th' ? 'ชื่อ - นามสกุล' : 'Name - Surname'}
