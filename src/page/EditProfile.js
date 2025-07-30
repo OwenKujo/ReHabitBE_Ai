@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLang } from '../App';
+import { useLang } from '../LangContext';
 
 const EditProfile = () => {
   const { lang } = useLang();

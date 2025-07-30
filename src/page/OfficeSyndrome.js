@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PlayCircle, ChevronDown, List, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useLang } from '../App';
+import { useLang } from '../LangContext';
 
 function OfficeSyndromePage() {
   const navigate = useNavigate();

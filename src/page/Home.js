@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useLang } from '../App';
+import { useLang } from '../LangContext';
 // Remove useTranslation import and usage
 // Restore all hardcoded English text for headings, buttons, features, tabs, and exercises
 

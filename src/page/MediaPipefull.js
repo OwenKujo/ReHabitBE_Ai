@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLang } from '../App';
+import { useLang } from '../LangContext';
 
 function PoseAngleDetector() {
   const { lang } = useLang();

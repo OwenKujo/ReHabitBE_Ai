@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLang } from '../App';
+import { useLang } from '../LangContext';
 
 function PoseAngleDetector() {
   const { lang } = useLang();
@@ -127,45 +127,82 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   const targetReps = 5;
 
   const loadMediaPipeScriptsFace = () => {
-    return new Promise((resolve, reject) => {
-      const scripts = [
-        'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js',
-        'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js'
+    return new Promise(async (resolve, reject) => {
+      const scriptSources = [
+        // Primary sources
+        [
+          'https://unpkg.com/@mediapipe/camera_utils@0.3.1620248256/camera_utils.js',
+          'https://unpkg.com/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js'
+        ],
+        // Alternative sources
+        [
+          'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1620248256/camera_utils.js',
+          'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js'
+        ],
+        // Fallback sources
+        [
+          'https://unpkg.com/@mediapipe/camera_utils/camera_utils.js',
+          'https://unpkg.com/@mediapipe/face_mesh/face_mesh.js'
+        ]
       ];
-      
-      let loadedCount = 0;
       
       const loadScript = (src) => {
         return new Promise((resolveScript, rejectScript) => {
           // Check if script already exists
           if (document.querySelector(`script[src="${src}"]`)) {
+            console.log(`Script ${src} already loaded`);
             resolveScript();
             return;
           }
           
+          console.log(`Loading script: ${src}`);
           const script = document.createElement('script');
           script.src = src;
           script.async = false;
-          script.onload = () => resolveScript();
-          script.onerror = () => rejectScript(new Error(`Failed to load ${src}`));
+          script.onload = () => {
+            console.log(`Successfully loaded: ${src}`);
+            resolveScript();
+          };
+          script.onerror = () => {
+            console.error(`Failed to load script: ${src}`);
+            rejectScript(new Error(`Failed to load ${src}`));
+          };
           document.head.appendChild(script);
         });
       };
       
-      // Load scripts sequentially
-      const loadSequentially = async () => {
+      // Try each source set
+      for (let i = 0; i < scriptSources.length; i++) {
         try {
+          console.log(`Trying script source set ${i + 1}/${scriptSources.length}`);
+          const scripts = scriptSources[i];
+          
           for (const src of scripts) {
             await loadScript(src);
-            loadedCount++;
           }
-          resolve();
+          
+          // Wait for scripts to initialize
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          // Check if FaceMesh is available
+          if (typeof window.FaceMesh !== 'undefined') {
+            console.log('FaceMesh available! All MediaPipe scripts loaded successfully');
+            resolve();
+            return;
+          } else {
+            console.log(`Source set ${i + 1} failed, trying next...`);
+          }
         } catch (error) {
-          reject(error);
+          console.warn(`Source set ${i + 1} failed:`, error);
+          if (i === scriptSources.length - 1) {
+            console.error('All script sources failed');
+            reject(new Error('Failed to load MediaPipe scripts from all sources'));
+            return;
+          }
         }
-      };
+      }
       
-      loadSequentially();
+      reject(new Error('FaceMesh not available after trying all sources'));
     });
   };
 
@@ -206,7 +243,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     //   threshold: pitchThreshold,
     //   isCorrect: pitch < -pitchThreshold // Negative when tilted back
     // });
-    //console.log('isCorrect', pitch < -pitchThreshold)
+    
     return pitch;
   };
 
@@ -218,6 +255,13 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
 
   // Only keep the set-based face tracker version of onFaceResults (the one using facePhase, setFaceIsHolding, etc.)
   const onFaceResults = (results) => {
+    console.log("onFaceResults called", { 
+      hasImage: !!results.image, 
+      hasLandmarks: !!results.multiFaceLandmarks,
+      numFaces: results.multiFaceLandmarks?.length || 0,
+      facePhase: facePhase
+    });
+    
     const canvas = canvasRef.current;
     if (!canvas) return;
     
@@ -233,7 +277,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       ctx.restore();
     }
 
-    // // Debug: Check if we have any face landmarks
+    // Debug: Check if we have any face landmarks
     // console.log('Face detection debug:', {
     //   hasImage: !!results.image,
     //   hasMultiFaceLandmarks: !!results.multiFaceLandmarks,
@@ -242,20 +286,18 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     //   facePhase: facePhase,
     //   isHolding: faceIsHolding
     // });
-  const landmarks = results.multiFaceLandmarks[0];
-  const pitch = calculatePitch(landmarks);
-  //console.log(`Pitch: ${pitch}, PitchThreshold: ${pitchThreshold}`);
 
     if (results.multiFaceLandmarks?.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
-      console.log('Landmarks received:', landmarks.length);
+      
+      // console.log('Landmarks received:', landmarks.length);
       
       // Visual debugging: Draw some key landmarks on the canvas
-      ctx.fillStyle = 'red';
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = 2;
+      // ctx.fillStyle = 'red';
+      // ctx.strokeStyle = 'white';
+      // ctx.lineWidth = 2;
       
-      // // Draw nose (landmark 1)
+      // Draw nose (landmark 1)
       // if (landmarks[1]) {
       //   ctx.beginPath();
       //   ctx.arc(landmarks[1].x * canvas.width, landmarks[1].y * canvas.height, 5, 0, 2 * Math.PI);
@@ -264,7 +306,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       //   ctx.fillText('Nose', landmarks[1].x * canvas.width + 10, landmarks[1].y * canvas.height);
       // }
       
-      // // Draw chin (landmark 152)
+      // Draw chin (landmark 152)
       // if (landmarks[152]) {
       //   ctx.fillStyle = 'blue';
       //   ctx.beginPath();
@@ -276,8 +318,8 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
 
       const pitch = calculatePitch(landmarks);
       const isCorrect = isFacePoseCorrect(pitch);
-      console.log("isCorrect before if in onFaceResults", isCorrect)
-      console.log("facePhase", facePhase)
+      console.log('Face detection - pitch:', pitch.toFixed(2), 'isCorrect:', isCorrect, 'facePhase:', facePhase);
+      
       // console.log('Face detection result:', { 
       //   pitch: pitch.toFixed(2), 
       //   threshold: pitchThreshold, 
@@ -294,33 +336,37 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       ctx.strokeText(`Pitch: ${pitch.toFixed(2)}°`, 10, 30);
       ctx.fillText(`Pitch: ${pitch.toFixed(2)}°`, 10, 30);
 
+
+      // console.log('onresults isCorrect: ', isCorrect);
+      // console.log('onresults facePhase: ', facePhase);  
+      
+
       // Only update faceIsHolding during challenge phase
-      if (facePhase === "challenge") {
-        console.log('Challenge phase - updating faceIsHolding:', isCorrect);
+      if (facePhase === "challenge") { // it works 
         setFaceIsHolding(isCorrect);
         
         if (isCorrect) {
           setFaceFeedback(lang === 'th' ? 'ถูกต้อง! ค้างท่าไว้' : 'Correct! Keep holding!');
           setFaceFeedbackColor("#00FF00");
-          setFaceTotalCorrectTime(t => t + 1);
+          
+          // Show "Correct" on frame
           ctx.fillStyle = 'lime';
           ctx.strokeStyle = 'darkgreen';
           ctx.lineWidth = 3;
           ctx.font = '24px Arial';
           ctx.strokeText('Correct', 10, 60);
           ctx.fillText('Correct', 10, 60);
-          console.log("correct in onFaceResults")
         } else {
           setFaceFeedback(lang === 'th' ? 'ปรับท่าให้ถูกต้อง' : 'Adjust your head position!');
           setFaceFeedbackColor("#FF0000");
-          setFaceTotalIncorrectTime(t => t + 1);
+          
+          // Show "Incorrect" on frame
           ctx.fillStyle = 'red';
           ctx.strokeStyle = 'darkred';
           ctx.lineWidth = 3;
           ctx.font = '24px Arial';
           ctx.strokeText('Incorrect', 10, 60);
           ctx.fillText('Incorrect', 10, 60);
-          console.log("incorrect in onFaceResults")
         }
       } else {
         // Show instruction when not in challenge phase
@@ -331,7 +377,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
         ctx.strokeText('Tilt head back to start', 10, 60);
         ctx.fillText('Tilt head back to start', 10, 60);
       }
-    } else {
+    } else { // it works 
       // No face detected
       console.log('No face landmarks detected - check camera and face visibility');
       ctx.fillStyle = 'yellow';
@@ -342,31 +388,18 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       ctx.fillText('No face detected - check camera', 10, 60);
     }
 
-    // In onFaceResults, after drawing the image and before any other text, add:
-    if (mode === 'face') {
-      ctx.save();
-      ctx.font = '16px Arial';
-      ctx.fillStyle = 'rgba(0,0,0,0.7)';
-      ctx.fillRect(8, 8, 120, 28);
-      ctx.fillStyle = 'white';
-      ctx.fillText('facePhase: ' + facePhase, 16, 28);
-      ctx.restore();
-    }
+    // // In onFaceResults, after drawing the image and before any other text, add:
+    // if (mode === 'face') {
+    //   ctx.save();
+    //   ctx.font = '16px Arial';
+    //   ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    //   ctx.fillRect(8, 8, 120, 28);
+    //   ctx.fillStyle = 'white';
+    //   ctx.fillText('facePhase: ' + facePhase, 16, 28);
+    //   ctx.restore();
+    // }
 
     ctx.restore();
-
-    // Add this logic:
-    if (mode === "face" && facePhase === "challenge") {
-      const now = Date.now();
-      if (now - lastFaceTimeUpdateRef.current >= 1000) { // 1 second
-        if (pitch > pitchThreshold) {
-          setFaceTotalCorrectTime(t => t + 1);
-        } else {
-          setFaceTotalIncorrectTime(t => t + 1);
-        }
-        lastFaceTimeUpdateRef.current = now;
-      }
-    }
   };
 
   // Face mesh initialization and cleanup
@@ -734,7 +767,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     }, 1000);
   };
 
-  const startChallenge = () => {//pose
+  const startChallenge = () => {
     setPhase("challenge");
     setHeldTime(0);
     playBeep(800,1000,0.4)
@@ -744,7 +777,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     setIncorrectTime(0);
   };
 
-  const startRest = () => {//pose
+  const startRest = () => {
     setPhase("rest");
     setRestCountdown(restTimePerSet);
     setHeldTime(0);
@@ -752,7 +785,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   };
 
   // Challenge countdown effect
-  useEffect(() => {//pose
+  useEffect(() => {
     if (phase === "challenge" && challengeCountdown > 0 && heldTime < holdTimePerSet) {
       const interval = setInterval(() => {
         setChallengeCountdown((prev) => prev - 1);
@@ -762,7 +795,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   }, [phase, challengeCountdown, heldTime]);
 
   // Hold time tracking effect
-  useEffect(() => {//pose
+  useEffect(() => {
     if (phase === "challenge" && isHolding && heldTime < holdTimePerSet && challengeCountdown > 0) {
       const interval = setInterval(() => {
         setHeldTime((prev) => {
@@ -857,13 +890,11 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       const timeout = setTimeout(() => {
         setPhase("getready");
         setGetReadyCountdown(10);
-      }, 8000);
+      }, 10000);
       return () => clearTimeout(timeout);
     }
   }, [phase]);
 
-
-  
   // In the getready countdown effect, after countdown reaches 0, switch to face mode
   useEffect(() => {
     if (phase === "getready" && getReadyCountdown > 0) {
@@ -902,7 +933,6 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   const [faceTotalCorrectTime, setFaceTotalCorrectTime] = useState(0);
   const [faceTotalIncorrectTime, setFaceTotalIncorrectTime] = useState(0);
   const [faceFinalMessage, setFaceFinalMessage] = useState("");
-  // const [faceTip, setFaceTip] = useState(faceTips[0]);
   const [faceFeedback, setFaceFeedback] = useState("");
   const [faceFeedbackColor, setFaceFeedbackColor] = useState("#FF0000");
   const faceIntervalRef = useRef(null);
@@ -910,6 +940,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
 
   // Add the set-based face tracker startFaceCountdown function
   function startFaceCountdown() {
+    console.log("Starting face countdown...");
     setFacePhase("countdown");
     setFaceCountdown(10);
     setFaceCurrentSet(1);
@@ -932,6 +963,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
 
   // Add the missing face tracker functions
   function startFaceChallenge() {
+    console.log("Starting face challenge...");
     setFacePhase("challenge");
     setFaceHeldTime(0);
     playBeep(800,1000,0.4);
@@ -1051,21 +1083,6 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     };
   }, [mode]);
 
-  useEffect(() => {
-    if (mode === "face" && challengeCountdown === 0 && heldTime < holdTimePerSet) {
-      // Stop camera and face mesh
-      if (cameraRef.current) {
-        try { cameraRef.current.stop(); } catch (e) {}
-        cameraRef.current = null;
-      }
-      if (faceMeshRef.current) {
-        try { faceMeshRef.current.close?.(); } catch (e) {}
-        faceMeshRef.current = null;
-      }
-      setFinalMessage(`Congratulations! You completed all ${totalSets} sets!`);
-    }
-  }, [mode, challengeCountdown, heldTime, totalSets]);
-
   // Recommendation tips
   const poseTips = [
     "Make sure your right arm is bent between 50° and 90°. Try raising or lowering your elbow!",
@@ -1115,14 +1132,14 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
 
   // Update face tip when user is not holding and in face mode
   useEffect(() => {
-    if (mode === "face" && challengeCountdown === 0 && heldTime < holdTimePerSet) {
+    if (facePhase === "challenge" && !faceIsHolding) {
       const tip = lang === 'th'
         ? faceTipsTH[Math.floor(Math.random() * faceTipsTH.length)]
         : faceTips[Math.floor(Math.random() * faceTips.length)];
       setFaceTip(tip);
       speak(tip);
     }
-  }, [mode, challengeCountdown, heldTime, lang]);
+  }, [facePhase, faceIsHolding, lang]);
 
   useEffect(() => {
     return () => {
@@ -1218,7 +1235,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [facePhase, faceChallengeCountdown, faceIsHolding, faceCurrentSet, faceTotalCorrectTime, lang]);
+  }, [facePhase, faceChallengeCountdown, faceIsHolding, faceCurrentSet, faceTotalCorrectTime, faceTotalIncorrectTime, lang]);
 
   // Hold time tracking effect
   useEffect(() => {
@@ -1311,10 +1328,29 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   // Automatically start face rehab when switching to face mode
   useEffect(() => {
     if (mode === 'face' && facePhase === 'idle') {
+      console.log("Starting face rehabilitation...");
+      setFacePhase("countdown");
       startFaceCountdown();
     }
-    // eslint-disable-next-line
   }, [mode, facePhase]);
+
+  // Handle mode switching from pose to face
+  useEffect(() => {
+    if (phase === "getready" && getReadyCountdown === 0) {
+      console.log("Switching to face mode");
+      setMode("face");
+      setFacePhase("idle"); // Reset face phase to trigger the above useEffect
+    }
+  }, [phase, getReadyCountdown]);
+
+  // Initialize face mode when component mounts in face mode
+  useEffect(() => {
+    if (mode === 'face' && facePhase === 'idle') {
+      console.log("Initial face mode setup");
+      setFacePhase("countdown");
+      startFaceCountdown();
+    }
+  }, [mode]);
 
   // Face feedback tips
   const faceFeedbackTips = [
@@ -1335,7 +1371,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
 
   // Update face tip when feedback changes to incorrect
   useEffect(() => {
-    if (facePhase === "challenge" && faceFeedback.includes('Adjust') || faceFeedback.includes('ปรับ')) {
+    if (facePhase === "challenge" && (faceFeedback.includes('Adjust') || faceFeedback.includes('ปรับ'))) {
       const tip = lang === 'th'
         ? faceFeedbackTipsTH[Math.floor(Math.random() * faceFeedbackTipsTH.length)]
         : faceFeedbackTips[Math.floor(Math.random() * faceFeedbackTips.length)];
@@ -1343,8 +1379,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     }
   }, [facePhase, faceFeedback, lang]);
 
-  const lastFaceTimeUpdateRef = useRef(Date.now());
-
+  
   if (mode === "face") {
     return (
       <div className="mpfull-root">
@@ -1417,6 +1452,89 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
             </div>
             <div className="mpfull-control-panel" style={{ marginTop: 50, paddingTop: 0 }}>
               <h1 className="mpfull-title">{lang === 'th' ? 'ฟื้นฟูท่าศีรษะ' : 'Face Rehabilitation'}</h1>
+              {error && (
+                <div style={{ 
+                  color: "red", 
+                  backgroundColor: "#ffebee", 
+                  padding: "10px", 
+                  borderRadius: "4px",
+                  margin: "10px 0"
+                }}>
+                  {error}
+                </div>
+              )}
+              {isLoading && (
+                <div style={{ color: "#1976d2", margin: "10px 0" }}>
+                  Loading MediaPipe Face Mesh...
+                </div>
+              )}
+              {facePhase === "idle" && (
+                <div>
+                  <div style={{ fontSize: 18, color: "#1976d2", marginBottom: 16 }}>
+                    {lang === 'th' ? 'เตรียมตัวสำหรับการฟื้นฟูท่าศีรษะ' : 'Get ready for face rehabilitation'}
+                  </div>
+                  <div style={{
+                    marginTop: 16,
+                    background: '#fffbe7',
+                    color: '#b45309',
+                    border: '1px solid #fde68a',
+                    borderRadius: 8,
+                    padding: '16px 20px',
+                    fontSize: 16,
+                    fontWeight: 500,
+                    maxWidth: 480,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    boxShadow: '0 2px 8px rgba(251,191,36,0.08)'
+                  }}>
+                    <div>{lang === 'th' ? '1. ปรับมุมกล้องให้เห็นใบหน้าชัดเจน' : '1. Adjust camera to see your face clearly'}</div>
+                    <div>{lang === 'th' ? '2. เงยหน้าขึ้นและค้างไว้ 10 วินาที' : '2. Tilt your head back and hold for 10 seconds'}</div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      console.log("Manual start face rehabilitation");
+                      setFacePhase("countdown");
+                      startFaceCountdown();
+                    }}
+                    style={{ 
+                      fontSize: "18px", 
+                      padding: "10px 30px", 
+                      marginTop: "16px",
+                      backgroundColor: "#1976d2",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "8px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    {lang === 'th' ? 'เริ่มฟื้นฟูท่าศีรษะ' : 'Start Face Rehabilitation'}
+                  </button>
+                  <button 
+                    onClick={async () => {
+                      console.log("Testing MediaPipe script loading...");
+                      try {
+                        await loadMediaPipeScriptsFace();
+                        console.log("Scripts loaded successfully!");
+                        console.log("Available objects:", Object.keys(window).filter(key => key.includes('MediaPipe') || key.includes('Face') || key.includes('Camera')));
+                      } catch (error) {
+                        console.error("Failed to load scripts:", error);
+                      }
+                    }}
+                    style={{ 
+                      fontSize: "14px", 
+                      padding: "8px 16px", 
+                      marginTop: "8px",
+                      backgroundColor: "#ff9800",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Test Script Loading
+                  </button>
+                </div>
+              )}
               {facePhase === "countdown" && (
                 <div>
                   <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>
@@ -1475,6 +1593,16 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
                   </div>
                   <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>
                     {lang === 'th' ? 'ดูผลการทดสอบด้านล่าง' : 'See your results below.'}
+                  </div>
+                  <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
+                    {faceFinalMessage}
+                  </div>
+                </div>
+              )}
+              {facePhase === "showfinal" && (
+                <div>
+                  <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>
+                    {lang === 'th' ? 'สรุป' : 'Summary'}
                   </div>
                   <div style={{ fontSize: 18, color: "#333", marginBottom: 8, whiteSpace: "pre-line" }}>
                     {faceFinalMessage}

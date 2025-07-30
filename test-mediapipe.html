@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaPipe FaceMesh Test</title>
+</head>
+<body>
+    <h1>MediaPipe FaceMesh Test</h1>
+    <div id="status">Loading...</div>
+    <video id="video" style="display: none;" autoplay playsinline></video>
+    <canvas id="canvas" width="640" height="480" style="border: 1px solid black;"></canvas>
+    
+    <script>
+        async function testMediaPipe() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                statusDiv.textContent = 'Loading MediaPipe scripts...';
+                
+                // Load scripts
+                const scripts = [
+                    'https://unpkg.com/@mediapipe/camera_utils@0.3.1620248256/camera_utils.js',
+                    'https://unpkg.com/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js'
+                ];
+                
+                for (const script of scripts) {
+                    await new Promise((resolve, reject) => {
+                        const scriptElement = document.createElement('script');
+                        scriptElement.src = script;
+                        scriptElement.onload = resolve;
+                        scriptElement.onerror = reject;
+                        document.head.appendChild(scriptElement);
+                    });
+                    console.log(`Loaded: ${script}`);
+                }
+                
+                statusDiv.textContent = 'Scripts loaded, checking FaceMesh...';
+                
+                // Wait a bit for initialization
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                if (typeof window.FaceMesh === 'undefined') {
+                    throw new Error('FaceMesh not available');
+                }
+                
+                statusDiv.textContent = 'FaceMesh available! Creating instance...';
+                
+                // Create FaceMesh instance
+                const faceMesh = new window.FaceMesh({
+                    locateFile: (file) => `https://unpkg.com/@mediapipe/face_mesh@0.4.1633559619/${file}`
+                });
+                
+                faceMesh.setOptions({
+                    maxNumFaces: 1,
+                    refineLandmarks: true,
+                    minDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5,
+                });
+                
+                statusDiv.textContent = 'FaceMesh created successfully!';
+                console.log('MediaPipe FaceMesh test successful!');
+                
+            } catch (error) {
+                statusDiv.textContent = `Error: ${error.message}`;
+                console.error('MediaPipe test failed:', error);
+            }
+        }
+        
+        // Run test when page loads
+        testMediaPipe();
+    </script>
+</body>
+</html> 

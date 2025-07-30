@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLang } from '../App';
+import { useLang } from '../LangContext';
 
 function ContactUs() {
   const { lang } = useLang();

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useLang } from '../App';
+import { useLang } from '../LangContext';
 
 function ReHabitNavbarGuest() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
