@@ -123,7 +123,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   const [isPoseRepActive, setIsPoseRepActive] = useState(false);
 
   // Face mesh logic
-  const pitchThreshold = 15; // was 5, now 2 for much easier detection
+  const pitchThreshold = 2; // Lower threshold for more accurate detection
   const targetReps = 5;
 
   const loadMediaPipeScriptsFace = () => {
@@ -274,6 +274,11 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
 
       const pitch = calculatePitch(landmarks);
       const isCorrect = isFacePoseCorrect(pitch);
+      
+      // Debug logging for pitch detection
+      if (facePhaseRef.current === "challenge") {
+        console.log('DEBUG: Pitch detection - pitch:', pitch.toFixed(2), 'threshold:', pitchThreshold, 'isCorrect:', isCorrect);
+      }
       
       // console.log('Face detection result:', { 
       //   pitch: pitch.toFixed(2), 
