@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Activity } from 'lucide-react';
-import { useLang } from '../App';
+import { useLang, useAuth } from '../App';
+import { api, tokenManager } from '../utils/api';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -9,7 +10,11 @@ function Register() {
     email: '',
     password: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { lang } = useLang();
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -18,10 +23,32 @@ function Register() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle registration logic here
-    console.log('Register attempt:', formData);
+    console.log('🚀 Form submitted with data:', formData);
+    setLoading(true);
+    setError('');
+
+    try {
+      console.log('📞 Calling API register function...');
+      const response = await api.auth.register(formData);
+      console.log('📥 API response received:', response);
+      
+      if (response.token) {
+        console.log('✅ Registration successful, setting token and navigating...');
+        tokenManager.setToken(response.token);
+        login(response.user, response.token);
+        navigate('/');
+      } else {
+        console.log('❌ Registration failed:', response.message);
+        setError(response.message || 'Registration failed');
+      }
+    } catch (err) {
+      console.error('💥 Registration error:', err);
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -282,7 +309,7 @@ function Register() {
             {lang === 'th' ? 'สมัครสมาชิก' : 'Register'}
           </h1>
           
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} id="register-form">
             <div className="form-group">
               <label className="form-label">
                 {lang === 'th' ? 'ชื่อ - นามสกุล' : 'Name - Surname'}
@@ -328,8 +355,14 @@ function Register() {
               />
             </div>
             
-            <button type="submit" className="register-button">
-              {lang === 'th' ? 'สมัครสมาชิก' : 'Register'}
+            {error && (
+              <div className="error-message" style={{ color: '#ef4444', marginBottom: '1rem', textAlign: 'center' }}>
+                {error}
+              </div>
+            )}
+            
+            <button type="submit" className="register-button" disabled={loading}>
+              {loading ? (lang === 'th' ? 'กำลังสมัครสมาชิก...' : 'Registering...') : (lang === 'th' ? 'สมัครสมาชิก' : 'Register')}
             </button>
           </form>
           
