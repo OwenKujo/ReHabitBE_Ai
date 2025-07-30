@@ -123,7 +123,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   const [isPoseRepActive, setIsPoseRepActive] = useState(false);
 
   // Face mesh logic
-  const pitchThreshold = 2; // was 5, now 2 for much easier detection
+  const pitchThreshold = 15; // was 5, now 2 for much easier detection
   const targetReps = 5;
 
   const loadMediaPipeScriptsFace = () => {
@@ -195,17 +195,17 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     const radians = Math.atan2(dy, dz);
     const pitch = radians * (180 / Math.PI);
     
-    console.log('Pitch calculation:', { 
-      noseY: nose.y.toFixed(3), 
-      chinY: chin.y.toFixed(3), 
-      noseZ: nose.z.toFixed(3),
-      chinZ: chin.z.toFixed(3),
-      dy: dy.toFixed(3),
-      dz: dz.toFixed(3),
-      pitch: pitch.toFixed(2),
-      threshold: pitchThreshold,
-      isCorrect: pitch < -pitchThreshold // Negative when tilted back
-    });
+    // console.log('Pitch calculation:', { 
+    //   noseY: nose.y.toFixed(3), 
+    //   chinY: chin.y.toFixed(3), 
+    //   noseZ: nose.z.toFixed(3),
+    //   chinZ: chin.z.toFixed(3),
+    //   dy: dy.toFixed(3),
+    //   dz: dz.toFixed(3),
+    //   pitch: pitch.toFixed(2),
+    //   threshold: pitchThreshold,
+    //   isCorrect: pitch < -pitchThreshold // Negative when tilted back
+    // });
     
     return pitch;
   };
@@ -234,53 +234,54 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     }
 
     // Debug: Check if we have any face landmarks
-    console.log('Face detection debug:', {
-      hasImage: !!results.image,
-      hasMultiFaceLandmarks: !!results.multiFaceLandmarks,
-      numFaces: results.multiFaceLandmarks?.length || 0,
-      landmarksLength: results.multiFaceLandmarks?.[0]?.length || 0,
-      facePhase: facePhase,
-      isHolding: faceIsHolding
-    });
+    // console.log('Face detection debug:', {
+    //   hasImage: !!results.image,
+    //   hasMultiFaceLandmarks: !!results.multiFaceLandmarks,
+    //   numFaces: results.multiFaceLandmarks?.length || 0,
+    //   landmarksLength: results.multiFaceLandmarks?.[0]?.length || 0,
+    //   facePhase: facePhase,
+    //   isHolding: faceIsHolding
+    // });
 
     if (results.multiFaceLandmarks?.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
-      console.log('Landmarks received:', landmarks.length);
+      // console.log("yess")
+      // console.log('Landmarks received:', landmarks.length);
       
       // Visual debugging: Draw some key landmarks on the canvas
-      ctx.fillStyle = 'red';
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = 2;
+      // ctx.fillStyle = 'red';
+      // ctx.strokeStyle = 'white';
+      // ctx.lineWidth = 2;
       
       // Draw nose (landmark 1)
-      if (landmarks[1]) {
-        ctx.beginPath();
-        ctx.arc(landmarks[1].x * canvas.width, landmarks[1].y * canvas.height, 5, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
-        ctx.fillText('Nose', landmarks[1].x * canvas.width + 10, landmarks[1].y * canvas.height);
-      }
+      // if (landmarks[1]) {
+      //   ctx.beginPath();
+      //   ctx.arc(landmarks[1].x * canvas.width, landmarks[1].y * canvas.height, 5, 0, 2 * Math.PI);
+      //   ctx.fill();
+      //   ctx.stroke();
+      //   ctx.fillText('Nose', landmarks[1].x * canvas.width + 10, landmarks[1].y * canvas.height);
+      // }
       
       // Draw chin (landmark 152)
-      if (landmarks[152]) {
-        ctx.fillStyle = 'blue';
-        ctx.beginPath();
-        ctx.arc(landmarks[152].x * canvas.width, landmarks[152].y * canvas.height, 5, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
-        ctx.fillText('Chin', landmarks[152].x * canvas.width + 10, landmarks[152].y * canvas.height);
-      }
+      // if (landmarks[152]) {
+      //   ctx.fillStyle = 'blue';
+      //   ctx.beginPath();
+      //   ctx.arc(landmarks[152].x * canvas.width, landmarks[152].y * canvas.height, 5, 0, 2 * Math.PI);
+      //   ctx.fill();
+      //   ctx.stroke();
+      //   ctx.fillText('Chin', landmarks[152].x * canvas.width + 10, landmarks[152].y * canvas.height);
+      // }
 
       const pitch = calculatePitch(landmarks);
       const isCorrect = isFacePoseCorrect(pitch);
       
-      console.log('Face detection result:', { 
-        pitch: pitch.toFixed(2), 
-        threshold: pitchThreshold, 
-        isCorrect: isCorrect,
-        facePhase: facePhase,
-        currentIsHolding: faceIsHolding
-      });
+      // console.log('Face detection result:', { 
+      //   pitch: pitch.toFixed(2), 
+      //   threshold: pitchThreshold, 
+      //   isCorrect: isCorrect,
+      //   facePhase: facePhase,
+      //   currentIsHolding: faceIsHolding
+      // });
 
       // Show pitch value on frame
       ctx.fillStyle = 'white';
@@ -290,12 +291,24 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       ctx.strokeText(`Pitch: ${pitch.toFixed(2)}°`, 10, 30);
       ctx.fillText(`Pitch: ${pitch.toFixed(2)}°`, 10, 30);
 
+
+      // console.log('onresults isCorrect: ', isCorrect);
+      // console.log('onresults facePhase: ', facePhase);  
+      // setFacePhase("challenge");
+
       // Only update faceIsHolding during challenge phase
-      if (facePhase === "challenge") {
-        console.log('Challenge phase - updating faceIsHolding:', isCorrect);
+      if (facePhaseRef.current === "challenge") {
+        // console.log('Challenge phase - updating faceIsHolding:', isCorrect);
+
+        // console.log('onresults isCorrect: ', isCorrect);
+        // console.log('onresults facePhase: ', facePhase);  
+
         setFaceIsHolding(isCorrect);
         
         if (isCorrect) {
+
+          // console.log("yess")
+
           setFaceFeedback(lang === 'th' ? 'ถูกต้อง! ค้างท่าไว้' : 'Correct! Keep holding!');
           setFaceFeedbackColor("#00FF00");
           
@@ -310,6 +323,9 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
           setFaceFeedback(lang === 'th' ? 'ปรับท่าให้ถูกต้อง' : 'Adjust your head position!');
           setFaceFeedbackColor("#FF0000");
           
+          console.log("noo")
+
+
           // Show "Incorrect" on frame
           ctx.fillStyle = 'red';
           ctx.strokeStyle = 'darkred';
@@ -345,7 +361,8 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       ctx.fillStyle = 'rgba(0,0,0,0.7)';
       ctx.fillRect(8, 8, 120, 28);
       ctx.fillStyle = 'white';
-      ctx.fillText('facePhase: ' + facePhase, 16, 28);
+      ctx.fillText('facePhase: ' + facePhaseRef.current, 16, 28);
+      ctx.fillText('mode: ' + mode, 16, 44);
       ctx.restore();
     }
 
@@ -887,10 +904,17 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   const [faceFeedback, setFaceFeedback] = useState("");
   const [faceFeedbackColor, setFaceFeedbackColor] = useState("#FF0000");
   const faceIntervalRef = useRef(null);
+  const facePhaseRef = useRef("idle");
 
+  // Update facePhase ref whenever facePhase changes
+  useEffect(() => {
+    facePhaseRef.current = facePhase;
+    console.log("DEBUG: facePhase changed to:", facePhase);
+  }, [facePhase]);
 
   // Add the set-based face tracker startFaceCountdown function
   function startFaceCountdown() {
+    console.log("DEBUG: startFaceCountdown called");
     setFacePhase("countdown");
     setFaceCountdown(10);
     setFaceCurrentSet(1);
@@ -899,16 +923,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     setFaceIncorrectTime(0);
     setFaceTotalCorrectTime(0);
     setFaceTotalIncorrectTime(0);
-    faceIntervalRef.current = setInterval(() => {
-      setFaceCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(faceIntervalRef.current);
-          startFaceChallenge();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    console.log("DEBUG: Face phase set to countdown, countdown set to 10");
   }
 
   // Add the missing face tracker functions
@@ -1289,9 +1304,95 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     }
   }, [facePhase]);
 
+  // Face countdown effect - handles the countdown before each set
+  useEffect(() => {
+    console.log("DEBUG: Face countdown effect - mode:", mode, "facePhase:", facePhase, "faceCountdown:", faceCountdown);
+    if (mode === "face" && facePhase === "countdown" && faceCountdown > 0) {
+      console.log("DEBUG: Starting face countdown timer");
+      const interval = setInterval(() => {
+        setFaceCountdown((prev) => {
+          console.log("DEBUG: Countdown tick - prev:", prev);
+          if (prev <= 1) {
+            clearInterval(interval);
+            setFacePhase("challenge");
+            setFaceChallengeCountdown(10);
+            setFaceIsHolding(false);
+            setFaceIncorrectTime(0);
+            console.log("Face countdown finished, starting challenge");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [mode, facePhase, faceCountdown]);
+
+  // Face challenge countdown effect - handles the actual set timer
+  useEffect(() => {
+    if (mode === "face" && facePhase === "challenge" && faceChallengeCountdown > 0) {
+      const interval = setInterval(() => {
+        setFaceChallengeCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            // After set ends, go to rest or finish
+            if (faceCurrentSet < 5) {
+              setFaceCurrentSet(faceCurrentSet + 1);
+              setFacePhase("rest");
+              setFaceRestCountdown(5);
+              setFaceChallengeCountdown(10);
+            } else {
+              setFacePhase("finished");
+              const score = Math.round((faceTotalCorrectTime / 50) * 10);
+              setFaceFinalMessage(
+                lang === 'th'
+                  ? `เวลาท่าถูกต้องทั้งหมด: ${faceTotalCorrectTime} วินาที\nคะแนน: ${score} เต็ม 10`
+                  : `Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${score} out of 10`
+              );
+            }
+            return 0;
+          } else {
+            // On each tick, check if user is correct
+            if (faceIsHolding) {
+              setFaceTotalCorrectTime((t) => t + 1);
+            } else {
+              setFaceTotalIncorrectTime((t) => t + 1);
+            }
+            return prev - 1;
+          }
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [mode, facePhase, faceChallengeCountdown, faceIsHolding, faceCurrentSet, faceTotalCorrectTime, lang]);
+
+  // Face rest timer effect
+  useEffect(() => {
+    if (mode === "face" && facePhase === "rest" && faceRestCountdown > 0) {
+      const interval = setInterval(() => {
+        setFaceRestCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setFacePhase("challenge");
+            setFaceChallengeCountdown(10);
+            setFaceIsHolding(false);
+            setFaceIncorrectTime(0);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [mode, facePhase, faceRestCountdown]);
+
   // Automatically start face rehab when switching to face mode
   useEffect(() => {
+    console.log("DEBUG: useEffect triggered - mode:", mode, "facePhase:", facePhase);
+    setMode("face");
+    
     if (mode === 'face' && facePhase === 'idle') {
+      console.log("DEBUG: Starting face countdown");
       startFaceCountdown();
     }
     // eslint-disable-next-line
@@ -1324,6 +1425,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     }
   }, [facePhase, faceFeedback, lang]);
 
+  
   if (mode === "face") {
     return (
       <div className="mpfull-root">
