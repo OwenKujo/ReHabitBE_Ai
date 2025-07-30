@@ -1,17 +1,37 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Activity } from 'lucide-react';
 import { useLang } from '../App';
+import { api, tokenManager } from '../utils/api';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { lang } = useLang();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempt:', { email, password });
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await api.auth.login({ email, password });
+      
+      if (response.token) {
+        tokenManager.setToken(response.token);
+        navigate('/');
+      } else {
+        setError(response.message || 'Login failed');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -301,8 +321,14 @@ function Login() {
               />
             </div>
             
-            <button type="submit" className="login-button">
-              {lang === 'th' ? 'เข้าสู่ระบบ' : 'Login'}
+            {error && (
+              <div className="error-message" style={{ color: '#ef4444', marginBottom: '1rem', textAlign: 'center' }}>
+                {error}
+              </div>
+            )}
+            
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? (lang === 'th' ? 'กำลังเข้าสู่ระบบ...' : 'Logging in...') : (lang === 'th' ? 'เข้าสู่ระบบ' : 'Login')}
             </button>
           </form>
           

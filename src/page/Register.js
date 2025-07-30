@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Activity } from 'lucide-react';
 import { useLang } from '../App';
+import { api, tokenManager } from '../utils/api';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -9,7 +10,10 @@ function Register() {
     email: '',
     password: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { lang } = useLang();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -18,10 +22,26 @@ function Register() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle registration logic here
-    console.log('Register attempt:', formData);
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await api.auth.register(formData);
+      
+      if (response.token) {
+        tokenManager.setToken(response.token);
+        navigate('/');
+      } else {
+        setError(response.message || 'Registration failed');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+      console.error('Registration error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -328,8 +348,14 @@ function Register() {
               />
             </div>
             
-            <button type="submit" className="register-button">
-              {lang === 'th' ? 'สมัครสมาชิก' : 'Register'}
+            {error && (
+              <div className="error-message" style={{ color: '#ef4444', marginBottom: '1rem', textAlign: 'center' }}>
+                {error}
+              </div>
+            )}
+            
+            <button type="submit" className="register-button" disabled={loading}>
+              {loading ? (lang === 'th' ? 'กำลังสมัครสมาชิก...' : 'Registering...') : (lang === 'th' ? 'สมัครสมาชิก' : 'Register')}
             </button>
           </form>
           
