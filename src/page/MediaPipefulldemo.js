@@ -388,6 +388,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       ctx.fillText('No face detected - check camera', 10, 60);
     }
 
+<<<<<<< HEAD
     // // In onFaceResults, after drawing the image and before any other text, add:
     // if (mode === 'face') {
     //   ctx.save();
@@ -399,6 +400,8 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     //   ctx.restore();
     // }
 
+=======
+>>>>>>> parent of baa9f32 (face2)
     ctx.restore();
   };
 
@@ -933,10 +936,13 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   const [faceTotalCorrectTime, setFaceTotalCorrectTime] = useState(0);
   const [faceTotalIncorrectTime, setFaceTotalIncorrectTime] = useState(0);
   const [faceFinalMessage, setFaceFinalMessage] = useState("");
+<<<<<<< HEAD
   const [faceFeedback, setFaceFeedback] = useState("");
   const [faceFeedbackColor, setFaceFeedbackColor] = useState("#FF0000");
+=======
+  const [faceScore, setFaceScore] = useState(null);
+>>>>>>> parent of baa9f32 (face2)
   const faceIntervalRef = useRef(null);
-
 
   // Add the set-based face tracker startFaceCountdown function
   function startFaceCountdown() {
@@ -1091,7 +1097,6 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     "Check your camera angle to ensure your full arm is visible.",
     "Try to keep your wrist in line with your elbow for better accuracy."
   ];
-
   const faceTips = [
     "Tilt your head back until you feel a gentle stretch in your neck.",
     "Keep your chin up and look slightly upwards.",
@@ -1201,41 +1206,17 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   // Add the missing useEffect hooks for face tracker logic
   // Challenge countdown effect
   useEffect(() => {
-    if (facePhase === "challenge" && faceChallengeCountdown > 0) {
+    if (facePhase === "challenge" && faceChallengeCountdown > 0 && faceHeldTime < 10) {
       const interval = setInterval(() => {
-        setFaceChallengeCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            // After set ends, go to rest or finish
-            if (faceCurrentSet < 5) {
-              setFaceCurrentSet(faceCurrentSet + 1);
-              setFacePhase("rest");
-              setFaceRestCountdown(5);
-              setFaceChallengeCountdown(10);
-            } else {
-              setFacePhase("finished");
-              const score = Math.round((faceTotalCorrectTime / 50) * 10);
-              setFaceFinalMessage(
-                lang === 'th'
-                  ? `เวลาท่าถูกต้องทั้งหมด: ${faceTotalCorrectTime} วินาที\nคะแนน: ${score} เต็ม 10`
-                  : `Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${score} out of 10`
-              );
-            }
-            return 0;
-          } else {
-            // On each tick, check if user is correct
-            if (faceIsHolding) {
-              setFaceTotalCorrectTime((t) => t + 1);
-            } else {
-              setFaceTotalIncorrectTime((t) => t + 1);
-            }
-            return prev - 1;
-          }
-        });
+        setFaceChallengeCountdown((prev) => prev - 1);
       }, 1000);
       return () => clearInterval(interval);
     }
+<<<<<<< HEAD
   }, [facePhase, faceChallengeCountdown, faceIsHolding, faceCurrentSet, faceTotalCorrectTime, faceTotalIncorrectTime, lang]);
+=======
+  }, [facePhase, faceChallengeCountdown, faceHeldTime]);
+>>>>>>> parent of baa9f32 (face2)
 
   // Hold time tracking effect
   useEffect(() => {
@@ -1312,6 +1293,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       const score = Math.round((faceTotalCorrectTime / maxCorrect) * 10);
       setFacePhase("showfinal");
       setFaceFinalMessage(`Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${score} out of 10`);
+      setFaceScore(score);
     }
   }, [facePhase, faceTotalCorrectTime, faceTotalIncorrectTime]);
 
@@ -1334,6 +1316,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     }
   }, [mode, facePhase]);
 
+<<<<<<< HEAD
   // Handle mode switching from pose to face
   useEffect(() => {
     if (phase === "getready" && getReadyCountdown === 0) {
@@ -1351,6 +1334,11 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       startFaceCountdown();
     }
   }, [mode]);
+=======
+  // Add face feedback state and logic
+  const [faceFeedback, setFaceFeedback] = useState("");
+  const [faceFeedbackColor, setFaceFeedbackColor] = useState("#FF0000");
+>>>>>>> parent of baa9f32 (face2)
 
   // Face feedback tips
   const faceFeedbackTips = [
@@ -1369,6 +1357,8 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     "พยายามรู้สึกตึงที่คอเบาๆ"
   ];
 
+
+
   // Update face tip when feedback changes to incorrect
   useEffect(() => {
     if (facePhase === "challenge" && (faceFeedback.includes('Adjust') || faceFeedback.includes('ปรับ'))) {
@@ -1381,7 +1371,9 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
 
   
   if (mode === "face") {
+    // No start button, auto-starts
     return (
+<<<<<<< HEAD
       <div className="mpfull-root">
         <style>{`
           .mpfull-root {
@@ -1610,8 +1602,50 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
                 </div>
               )}
             </div>
+=======
+      <div style={{ textAlign: "center", padding: "20px" }}>
+        <h1>Face Rehabilitation</h1>
+        <video ref={videoRef} style={{ display: "none" }} autoPlay playsInline />
+        <canvas ref={canvasRef} width="640" height="480" style={{ border: "1px solid #ccc", borderRadius: "8px" }} />
+        <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 40 }}>
+          <div style={{ background: '#007bff', color: 'white', padding: 15, borderRadius: 8, textAlign: 'center', minWidth: 120 }}>
+            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{faceCurrentSet}</div>
+            <div style={{ fontSize: 14, marginTop: 5 }}>Set / 5</div>
+          </div>
+          <div style={{ background: '#007bff', color: 'white', padding: 15, borderRadius: 8, textAlign: 'center', minWidth: 120 }}>
+            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{faceHeldTime}</div>
+            <div style={{ fontSize: 14, marginTop: 5 }}>Hold Time (s)</div>
+>>>>>>> parent of baa9f32 (face2)
           </div>
         </div>
+        <div style={{ marginTop: 20, padding: 15, background: '#e9ecef', borderRadius: 8, textAlign: 'center' }}>
+          <p><strong>Instructions:</strong> Tilt your head back and hold for 10 seconds. Complete 5 sets.</p>
+        </div>
+        {facePhase === "countdown" && (
+          <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginTop: 20 }}>Get Ready! Countdown: {faceCountdown} s</div>
+        )}
+        {facePhase === "challenge" && (
+          <>
+            <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginTop: 20 }}>Set {faceCurrentSet} / 5<br/>Countdown: {faceChallengeCountdown} s</div>
+            <div style={{ 
+              fontSize: 18, 
+              color: faceFeedbackColor, 
+              fontWeight: "bold", 
+              marginTop: 10,
+              padding: "10px",
+              borderRadius: "5px",
+              backgroundColor: faceFeedbackColor === "#00FF00" ? "#e8f5e8" : "#ffe8e8"
+            }}>
+              {faceFeedback}
+            </div>
+          </>
+        )}
+        {facePhase === "rest" && (
+          <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginTop: 20 }}>Rest Time: {faceRestCountdown} s<br/>Next: Set {faceCurrentSet} / 5</div>
+        )}
+        {facePhase === "showfinal" && (
+          <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginTop: 20 }}>Summary<br/><span style={{ color: '#333', fontSize: 18, whiteSpace: 'pre-line' }}>{faceFinalMessage}</span></div>
+        )}
       </div>
     );
   }
