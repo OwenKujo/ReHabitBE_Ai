@@ -389,6 +389,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // // In onFaceResults, after drawing the image and before any other text, add:
     // if (mode === 'face') {
     //   ctx.save();
@@ -400,6 +401,8 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     //   ctx.restore();
     // }
 
+=======
+>>>>>>> parent of baa9f32 (face2)
 =======
 >>>>>>> parent of baa9f32 (face2)
     ctx.restore();
@@ -937,8 +940,12 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   const [faceTotalIncorrectTime, setFaceTotalIncorrectTime] = useState(0);
   const [faceFinalMessage, setFaceFinalMessage] = useState("");
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [faceFeedback, setFaceFeedback] = useState("");
   const [faceFeedbackColor, setFaceFeedbackColor] = useState("#FF0000");
+=======
+  const [faceScore, setFaceScore] = useState(null);
+>>>>>>> parent of baa9f32 (face2)
 =======
   const [faceScore, setFaceScore] = useState(null);
 >>>>>>> parent of baa9f32 (face2)
@@ -1213,7 +1220,11 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       return () => clearInterval(interval);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
   }, [facePhase, faceChallengeCountdown, faceIsHolding, faceCurrentSet, faceTotalCorrectTime, faceTotalIncorrectTime, lang]);
+=======
+  }, [facePhase, faceChallengeCountdown, faceHeldTime]);
+>>>>>>> parent of baa9f32 (face2)
 =======
   }, [facePhase, faceChallengeCountdown, faceHeldTime]);
 >>>>>>> parent of baa9f32 (face2)
@@ -1317,6 +1328,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   }, [mode, facePhase]);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   // Handle mode switching from pose to face
   useEffect(() => {
     if (phase === "getready" && getReadyCountdown === 0) {
@@ -1334,6 +1346,11 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       startFaceCountdown();
     }
   }, [mode]);
+=======
+  // Add face feedback state and logic
+  const [faceFeedback, setFaceFeedback] = useState("");
+  const [faceFeedbackColor, setFaceFeedbackColor] = useState("#FF0000");
+>>>>>>> parent of baa9f32 (face2)
 =======
   // Add face feedback state and logic
   const [faceFeedback, setFaceFeedback] = useState("");
@@ -1373,6 +1390,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   if (mode === "face") {
     // No start button, auto-starts
     return (
+<<<<<<< HEAD
 <<<<<<< HEAD
       <div className="mpfull-root">
         <style>{`
@@ -1603,6 +1621,8 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
               )}
             </div>
 =======
+=======
+>>>>>>> parent of baa9f32 (face2)
       <div style={{ textAlign: "center", padding: "20px" }}>
         <h1>Face Rehabilitation</h1>
         <video ref={videoRef} style={{ display: "none" }} autoPlay playsInline />
@@ -1615,6 +1635,9 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
           <div style={{ background: '#007bff', color: 'white', padding: 15, borderRadius: 8, textAlign: 'center', minWidth: 120 }}>
             <div style={{ fontSize: 24, fontWeight: 'bold' }}>{faceHeldTime}</div>
             <div style={{ fontSize: 14, marginTop: 5 }}>Hold Time (s)</div>
+<<<<<<< HEAD
+>>>>>>> parent of baa9f32 (face2)
+=======
 >>>>>>> parent of baa9f32 (face2)
           </div>
         </div>
