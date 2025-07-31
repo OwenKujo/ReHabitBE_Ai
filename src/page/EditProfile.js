@@ -202,38 +202,39 @@ const EditProfile = () => {
          }
         
                  .section-title {
-           font-size: 16px;
+           font-size: 14px;
            font-weight: 600;
            color: #1e293b;
-           margin-bottom: 12px;
+           margin-bottom: 8px;
            display: flex;
            align-items: center;
-           gap: 8px;
+           gap: 6px;
          }
          
          .form-group {
-           margin-bottom: 12px;
+           margin-bottom: 8px;
          }
         
         .form-label {
           display: block;
           font-weight: 500;
           color: #374151;
-          margin-bottom: 8px;
-          font-size: 14px;
+          margin-bottom: 4px;
+          font-size: 13px;
         }
         
                  .form-input,
          .form-select {
            width: 100%;
-           padding: 8px 12px;
-           border: 2px solid #e5e7eb;
-           border-radius: 6px;
-           font-size: 14px;
+           padding: 6px 10px;
+           border: 1px solid #e5e7eb;
+           border-radius: 4px;
+           font-size: 13px;
            color: #1f2937;
            background: white;
            transition: all 0.2s;
            font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+           height: 32px;
          }
         
         .form-input:focus,
@@ -251,7 +252,7 @@ const EditProfile = () => {
                  .form-row {
            display: grid;
            grid-template-columns: 1fr 1fr;
-           gap: 12px;
+           gap: 8px;
          }
         
         .full-width {
