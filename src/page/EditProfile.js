@@ -132,6 +132,8 @@ const EditProfile = () => {
            border-radius: 12px;
            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
            overflow: hidden;
+           width: 100%;
+           box-sizing: border-box;
          }
         
                  .edit-profile-header {
@@ -186,12 +188,15 @@ const EditProfile = () => {
         
                  .edit-profile-content {
            padding: 24px;
+           width: 100%;
+           box-sizing: border-box;
          }
          
          .form-grid {
            display: grid;
            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
            gap: 16px;
+           width: 100%;
          }
          
          @media (min-width: 1024px) {
@@ -214,6 +219,8 @@ const EditProfile = () => {
            padding: 16px;
            border-radius: 8px;
            border: 1px solid #e2e8f0;
+           width: 100%;
+           box-sizing: border-box;
          }
         
                  .section-title {
@@ -228,6 +235,7 @@ const EditProfile = () => {
          
          .form-group {
            margin-bottom: 8px;
+           width: 100%;
          }
         
         .form-label {
@@ -250,6 +258,7 @@ const EditProfile = () => {
            transition: all 0.2s;
            font-family: 'Kanit', 'Prompt', Arial, sans-serif;
            height: 32px;
+           box-sizing: border-box;
          }
         
         .form-input:focus,
@@ -268,6 +277,7 @@ const EditProfile = () => {
            display: grid;
            grid-template-columns: 1fr 1fr;
            gap: 8px;
+           width: 100%;
          }
         
         .full-width {
@@ -493,7 +503,7 @@ const EditProfile = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <div className="form-grid">
               {/* Personal & Contact Information */}
               <div className="form-section">
