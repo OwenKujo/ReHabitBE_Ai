@@ -194,6 +194,21 @@ const EditProfile = () => {
            gap: 16px;
          }
          
+         @media (min-width: 1024px) {
+           .edit-profile-card {
+             max-width: 1000px;
+           }
+           
+           .form-grid {
+             grid-template-columns: repeat(2, 1fr);
+             gap: 20px;
+           }
+           
+           .form-section.full-width {
+             grid-column: 1 / -1;
+           }
+         }
+         
          .form-section {
            background: #f8fafc;
            padding: 16px;
@@ -326,33 +341,123 @@ const EditProfile = () => {
         
         @media (max-width: 768px) {
           .edit-profile-container {
-            padding: 10px;
+            padding: 8px;
+          }
+          
+          .edit-profile-card {
+            max-width: 100%;
+            border-radius: 8px;
           }
           
           .edit-profile-header {
-            padding: 20px;
+            padding: 16px;
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+          }
+          
+          .header-content {
+            order: 2;
+          }
+          
+          .back-button {
+            order: 1;
+            align-self: flex-start;
+          }
+          
+          .profile-avatar {
+            order: 3;
+            width: 40px;
+            height: 40px;
           }
           
           .edit-profile-content {
-            padding: 20px;
+            padding: 16px;
           }
           
           .form-grid {
             grid-template-columns: 1fr;
-            gap: 16px;
+            gap: 12px;
+          }
+          
+          .form-section {
+            padding: 12px;
           }
           
           .form-row {
             grid-template-columns: 1fr;
+            gap: 8px;
+          }
+          
+          .form-group {
+            margin-bottom: 6px;
+          }
+          
+          .form-input,
+          .form-select {
+            height: 36px;
+            font-size: 14px;
+          }
+          
+          .form-label {
+            font-size: 14px;
+            margin-bottom: 3px;
+          }
+          
+          .section-title {
+            font-size: 15px;
+            margin-bottom: 6px;
           }
           
           .form-actions {
             flex-direction: column;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 12px;
           }
           
           .btn {
             width: 100%;
             justify-content: center;
+            padding: 12px 16px;
+            font-size: 14px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .edit-profile-container {
+            padding: 4px;
+          }
+          
+          .edit-profile-header {
+            padding: 12px;
+          }
+          
+          .edit-profile-content {
+            padding: 12px;
+          }
+          
+          .form-section {
+            padding: 10px;
+          }
+          
+          .form-input,
+          .form-select {
+            height: 40px;
+            font-size: 16px; /* Prevents zoom on iOS */
+          }
+          
+          .form-label {
+            font-size: 15px;
+          }
+          
+          .section-title {
+            font-size: 16px;
+          }
+          
+          .btn {
+            padding: 14px 16px;
+            font-size: 16px;
           }
         }
       `}</style>
