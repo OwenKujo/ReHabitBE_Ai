@@ -125,23 +125,23 @@ const EditProfile = () => {
           padding: 20px;
         }
         
-        .edit-profile-card {
-          max-width: 1000px;
-          margin: 0 auto;
-          background: white;
-          border-radius: 16px;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-          overflow: hidden;
-        }
+                 .edit-profile-card {
+           max-width: 900px;
+           margin: 0 auto;
+           background: white;
+           border-radius: 12px;
+           box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+           overflow: hidden;
+         }
         
-        .edit-profile-header {
-          background: linear-gradient(135deg, #4392B1 0%, #3a7a9a 100%);
-          color: white;
-          padding: 24px 32px;
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
+                 .edit-profile-header {
+           background: linear-gradient(135deg, #4392B1 0%, #3a7a9a 100%);
+           color: white;
+           padding: 20px 24px;
+           display: flex;
+           align-items: center;
+           gap: 12px;
+         }
         
         .back-button {
           background: rgba(255,255,255,0.2);
@@ -161,59 +161,59 @@ const EditProfile = () => {
           flex: 1;
         }
         
-        .header-title {
-          font-size: 24px;
-          font-weight: 600;
-          margin: 0;
-        }
+                 .header-title {
+           font-size: 20px;
+           font-weight: 600;
+           margin: 0;
+         }
+         
+         .header-subtitle {
+           font-size: 13px;
+           opacity: 0.9;
+           margin: 2px 0 0 0;
+         }
         
-        .header-subtitle {
-          font-size: 14px;
-          opacity: 0.9;
-          margin: 4px 0 0 0;
-        }
+                 .profile-avatar {
+           width: 48px;
+           height: 48px;
+           border-radius: 50%;
+           background: rgba(255,255,255,0.2);
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           border: 2px solid rgba(255,255,255,0.3);
+         }
         
-        .profile-avatar {
-          width: 64px;
-          height: 64px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.2);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 2px solid rgba(255,255,255,0.3);
-        }
+                 .edit-profile-content {
+           padding: 24px;
+         }
+         
+         .form-grid {
+           display: grid;
+           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+           gap: 16px;
+         }
+         
+         .form-section {
+           background: #f8fafc;
+           padding: 16px;
+           border-radius: 8px;
+           border: 1px solid #e2e8f0;
+         }
         
-        .edit-profile-content {
-          padding: 32px;
-        }
-        
-        .form-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 24px;
-        }
-        
-        .form-section {
-          background: #f8fafc;
-          padding: 24px;
-          border-radius: 12px;
-          border: 1px solid #e2e8f0;
-        }
-        
-        .section-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #1e293b;
-          margin-bottom: 20px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        
-        .form-group {
-          margin-bottom: 20px;
-        }
+                 .section-title {
+           font-size: 16px;
+           font-weight: 600;
+           color: #1e293b;
+           margin-bottom: 12px;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+         }
+         
+         .form-group {
+           margin-bottom: 12px;
+         }
         
         .form-label {
           display: block;
@@ -223,18 +223,18 @@ const EditProfile = () => {
           font-size: 14px;
         }
         
-        .form-input,
-        .form-select {
-          width: 100%;
-          padding: 12px 16px;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
-          font-size: 14px;
-          color: #1f2937;
-          background: white;
-          transition: all 0.2s;
-          font-family: 'Kanit', 'Prompt', Arial, sans-serif;
-        }
+                 .form-input,
+         .form-select {
+           width: 100%;
+           padding: 8px 12px;
+           border: 2px solid #e5e7eb;
+           border-radius: 6px;
+           font-size: 14px;
+           color: #1f2937;
+           background: white;
+           transition: all 0.2s;
+           font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+         }
         
         .form-input:focus,
         .form-select:focus {
@@ -248,11 +248,11 @@ const EditProfile = () => {
           color: #6b7280;
         }
         
-        .form-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-        }
+                 .form-row {
+           display: grid;
+           grid-template-columns: 1fr 1fr;
+           gap: 12px;
+         }
         
         .full-width {
           grid-column: 1 / -1;
@@ -277,28 +277,28 @@ const EditProfile = () => {
           border: 1px solid #bbf7d0;
         }
         
-        .form-actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 16px;
-          margin-top: 32px;
-          padding-top: 24px;
-          border-top: 1px solid #e5e7eb;
-        }
+                 .form-actions {
+           display: flex;
+           justify-content: flex-end;
+           gap: 12px;
+           margin-top: 20px;
+           padding-top: 16px;
+           border-top: 1px solid #e5e7eb;
+         }
         
-        .btn {
-          padding: 12px 24px;
-          border: none;
-          border-radius: 8px;
-          font-weight: 500;
-          cursor: pointer;
-          font-size: 14px;
-          transition: all 0.2s;
-          font-family: 'Kanit', 'Prompt', Arial, sans-serif;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
+                 .btn {
+           padding: 10px 20px;
+           border: none;
+           border-radius: 6px;
+           font-weight: 500;
+           cursor: pointer;
+           font-size: 14px;
+           transition: all 0.2s;
+           font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+           display: flex;
+           align-items: center;
+           gap: 6px;
+         }
         
         .btn-cancel {
           background: #f3f4f6;
@@ -369,9 +369,9 @@ const EditProfile = () => {
               {lang === 'th' ? 'อัปเดตข้อมูลส่วนตัวของคุณ' : 'Update your personal information'}
             </p>
           </div>
-          <div className="profile-avatar">
-            <User size={32} />
-          </div>
+                     <div className="profile-avatar">
+             <User size={24} />
+           </div>
         </div>
 
         <div className="edit-profile-content">
