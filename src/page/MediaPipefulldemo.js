@@ -926,6 +926,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     setFaceIncorrectTime(0);
     setFaceTotalCorrectTime(0);
     setFaceTotalIncorrectTime(0);
+    playBeep(800,1000,0.4); // Beep when first set starts
     console.log("DEBUG: Face phase set to countdown, countdown set to 10");
   }
 
@@ -1159,7 +1160,9 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       if (lastSpokenCountdownRef.current !== challengeCountdown) {
         speak(String(challengeCountdown));
         lastSpokenCountdownRef.current = challengeCountdown;
+        
       }
+      
     } else if (phase === "rest") {
       if (lastSpokenCountdownRef.current !== 0) {
         const finishText = lang === 'th'
@@ -1330,6 +1333,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
             setFaceChallengeCountdown(10);
             setFaceIsHolding(false);
             setFaceIncorrectTime(0);
+            playBeep(800,1000,0.4); // Beep when rest time ends
             return 0;
           }
           return prev - 1;
