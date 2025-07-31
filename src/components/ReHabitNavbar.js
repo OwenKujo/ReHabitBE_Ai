@@ -296,7 +296,7 @@ function ReHabitNavbar() {
               </button>
               {isProfileOpen && (
                 <div className="navbar-dropdown">
-                  <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'โปรไฟล์ของคุณ' : 'Your Profile'}</Link>
+                  <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'โปรไฟล์และประวัติ' : 'ReHabit Record'}</Link>
                   <Link to="/edit-profile" className="navbar-dropdown-item" onClick={() => setIsProfileOpen(false)}>{lang === 'th' ? 'แก้ไขโปรไฟล์' : 'Edit Profile'}</Link>
                   <button 
                     onClick={() => {
