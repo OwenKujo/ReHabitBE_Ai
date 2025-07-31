@@ -351,18 +351,18 @@ const EditProfile = () => {
         
         @media (max-width: 768px) {
           .edit-profile-container {
-            padding: 8px;
+            padding: 12px;
           }
           
           .edit-profile-card {
             max-width: 100%;
-            border-radius: 8px;
+            border-radius: 12px;
           }
           
           .edit-profile-header {
-            padding: 16px;
+            padding: 20px 16px;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             text-align: center;
           }
           
@@ -377,96 +377,96 @@ const EditProfile = () => {
           
           .profile-avatar {
             order: 3;
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
           }
           
           .edit-profile-content {
-            padding: 16px;
+            padding: 20px 16px;
           }
           
           .form-grid {
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 16px;
           }
           
           .form-section {
-            padding: 12px;
+            padding: 16px;
           }
           
           .form-row {
             grid-template-columns: 1fr;
-            gap: 8px;
+            gap: 12px;
           }
           
           .form-group {
-            margin-bottom: 6px;
+            margin-bottom: 12px;
           }
           
           .form-input,
           .form-select {
-            height: 36px;
-            font-size: 14px;
+            height: 40px;
+            font-size: 16px;
           }
           
           .form-label {
-            font-size: 14px;
-            margin-bottom: 3px;
-          }
-          
-          .section-title {
             font-size: 15px;
             margin-bottom: 6px;
           }
           
+          .section-title {
+            font-size: 16px;
+            margin-bottom: 12px;
+          }
+          
           .form-actions {
             flex-direction: column;
-            gap: 8px;
-            margin-top: 16px;
-            padding-top: 12px;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
           }
           
           .btn {
             width: 100%;
             justify-content: center;
-            padding: 12px 16px;
-            font-size: 14px;
+            padding: 14px 20px;
+            font-size: 16px;
           }
         }
         
         @media (max-width: 480px) {
           .edit-profile-container {
-            padding: 4px;
+            padding: 8px;
           }
           
           .edit-profile-header {
-            padding: 12px;
+            padding: 16px 12px;
           }
           
           .edit-profile-content {
-            padding: 12px;
+            padding: 16px 12px;
           }
           
           .form-section {
-            padding: 10px;
+            padding: 14px;
           }
           
           .form-input,
           .form-select {
-            height: 40px;
+            height: 44px;
             font-size: 16px; /* Prevents zoom on iOS */
           }
           
           .form-label {
-            font-size: 15px;
-          }
-          
-          .section-title {
             font-size: 16px;
           }
           
+          .section-title {
+            font-size: 17px;
+          }
+          
           .btn {
-            padding: 14px 16px;
+            padding: 16px 20px;
             font-size: 16px;
           }
         }

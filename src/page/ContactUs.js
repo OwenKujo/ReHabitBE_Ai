@@ -344,9 +344,15 @@ function ContactUs() {
           }
         `}</style>
 
-        <div className="contact-header fade-in">
-          <h1>Contact Us</h1>
-          <p>
+        <div className="contact-header fade-in" style={{
+          padding: window.innerWidth <= 600 ? '32px 16px 24px' : '56px 20px 36px'
+        }}>
+          <h1 style={{
+            fontSize: window.innerWidth <= 600 ? '24px' : '34px'
+          }}>Contact Us</h1>
+          <p style={{
+            fontSize: window.innerWidth <= 600 ? '14px' : '16px'
+          }}>
             If you have any questions or feedback, please don't hesitate to get in touch with us.
           </p>
           <div className="icon-row">
@@ -736,9 +742,15 @@ function ContactUs() {
           }
         `}</style>
 
-        <div className="contact-header fade-in">
-          <h1>ติดต่อเรา</h1>
-          <p>หากคุณมีคำถามหรือข้อเสนอแนะ กรุณาติดต่อเราได้เลย</p>
+        <div className="contact-header fade-in" style={{
+          padding: window.innerWidth <= 600 ? '32px 16px 24px' : '56px 20px 36px'
+        }}>
+          <h1 style={{
+            fontSize: window.innerWidth <= 600 ? '24px' : '34px'
+          }}>ติดต่อเรา</h1>
+          <p style={{
+            fontSize: window.innerWidth <= 600 ? '14px' : '16px'
+          }}>หากคุณมีคำถามหรือข้อเสนอแนะ กรุณาติดต่อเราได้เลย</p>
           <div className="icon-row">
             <div className="icon-item">
               <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="Location" />

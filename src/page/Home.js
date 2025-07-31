@@ -481,9 +481,21 @@ const Home = () => {
             <div className="home-hero-title">ReHabit</div>
             <h1 className="home-hero-h1">Rehabilitaion For Better Life And Health</h1>
             <p className="home-hero-p">Welcome to ReHabit, your digital rehabilitation companion.</p>
-            <div className="home-hero-btns">
-              <button className="home-hero-btn-primary">Try Out ReHabit</button>
-              <button className="home-hero-btn-secondary">Contact Us</button>
+            <div className="home-hero-btns" style={{
+              flexDirection: window.innerWidth <= 600 ? 'column' : 'row',
+              gap: window.innerWidth <= 600 ? '12px' : '16px',
+              alignItems: window.innerWidth <= 600 ? 'center' : 'flex-start'
+            }}>
+              <button className="home-hero-btn-primary" style={{
+                width: window.innerWidth <= 600 ? '200px' : 'auto',
+                fontSize: window.innerWidth <= 600 ? '14px' : '16px',
+                padding: window.innerWidth <= 600 ? '12px 24px' : '12px 28px'
+              }}>Try Out ReHabit</button>
+              <button className="home-hero-btn-secondary" style={{
+                width: window.innerWidth <= 600 ? '200px' : 'auto',
+                fontSize: window.innerWidth <= 600 ? '14px' : '16px',
+                padding: window.innerWidth <= 600 ? '12px 24px' : '12px 28px'
+              }}>Contact Us</button>
             </div>
           </div>
         </div>
@@ -947,9 +959,21 @@ const Home = () => {
             <div className="home-hero-title">ReHabit</div>
             <h1 className="home-hero-h1">ยินดีต้อนรับสู่ ReHabit</h1>
             <p className="home-hero-p">เพื่อนคู่ใจด้านการฟื้นฟูสุขภาพของคุณ</p>
-            <div className="home-hero-btns">
-              <button className="home-hero-btn-primary">ทดลองใช้ ReHabit</button>
-              <button className="home-hero-btn-secondary">ติดต่อเรา</button>
+            <div className="home-hero-btns" style={{
+              flexDirection: window.innerWidth <= 600 ? 'column' : 'row',
+              gap: window.innerWidth <= 600 ? '12px' : '16px',
+              alignItems: window.innerWidth <= 600 ? 'center' : 'flex-start'
+            }}>
+              <button className="home-hero-btn-primary" style={{
+                width: window.innerWidth <= 600 ? '200px' : 'auto',
+                fontSize: window.innerWidth <= 600 ? '14px' : '16px',
+                padding: window.innerWidth <= 600 ? '12px 24px' : '12px 28px'
+              }}>ทดลองใช้ ReHabit</button>
+              <button className="home-hero-btn-secondary" style={{
+                width: window.innerWidth <= 600 ? '200px' : 'auto',
+                fontSize: window.innerWidth <= 600 ? '14px' : '16px',
+                padding: window.innerWidth <= 600 ? '12px 24px' : '12px 28px'
+              }}>ติดต่อเรา</button>
             </div>
           </div>
         </div>

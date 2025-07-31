@@ -33,6 +33,18 @@ function OfficeSyndromePage() {
             height: 450px;
             object-fit: cover;
           }
+          
+          @media (max-width: 768px) {
+            .header-image {
+              height: 300px;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .header-image {
+              height: 250px;
+            }
+          }
           .overlay {
             position: absolute;
             top: 0;
@@ -48,6 +60,22 @@ function OfficeSyndromePage() {
             padding-top: 24px;
             color: white;
           }
+          
+          @media (max-width: 768px) {
+            .overlay {
+              padding-left: 20px;
+              padding-top: 16px;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .overlay {
+              padding-left: 16px;
+              padding-top: 12px;
+              align-items: center;
+              text-align: center;
+            }
+          }
           .start-button {
             background-color: #14b8a6;
             color: white;
@@ -60,6 +88,22 @@ function OfficeSyndromePage() {
             margin-top: 32px;
             letter-spacing: 0.5px;
           }
+          
+          @media (max-width: 768px) {
+            .start-button {
+              padding: 12px 24px;
+              font-size: 1rem;
+              margin-top: 24px;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .start-button {
+              padding: 10px 20px;
+              font-size: 0.875rem;
+              margin-top: 16px;
+            }
+          }
           .info-box {
             position: absolute;
             bottom: -30px;
@@ -67,6 +111,18 @@ function OfficeSyndromePage() {
             display: flex;
             gap: 16px;
           }
+          
+          @media (max-width: 480px) {
+            .info-box {
+              position: relative;
+              bottom: auto;
+              left: auto;
+              margin-top: 16px;
+              justify-content: center;
+              gap: 12px;
+            }
+          }
+          
           .info-card {
             background: white;
             padding: 12px 24px;
@@ -74,13 +130,36 @@ function OfficeSyndromePage() {
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             font-weight: bold;
           }
+          
+          @media (max-width: 480px) {
+            .info-card {
+              padding: 8px 12px;
+              font-size: 12px;
+            }
+          }
+          
           .section {
             padding: 60px 40px 20px;
           }
+          
+          @media (max-width: 480px) {
+            .section {
+              padding: 24px 16px 16px;
+            }
+          }
+          
           .section h2 {
             color: #003d6a;
             margin-bottom: 16px;
           }
+          
+          @media (max-width: 480px) {
+            .section h2 {
+              font-size: 18px;
+              text-align: center;
+            }
+          }
+          
           .detail-container {
             display: flex;
             flex-wrap: wrap;
@@ -90,12 +169,29 @@ function OfficeSyndromePage() {
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             gap: 24px;
           }
+          
+          @media (max-width: 480px) {
+            .detail-container {
+              flex-direction: column;
+              gap: 16px;
+              padding: 16px;
+            }
+          }
+          
           .preview-video {
             flex: 1;
             min-width: 280px;
             max-width: 500px;
             position: relative;
           }
+          
+          @media (max-width: 480px) {
+            .preview-video {
+              min-width: auto;
+              max-width: 100%;
+            }
+          }
+          
           .preview-video img {
             width: 100%;
             border-radius: 10px;
@@ -111,21 +207,50 @@ function OfficeSyndromePage() {
             flex: 1;
             min-width: 280px;
           }
+          
+          @media (max-width: 480px) {
+            .video-text {
+              min-width: auto;
+              text-align: center;
+            }
+          }
+          
           .video-text h3 {
             color: #0077b6;
             margin-bottom: 10px;
           }
+          
+          @media (max-width: 480px) {
+            .video-text h3 {
+              font-size: 16px;
+            }
+          }
+          
           .video-text p {
             font-size: 14px;
             color: #444;
             line-height: 1.6;
           }
+          
+          @media (max-width: 480px) {
+            .video-text p {
+              font-size: 14px;
+            }
+          }
+          
           .movement-box {
             background: white;
             padding: 24px;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
           }
+          
+          @media (max-width: 480px) {
+            .movement-box {
+              padding: 16px;
+            }
+          }
+          
           .movement-item {
             display: flex;
             justify-content: space-between;
@@ -133,6 +258,14 @@ function OfficeSyndromePage() {
             padding: 12px 0;
             border-bottom: 1px solid #ddd;
           }
+          
+          @media (max-width: 480px) {
+            .movement-item {
+              font-size: 14px;
+              padding: 12px 0;
+            }
+          }
+          
           .movement-item:last-child {
             border-bottom: none;
           }
@@ -140,12 +273,20 @@ function OfficeSyndromePage() {
             color: #003d6a;
             font-weight: 500;
           }
+          
+          @media (max-width: 480px) {
+            .movement-name {
+              font-size: 14px;
+            }
+          }
+          
           .movement-right {
             display: flex;
             align-items: center;
             gap: 6px;
             color: #555;
           }
+          
           @media (max-width: 1200px) {
             .header-image {
               height: 320px;
@@ -175,43 +316,12 @@ function OfficeSyndromePage() {
               padding: 10px;
             }
           }
-          @media (max-width: 600px) {
-            .header-image {
-              height: 90px;
-            }
-            .overlay h1 {
-              font-size: 18px;
-              margin-top: 24px;
-            }
-            .start-button {
-              font-size: 12px;
-              padding: 8px 16px;
-              margin-top: 12px;
-            }
-            .info-card {
-              padding: 6px 10px;
-              font-size: 10px;
-            }
-            .section h2 {
-              font-size: 14px;
-            }
-            .video-text h3 {
-              font-size: 12px;
-            }
-            .video-text p {
-              font-size: 10px;
-            }
-            .movement-item {
-              font-size: 12px;
-              padding: 6px 0;
-            }
-          }
         `}</style>
 
         {/* Header Section */}
         <div className="header">
           <img
-            src="/office-syndrome-header.jpg" // แก้ path ให้ตรงกับภาพจริง
+            src="/office-syndrome-header.jpg"
             alt="Office Syndrome"
             className="header-image"
           />
@@ -219,19 +329,24 @@ function OfficeSyndromePage() {
             <a href="/PhysicalMenu" style={{ textDecoration: 'underline', color: 'white', fontSize: '1.15rem', fontWeight: 700, alignSelf: 'flex-start', marginBottom: 24, letterSpacing: 0.5 }}>
               ← Go Back
             </a>
-            <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginTop: 80 }}>Office Syndrome</h1>
+            <h1 style={{ 
+              fontSize: window.innerWidth <= 480 ? '24px' : '36px', 
+              fontWeight: 'bold', 
+              marginTop: window.innerWidth <= 480 ? 16 : 80,
+              textAlign: window.innerWidth <= 480 ? 'center' : 'left'
+            }}>Office Syndrome</h1>
             <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ Start</button>
           </div>
 
           {/* Summary cards */}
           <div className="info-box">
             <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <List size={20} style={{ color: '#1976d2' }} />
-              4 movements
+              <List size={window.innerWidth <= 480 ? 16 : 20} style={{ color: '#1976d2' }} />
+              <span style={{ fontSize: window.innerWidth <= 480 ? '12px' : 'inherit' }}>4 movements</span>
             </div>
             <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Clock size={20} style={{ color: '#1976d2' }} />
-              8 minutes
+              <Clock size={window.innerWidth <= 480 ? 16 : 20} style={{ color: '#1976d2' }} />
+              <span style={{ fontSize: window.innerWidth <= 480 ? '12px' : 'inherit' }}>8 minutes</span>
             </div>
           </div>
         </div>
@@ -467,33 +582,67 @@ function OfficeSyndromePage() {
           }
           @media (max-width: 600px) {
             .header-image {
-              height: 90px;
+              height: 200px;
+            }
+            .overlay {
+              align-items: center;
+              text-align: center;
             }
             .overlay h1 {
-              font-size: 18px;
-              margin-top: 24px;
+              font-size: 24px;
+              margin-top: 16px;
             }
             .start-button {
-              font-size: 12px;
-              padding: 8px 16px;
-              margin-top: 12px;
+              font-size: 14px;
+              padding: 12px 20px;
+              margin-top: 16px;
+            }
+            .info-box {
+              position: relative;
+              bottom: auto;
+              left: auto;
+              margin-top: 16px;
+              justify-content: center;
             }
             .info-card {
-              padding: 6px 10px;
-              font-size: 10px;
+              padding: 8px 12px;
+              font-size: 12px;
+            }
+            .section {
+              padding: 24px 16px 16px;
             }
             .section h2 {
-              font-size: 14px;
+              font-size: 18px;
+              text-align: center;
+            }
+            .detail-container {
+              flex-direction: column;
+              gap: 16px;
+              padding: 16px;
+            }
+            .preview-video {
+              min-width: auto;
+              max-width: 100%;
+            }
+            .video-text {
+              min-width: auto;
+              text-align: center;
             }
             .video-text h3 {
-              font-size: 12px;
+              font-size: 16px;
             }
             .video-text p {
-              font-size: 10px;
+              font-size: 14px;
+            }
+            .movement-box {
+              padding: 16px;
             }
             .movement-item {
-              font-size: 12px;
-              padding: 6px 0;
+              font-size: 14px;
+              padding: 12px 0;
+            }
+            .movement-name {
+              font-size: 14px;
             }
           }
         `}</style>
@@ -501,7 +650,7 @@ function OfficeSyndromePage() {
         {/* Header Section */}
         <div className="header">
           <img
-            src="/office-syndrome-header.jpg" // แก้ path ให้ตรงกับภาพจริง
+            src="/office-syndrome-header.jpg"
             alt="Office Syndrome"
             className="header-image"
           />
@@ -509,19 +658,24 @@ function OfficeSyndromePage() {
             <a href="#" style={{ textDecoration: 'underline', color: 'white', fontSize: '1.15rem', fontWeight: 700, alignSelf: 'flex-start', marginBottom: 24, letterSpacing: 0.5 }}>
               ← Go Back
             </a>
-            <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginTop: 80 }}>ออฟฟิศซินโดรม</h1>
+            <h1 style={{ 
+              fontSize: window.innerWidth <= 600 ? '24px' : '36px', 
+              fontWeight: 'bold', 
+              marginTop: window.innerWidth <= 600 ? 16 : 80,
+              textAlign: window.innerWidth <= 600 ? 'center' : 'left'
+            }}>ออฟฟิศซินโดรม</h1>
             <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ Start</button>
           </div>
 
           {/* Summary cards */}
           <div className="info-box">
             <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <List size={20} style={{ color: '#1976d2' }} />
-              4 movements
+              <List size={window.innerWidth <= 600 ? 16 : 20} style={{ color: '#1976d2' }} />
+              <span style={{ fontSize: window.innerWidth <= 600 ? '12px' : 'inherit' }}>4 movements</span>
             </div>
             <div className="info-card" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Clock size={20} style={{ color: '#1976d2' }} />
-              8 minutes
+              <Clock size={window.innerWidth <= 600 ? 16 : 20} style={{ color: '#1976d2' }} />
+              <span style={{ fontSize: window.innerWidth <= 600 ? '12px' : 'inherit' }}>8 minutes</span>
             </div>
           </div>
         </div>

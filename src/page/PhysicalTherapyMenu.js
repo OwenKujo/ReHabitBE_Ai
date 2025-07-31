@@ -58,9 +58,23 @@ const PhysicalTherapyMenu = () => {
 
   if (lang === 'en') {
     return (
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#f4fafd', fontFamily: 'Kanit, Prompt, Arial, sans-serif' }}>
+      <div style={{ 
+        display: 'flex', 
+        minHeight: '100vh', 
+        background: '#f4fafd', 
+        fontFamily: 'Kanit, Prompt, Arial, sans-serif',
+        flexDirection: window.innerWidth <= 768 ? 'column' : 'row'
+      }}>
         {/* Sidebar */}
-        <aside style={{ width: 280, background: '#fff', boxShadow: '2px 0 16px 0 rgba(30,136,229,0.06)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0' }}>
+        <aside style={{ 
+          width: window.innerWidth <= 768 ? '100%' : 280, 
+          background: '#fff', 
+          boxShadow: '2px 0 16px 0 rgba(30,136,229,0.06)', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          padding: window.innerWidth <= 768 ? '16px 0' : '32px 0'
+        }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: 36 }}>
             <span style={{ fontWeight: 700, fontSize: 24, color: '#4392B1', letterSpacing: 1 }}>ReHabit</span>
@@ -134,21 +148,71 @@ const PhysicalTherapyMenu = () => {
             />
           </div>
           {/* Section Title */}
-          <div style={{ fontWeight: 700, fontSize: 28, color: '#222', marginBottom: 24 }}>Suggestion</div>
+          <div style={{ 
+            fontWeight: 700, 
+            fontSize: window.innerWidth <= 768 ? 20 : 28, 
+            color: '#222', 
+            marginBottom: window.innerWidth <= 768 ? 16 : 24,
+            textAlign: window.innerWidth <= 768 ? 'center' : 'left'
+          }}>Suggestion</div>
           {/* Suggestion Cards */}
-          <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
-            {suggestions.map((s, i) => (
-              <div key={i} style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 16px 0 rgba(30,136,229,0.08)', width: 300, padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <img src={s.img} alt="Suggestion" style={{ width: '100%', height: 140, objectFit: 'cover' }} />
-                <div style={{ padding: '18px 18px 12px 18px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div style={{ fontWeight: 700, fontSize: 16, color: '#222', marginBottom: 8 }}>{s.title}</div>
-                  <div style={{ fontSize: 14, color: '#555', marginBottom: 18 }}>{s.desc}</div>
-                  <button
-                    style={{ alignSelf: 'flex-end', background: '#19c2d2', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 24px', fontWeight: 600, fontSize: 15, cursor: 'pointer', boxShadow: '0 1px 4px rgba(30,136,229,0.06)' }}
-                    onClick={i === 0 ? () => navigate('/office-syndrome') : undefined}
-                  >
-                    View
-                  </button>
+          <div style={{ 
+            display: 'flex', 
+            gap: window.innerWidth <= 768 ? 16 : 32, 
+            flexWrap: 'wrap',
+            justifyContent: window.innerWidth <= 768 ? 'center' : 'flex-start'
+          }}>
+                          {suggestions.map((s, i) => (
+                <div key={i} style={{ 
+                  background: '#fff', 
+                  borderRadius: window.innerWidth <= 768 ? 12 : 18, 
+                  boxShadow: '0 4px 16px 0 rgba(30,136,229,0.08)', 
+                  width: window.innerWidth <= 768 ? 280 : 300, 
+                  padding: 0, 
+                  overflow: 'hidden', 
+                  display: 'flex', 
+                  flexDirection: 'column' 
+                }}>
+                                  <img src={s.img} alt="Suggestion" style={{ 
+                    width: '100%', 
+                    height: window.innerWidth <= 768 ? 120 : 140, 
+                    objectFit: 'cover' 
+                  }} />
+                                    <div style={{ 
+                    padding: window.innerWidth <= 768 ? '12px 12px 8px 12px' : '18px 18px 12px 18px', 
+                    flex: 1, 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    justifyContent: 'space-between' 
+                  }}>
+                    <div style={{ 
+                      fontWeight: 700, 
+                      fontSize: window.innerWidth <= 768 ? 14 : 16, 
+                      color: '#222', 
+                      marginBottom: 8 
+                    }}>{s.title}</div>
+                    <div style={{ 
+                      fontSize: window.innerWidth <= 768 ? 12 : 14, 
+                      color: '#555', 
+                      marginBottom: window.innerWidth <= 768 ? 12 : 18 
+                    }}>{s.desc}</div>
+                                      <button
+                      style={{ 
+                        alignSelf: 'flex-end', 
+                        background: '#19c2d2', 
+                        color: '#fff', 
+                        border: 'none', 
+                        borderRadius: window.innerWidth <= 768 ? 6 : 8, 
+                        padding: window.innerWidth <= 768 ? '6px 16px' : '8px 24px', 
+                        fontWeight: 600, 
+                        fontSize: window.innerWidth <= 768 ? 13 : 15, 
+                        cursor: 'pointer', 
+                        boxShadow: '0 1px 4px rgba(30,136,229,0.06)' 
+                      }}
+                      onClick={i === 0 ? () => navigate('/office-syndrome') : undefined}
+                    >
+                      View
+                    </button>
                 </div>
               </div>
             ))}

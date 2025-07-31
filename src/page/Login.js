@@ -46,6 +46,12 @@ function Login() {
           font-family: 'Kanit', 'Prompt', Arial, sans-serif;
         }
         
+        @media (max-width: 768px) {
+          .login-container {
+            flex-direction: column;
+          }
+        }
+        
         .login-left {
           flex: 1;
           display: flex;
@@ -57,6 +63,20 @@ function Login() {
           position: relative;
         }
         
+        @media (max-width: 768px) {
+          .login-left {
+            padding: 1.5rem;
+            min-height: 60vh;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .login-left {
+            padding: 1rem;
+            min-height: 70vh;
+          }
+        }
+        
         .login-right {
           flex: 1;
           background: url('/loginpage.jpg') center/cover;
@@ -64,6 +84,19 @@ function Login() {
           display: flex;
           align-items: center;
           justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+          .login-right {
+            min-height: 40vh;
+            background-position: center;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .login-right {
+            min-height: 30vh;
+          }
         }
         
         .login-right::before {
@@ -82,6 +115,19 @@ function Login() {
           text-align: center;
         }
         
+        @media (max-width: 768px) {
+          .login-content {
+            max-width: 100%;
+            padding: 0 1rem;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .login-content {
+            padding: 0 0.5rem;
+          }
+        }
+        
         .back-button {
           position: absolute;
           top: 2rem;
@@ -94,6 +140,22 @@ function Login() {
           font-size: 14px;
           font-weight: 500;
           transition: color 0.2s;
+        }
+        
+        @media (max-width: 768px) {
+          .back-button {
+            top: 1rem;
+            left: 1rem;
+            font-size: 13px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .back-button {
+            top: 0.5rem;
+            left: 0.5rem;
+            font-size: 12px;
+          }
         }
         
         .back-button:hover {

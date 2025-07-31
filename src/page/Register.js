@@ -61,6 +61,12 @@ function Register() {
           font-family: 'Kanit', 'Prompt', Arial, sans-serif;
         }
         
+        @media (max-width: 768px) {
+          .register-container {
+            flex-direction: column;
+          }
+        }
+        
         .register-left {
           flex: 1;
           display: flex;
@@ -72,6 +78,20 @@ function Register() {
           position: relative;
         }
         
+        @media (max-width: 768px) {
+          .register-left {
+            padding: 1.5rem;
+            min-height: 60vh;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .register-left {
+            padding: 1rem;
+            min-height: 70vh;
+          }
+        }
+        
         .register-right {
           flex: 1;
           background: url('/register.jpg') center/cover;
@@ -79,6 +99,19 @@ function Register() {
           display: flex;
           align-items: center;
           justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+          .register-right {
+            min-height: 40vh;
+            background-position: center;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .register-right {
+            min-height: 30vh;
+          }
         }
         
         .register-right::before {
@@ -95,6 +128,19 @@ function Register() {
           max-width: 400px;
           width: 100%;
           text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+          .register-content {
+            max-width: 100%;
+            padding: 0 1rem;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .register-content {
+            padding: 0 0.5rem;
+          }
         }
         
         .back-button {
