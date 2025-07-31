@@ -130,6 +130,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     return new Promise((resolve, reject) => {
       const scripts = [
         'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js',
+        'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js',
         'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js'
       ];
       
@@ -329,6 +330,43 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
         ctx.font = '18px Arial';
         ctx.strokeText('Tilt head back to start', 10, 60);
         ctx.fillText('Tilt head back to start', 10, 60);
+      }
+
+      // Draw face keypoints only in the first set
+      console.log('DEBUG: Face drawing check - faceCurrentSet:', faceCurrentSet, 'DrawingUtils available:', !!window.DrawingUtils, 'FACEMESH_TESSELATION available:', !!window.FACEMESH_TESSELATION);
+      if (faceCurrentSet === 1 && window.DrawingUtils) {
+        try {
+          console.log('DEBUG: Drawing face keypoints...');
+          
+          // Test drawing a simple circle first to verify canvas context is working
+          ctx.fillStyle = 'blue';
+          ctx.beginPath();
+          ctx.arc(100, 100, 10, 0, 2 * Math.PI);
+          ctx.fill();
+          console.log('DEBUG: Test circle drawn successfully');
+          
+          // Draw face landmarks
+          window.DrawingUtils.drawLandmarks(ctx, landmarks, {
+            color: '#00FF00',
+            lineWidth: 1,
+            radius: 2
+          });
+          
+          // Draw face connections if available
+          if (window.FACEMESH_TESSELATION) {
+            window.DrawingUtils.drawConnectors(ctx, landmarks, window.FACEMESH_TESSELATION, {
+              color: '#00FF00',
+              lineWidth: 1
+            });
+          } else {
+            console.warn("FACEMESH_TESSELATION not available");
+          }
+          console.log('DEBUG: Face keypoints drawn successfully');
+        } catch (drawError) {
+          console.warn("Error drawing face keypoints:", drawError);
+        }
+      } else {
+        console.log('DEBUG: Face drawing skipped - faceCurrentSet:', faceCurrentSet, 'DrawingUtils:', !!window.DrawingUtils);
       }
     } else {
       // No face detected
@@ -646,43 +684,80 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
         if (!landmarks[12] || !landmarks[14] || !landmarks[16] || 
             !landmarks[11] || !landmarks[13] || !landmarks[15]) {
           console.warn("Missing required landmarks");
-          return;
+          // Don't return here, continue to draw keypoints
+        } else {
+          const rightAngle = calculateAngle(
+          landmarks[14], // elbow
+          landmarks[12], // shoulder
+          landmarks[16]  // wrist
+        );
+        
+        const leftAngle = calculateAngle(
+          landmarks[13], // elbow
+          landmarks[11], // shoulder
+          landmarks[15]  // wrist
+        );
+
+        let feedbackText = "";
+        let feedbackColor = "#FF0000";
+        
+        if (rightAngle !== null && leftAngle !== null) {
+          if (isRightArmCorrect(rightAngle)) {
+            feedbackText = "Correct";
+            feedbackColor = "#00FF00";
+            setIsHolding(true);
+          } else {
+            feedbackText = "Incorrect";
+            feedbackColor = "#FF0000";
+            setIsHolding(false);
+          }
+        }
+
+        if (feedbackText) {
+          canvasCtx.font = "24px Arial";
+          canvasCtx.fillStyle = feedbackColor;
+          canvasCtx.fillText(feedbackText, 50, 50);
         }
         
-        const rightAngle = calculateAngle(
-        landmarks[14], // elbow
-        landmarks[12], // shoulder
-        landmarks[16]  // wrist
-      );
-      
-      const leftAngle = calculateAngle(
-        landmarks[13], // elbow
-        landmarks[11], // shoulder
-        landmarks[15]  // wrist
-      );
-
-      let feedbackText = "";
-      let feedbackColor = "#FF0000";
-      
-      if (rightAngle !== null && leftAngle !== null) {
-        if (isRightArmCorrect(rightAngle)) {
-          feedbackText = "Correct";
-          feedbackColor = "#00FF00";
-          setIsHolding(true);
-        } else {
-          feedbackText = "Incorrect";
-          feedbackColor = "#FF0000";
-          setIsHolding(false);
+        setFeedback(feedbackText);
         }
-      }
 
-      if (feedbackText) {
-        canvasCtx.font = "24px Arial";
-        canvasCtx.fillStyle = feedbackColor;
-        canvasCtx.fillText(feedbackText, 50, 50);
+      // Draw full body keypoints only in the first set (moved outside the landmark check)
+      console.log('DEBUG: Pose drawing check - currentSet:', currentSet, 'DrawingUtils available:', !!window.DrawingUtils, 'POSE_CONNECTIONS available:', !!window.POSE_CONNECTIONS);
+      if (currentSet === 1 && window.DrawingUtils) {
+        try {
+          console.log('DEBUG: Drawing pose keypoints...');
+          
+          // Test drawing a simple circle first to verify canvas context is working
+          canvasCtx.fillStyle = 'red';
+          canvasCtx.beginPath();
+          canvasCtx.arc(100, 100, 10, 0, 2 * Math.PI);
+          canvasCtx.fill();
+          console.log('DEBUG: Test circle drawn successfully');
+          
+          // Draw pose landmarks
+          window.DrawingUtils.drawLandmarks(canvasCtx, results.poseLandmarks, {
+            color: '#00FF00',
+            lineWidth: 2,
+            radius: 3
+          });
+          
+          // Draw pose connections
+          if (window.POSE_CONNECTIONS) {
+            window.DrawingUtils.drawConnectors(canvasCtx, results.poseLandmarks, window.POSE_CONNECTIONS, {
+              color: '#00FF00',
+              lineWidth: 2
+            });
+          } else {
+            console.warn("POSE_CONNECTIONS not available");
+          }
+          console.log('DEBUG: Pose keypoints drawn successfully');
+        } catch (drawError) {
+          console.warn("Error drawing pose keypoints:", drawError);
+        }
+      } else {
+        console.log('DEBUG: Pose drawing skipped - currentSet:', currentSet, 'DrawingUtils:', !!window.DrawingUtils);
       }
-      
-      setFeedback(feedbackText);
       }
     } catch (error) {
       console.error("Error in onResults:", error);
@@ -848,7 +923,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
           if (prev <= 1) {
             clearInterval(interval);
             setGetReadyCountdown(0);
-            playBeep(800,1000,0.4)
+            // playBeep(800,1000,0.4)
             setMode("face");
             return 0;
           }
@@ -1380,6 +1455,34 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
       speak(tip);
     }
   }, [facePhase, faceFeedback, lang]);
+
+  // Debug: Check availability of drawing utilities and connection constants
+  useEffect(() => {
+    const checkDrawingUtils = () => {
+      console.log('DEBUG: Checking drawing utilities availability:');
+      console.log('- window.DrawingUtils:', !!window.DrawingUtils);
+      console.log('- window.POSE_CONNECTIONS:', !!window.POSE_CONNECTIONS);
+      console.log('- window.FACEMESH_TESSELATION:', !!window.FACEMESH_TESSELATION);
+      
+      if (window.DrawingUtils) {
+        console.log('- DrawingUtils methods:', Object.keys(window.DrawingUtils));
+      }
+      if (window.POSE_CONNECTIONS) {
+        console.log('- POSE_CONNECTIONS length:', window.POSE_CONNECTIONS.length);
+      }
+      if (window.FACEMESH_TESSELATION) {
+        console.log('- FACEMESH_TESSELATION length:', window.FACEMESH_TESSELATION.length);
+      }
+    };
+
+    // Check immediately
+    checkDrawingUtils();
+    
+    // Check again after a delay to ensure scripts are loaded
+    const timer = setTimeout(checkDrawingUtils, 2000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   
   if (mode === "face") {
