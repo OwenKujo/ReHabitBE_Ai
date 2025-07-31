@@ -389,10 +389,10 @@ const EditProfile = () => {
 
           <form onSubmit={handleSubmit}>
             <div className="form-grid">
-              {/* Personal Information */}
+              {/* Personal & Contact Information */}
               <div className="form-section">
                 <h3 className="section-title">
-                  {lang === 'th' ? 'ข้อมูลส่วนตัว' : 'Personal Information'}
+                  {lang === 'th' ? 'ข้อมูลส่วนตัวและติดต่อ' : 'Personal & Contact Info'}
                 </h3>
                 
                 <div className="form-row">
@@ -425,18 +425,33 @@ const EditProfile = () => {
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">
-                    {lang === 'th' ? 'อีเมล' : 'Email'}
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    className="form-input"
-                    readOnly
-                  />
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">
+                      {lang === 'th' ? 'อีเมล' : 'Email'}
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      className="form-input"
+                      readOnly
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">
+                      {lang === 'th' ? 'เบอร์โทรศัพท์' : 'Phone'}
+                    </label>
+                    <input
+                      type="tel"
+                      name="contactNumber"
+                      value={form.contactNumber}
+                      onChange={handleChange}
+                      className="form-input"
+                    />
+                  </div>
                 </div>
 
                 <div className="form-row">
@@ -468,39 +483,6 @@ const EditProfile = () => {
                       className="form-input"
                     />
                   </div>
-                </div>
-              </div>
-
-              {/* Contact Information */}
-              <div className="form-section">
-                <h3 className="section-title">
-                  {lang === 'th' ? 'ข้อมูลการติดต่อ' : 'Contact Information'}
-                </h3>
-                
-                <div className="form-group">
-                  <label className="form-label">
-                    {lang === 'th' ? 'ที่อยู่' : 'Address'}
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={form.address}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">
-                    {lang === 'th' ? 'เบอร์โทรศัพท์' : 'Contact Number'}
-                  </label>
-                  <input
-                    type="tel"
-                    name="contactNumber"
-                    value={form.contactNumber}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
                 </div>
 
                 <div className="form-row">
@@ -542,12 +524,25 @@ const EditProfile = () => {
                     </select>
                   </div>
                 </div>
+
+                <div className="form-group">
+                  <label className="form-label">
+                    {lang === 'th' ? 'ที่อยู่' : 'Address'}
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={form.address}
+                    onChange={handleChange}
+                    className="form-input"
+                  />
+                </div>
               </div>
 
-              {/* Health Information */}
+              {/* Health & Additional Information */}
               <div className="form-section">
                 <h3 className="section-title">
-                  {lang === 'th' ? 'ข้อมูลสุขภาพ' : 'Health Information'}
+                  {lang === 'th' ? 'ข้อมูลสุขภาพและเพิ่มเติม' : 'Health & Additional Info'}
                 </h3>
                 
                 <div className="form-row">
@@ -619,6 +614,19 @@ const EditProfile = () => {
                   </div>
                 </div>
 
+                <div className="form-group">
+                  <label className="form-label">
+                    {lang === 'th' ? 'อาชีพ' : 'Occupation'}
+                  </label>
+                  <input
+                    type="text"
+                    name="occupation"
+                    value={form.occupation}
+                    onChange={handleChange}
+                    className="form-input"
+                  />
+                </div>
+
                 {form.medicalCondition === 'Yes' && (
                   <div className="form-group">
                     <label className="form-label">
@@ -633,26 +641,6 @@ const EditProfile = () => {
                     />
                   </div>
                 )}
-              </div>
-
-              {/* Additional Information */}
-              <div className="form-section">
-                <h3 className="section-title">
-                  {lang === 'th' ? 'ข้อมูลเพิ่มเติม' : 'Additional Information'}
-                </h3>
-                
-                <div className="form-group">
-                  <label className="form-label">
-                    {lang === 'th' ? 'อาชีพ' : 'Occupation'}
-                  </label>
-                  <input
-                    type="text"
-                    name="occupation"
-                    value={form.occupation}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                </div>
               </div>
 
               {/* Password Change */}
