@@ -45,7 +45,7 @@ const EditProfile = () => {
             background-color: #eff6ff;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Kanit', 'Prompt';
           }
           .edit-header {
             display: flex;
@@ -338,7 +338,7 @@ const EditProfile = () => {
             background-color: #eff6ff;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Kanit', 'Prompt', Arial, sans-serif;
           }
           .edit-header {
             display: flex;

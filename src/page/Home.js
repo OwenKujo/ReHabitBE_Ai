@@ -479,7 +479,7 @@ const Home = () => {
         <div className="home-hero">
           <div className="home-hero-content">
             <div className="home-hero-title">ReHabit</div>
-            <h1 className="home-hero-h1">reHabilitaion For Better Life And Health</h1>
+            <h1 className="home-hero-h1">Rehabilitaion For Better Life And Health</h1>
             <p className="home-hero-p">Welcome to ReHabit, your digital rehabilitation companion.</p>
             <div className="home-hero-btns">
               <button className="home-hero-btn-primary">Try Out ReHabit</button>
@@ -557,7 +557,6 @@ const Home = () => {
             )}
           </div>
         </div>
-        {/* Add a <div style={{ marginBottom: 32 }} /> after the last main section (after the therapy section, before the end of the main container) */}
         <div style={{ marginBottom: 32 }} />
       </div>
     );
@@ -1024,7 +1023,6 @@ const Home = () => {
             )}
           </div>
         </div>
-        {/* Add a <div style={{ marginBottom: 32 }} /> after the last main section (after the therapy section, before the end of the main container) */}
         <div style={{ marginBottom: 0}} />
       </div>
     );
