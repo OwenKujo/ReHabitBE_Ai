@@ -13,6 +13,7 @@ import Register from './page/Register';
 import TestAPI from './page/TestAPI';
 import Footer from './components/Footer';
 import MediaPipefullDemo from './page/MediaPipefulldemo'
+import ReHabRecord from './page/ReHabRecord';
 import ProtectedRoute from './components/ProtectedRoute';
 import { tokenManager, api } from './utils/api';
 import './i18n';
@@ -114,6 +115,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/test-api" element={<TestAPI />} />
             <Route path="/officesyndromerehab" element={<MediaPipefull />} />
+            <Route path="/rehab-record" element={<ReHabRecord />} />
             <Route path="/demo" element={<MediaPipefullDemo />} />
           </Routes>
 

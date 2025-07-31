@@ -335,7 +335,26 @@ function OfficeSyndromePage() {
               marginTop: window.innerWidth <= 480 ? 16 : 80,
               textAlign: window.innerWidth <= 480 ? 'center' : 'left'
             }}>Office Syndrome</h1>
-            <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ Start</button>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ Start</button>
+              <button 
+                style={{
+                  backgroundColor: '#1976d2',
+                  color: 'white',
+                  border: 'none',
+                  padding: '16px 24px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  marginTop: '32px',
+                  letterSpacing: '0.5px'
+                }}
+                onClick={() => navigate('/rehab-record')}
+              >
+                📊 View Records
+              </button>
+            </div>
           </div>
 
           {/* Summary cards */}
@@ -664,7 +683,26 @@ function OfficeSyndromePage() {
               marginTop: window.innerWidth <= 600 ? 16 : 80,
               textAlign: window.innerWidth <= 600 ? 'center' : 'left'
             }}>ออฟฟิศซินโดรม</h1>
-            <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ Start</button>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <button className="start-button" onClick={() => navigate('/officesyndromerehab')}>▶ Start</button>
+              <button 
+                style={{
+                  backgroundColor: '#1976d2',
+                  color: 'white',
+                  border: 'none',
+                  padding: '16px 24px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  marginTop: '32px',
+                  letterSpacing: '0.5px'
+                }}
+                onClick={() => navigate('/rehab-record')}
+              >
+                📊 ดูประวัติ
+              </button>
+            </div>
           </div>
 
           {/* Summary cards */}
