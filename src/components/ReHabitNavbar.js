@@ -28,13 +28,13 @@ function ReHabitNavbar() {
 
   const navItems = lang === 'th' ? [
     { name: 'หน้าหลัก', href: '/', active: true },
-    { name: 'กายภาพบำบัด', href: 'MediaPipefull', active: false },
+    { name: 'กายภาพบำบัด', href: '/PhysicalMemu', active: false },
     { name: 'ประวัติการรักษา', href: '/rehab-record', active: false },
     { name: 'เกี่ยวกับเรา', href: '#', active: false },
     { name: 'ติดต่อ', href: '#', active: false },
   ] : [
     { name: 'Home', href: '/', active: true },
-    { name: 'Physical Therapy', href: 'MediaPipefull', active: false },
+    { name: 'Physical Therapy', href: '/PhysicalMemu', active: false },
     { name: 'Rehab Record', href: '/rehab-record', active: false },
     { name: 'About', href: '#', active: false },
     { name: 'Contact', href: '#', active: false },

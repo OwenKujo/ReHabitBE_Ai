@@ -5,6 +5,40 @@ import { api, tokenManager } from '../utils/api';
 
 function PoseAngleDetector() {
   const { lang } = useLang();
+  
+  // Function to save score to backend
+  const saveScore = async (score, exercise = 'Office Syndrome Rehab', sessionType = 'pose') => {
+    try {
+      const token = tokenManager.getToken();
+      if (!token) {
+        console.warn('No authentication token found, skipping score save');
+        return;
+      }
+
+      // Calculate session duration based on session type
+      const startTime = sessionType === 'face' ? faceSessionStartTime : sessionStartTime;
+      const sessionDuration = startTime 
+        ? Math.round((Date.now() - startTime) / 1000)
+        : 60; // fallback to 60 seconds if not tracked
+      
+      const scoreData = {
+        move_type: sessionType === 'face' ? 'move_2' : sessionType === 'complete' ? 'move_1' : 'move_1', // face = move_2, pose/complete = move_1
+        score: score,
+        duration: sessionDuration,
+        accuracy: score // using score as accuracy for now
+      };
+
+      const response = await api.scores.create(scoreData, token);
+      if (response.success) {
+        console.log('Score saved successfully:', response);
+      } else {
+        console.error('Failed to save score:', response.message);
+      }
+    } catch (error) {
+      console.error('Error saving score:', error);
+    }
+  };
+  
   // Browser-native Thai TTS
   function speak(text) {
     if ('speechSynthesis' in window) {
@@ -80,37 +114,6 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     }
   }
 
-  // Function to save score to backend
-  const saveScore = async (score, exercise = 'Office Syndrome Rehab') => {
-    try {
-      const token = tokenManager.getToken();
-      if (!token) {
-        console.warn('No authentication token found, skipping score save');
-        return;
-      }
-
-      // Calculate session duration
-      const sessionDuration = sessionStartTime 
-        ? Math.round((Date.now() - sessionStartTime) / 1000)
-        : 60; // fallback to 60 seconds if not tracked
-      
-      const scoreData = {
-        move_type: 'move_1', // or 'move_2' depending on exercise type
-        score: score,
-        duration: sessionDuration,
-        accuracy: score // using score as accuracy for now
-      };
-
-      const response = await api.scores.create(scoreData, token);
-      if (response.success) {
-        console.log('Score saved successfully:', response);
-      } else {
-        console.error('Failed to save score:', response.message);
-      }
-    } catch (error) {
-      console.error('Error saving score:', error);
-    }
-  };
 
   const navigate = useNavigate();
   const videoRef = useRef(null);
@@ -143,6 +146,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   const [totalCorrectTime, setTotalCorrectTime] = useState(0);
   const [totalIncorrectTime, setTotalIncorrectTime] = useState(0);
   const [sessionStartTime, setSessionStartTime] = useState(null);
+  const [faceSessionStartTime, setFaceSessionStartTime] = useState(null);
 
   // Face mesh/rep tracker refs and state
   const faceMeshRef = useRef(null);
@@ -807,7 +811,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     setHeldTime(0);
     setFinalMessage("");
     setIncorrectTime(0);
-    setSessionStartTime(Date.now()); // Start tracking session time
+    setSessionStartTime(Date.now()); // Start tracking session time for pose mode
     
     intervalRef.current = setInterval(() => {
       setCountdown((prev) => {
@@ -928,6 +932,9 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
         : `Total correct time: ${totalCorrectTime} seconds\nScore: ${score} out of 10`;
       setPhase("showfinal");
       setFinalMessage(summaryText);
+      
+      // Save pose score to backend
+      saveScore(score, 'Office Syndrome Rehab - Pose', 'pose');
     }
   }, [phase, totalCorrectTime, totalIncorrectTime, lang]);
 
@@ -1035,7 +1042,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
     setFaceIncorrectTime(0);
     setFaceTotalCorrectTime(0);
     setFaceTotalIncorrectTime(0);
-    setSessionStartTime(Date.now()); // Start tracking session time for face mode
+    setFaceSessionStartTime(Date.now()); // Start tracking session time for face mode
     playBeep(800,1000,0.4); // Beep when first set starts
     console.log("DEBUG: Face phase set to countdown, countdown set to 10");
   }
@@ -1334,6 +1341,9 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
           ? `เวลาท่าถูกต้องทั้งหมด: ${faceTotalCorrectTime} วินาที\nคะแนน: ${faceScore} เต็ม 10`
           : `Total correct time: ${faceTotalCorrectTime} seconds\nScore: ${faceScore} out of 10`
       );
+      
+      // Save face score to backend
+      saveScore(faceScore, 'Office Syndrome Rehab - Face', 'face');
     }
   }, [facePhase, faceTotalCorrectTime, faceTotalIncorrectTime, lang]);
 
@@ -1347,8 +1357,8 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
         const poseScore = Math.round((totalCorrectTime / maxPoseCorrect) * 10);
         const maxFaceCorrect = 5 * 10;
         const faceScore = Math.round((faceTotalCorrectTime / maxFaceCorrect) * 10);
-        
         const overallScore = Math.round((poseScore + faceScore) / 2);
+        
         const conclusionMessage = lang === 'th'
           ? `สรุปผลการทดสอบ:\n\nท่าทางแขน:\n- เวลาท่าถูกต้อง: ${totalCorrectTime} วินาที\n- คะแนน: ${poseScore} เต็ม 10\n\nท่าทางศีรษะ:\n- เวลาท่าถูกต้อง: ${faceTotalCorrectTime} วินาที\n- คะแนน: ${faceScore} เต็ม 10\n\nคะแนนรวม: ${overallScore} เต็ม 10`
           : `Test Results Summary:\n\nArm Pose:\n- Total correct time: ${totalCorrectTime} seconds\n- Score: ${poseScore} out of 10\n\nFace Pose:\n- Total correct time: ${faceTotalCorrectTime} seconds\n- Score: ${faceScore} out of 10\n\nOverall Score: ${overallScore} out of 10`;
@@ -1356,8 +1366,8 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
         setFaceFinalMessage(conclusionMessage);
         speak(conclusionMessage);
         
-        // Save the overall score to backend
-        saveScore(overallScore, 'Office Syndrome Rehab');
+        // Save overall score to backend
+        saveScore(overallScore, 'Office Syndrome Rehab - Complete', 'complete');
       }, 5000); // 5 second delay
       return () => clearTimeout(timeout);
     }
