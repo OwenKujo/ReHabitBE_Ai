@@ -38,6 +38,24 @@ function PoseAngleDetector() {
       console.error('Error saving score:', error);
     }
   };
+
+  // Function to skip the physical therapy process and go to score
+  const skipToScore = async () => {
+    try {
+      // Generate a default score (5 out of 10) for skipped session
+      const defaultScore = 5;
+      
+      // Save the skipped score to backend
+      await saveScore(defaultScore, 'Office Syndrome Rehab - Skipped', 'pose');
+      
+      // Navigate to rehab record page
+      navigate('/rehab-record');
+    } catch (error) {
+      console.error('Error skipping to score:', error);
+      // Still navigate even if save fails
+      navigate('/rehab-record');
+    }
+  };
   
   // Browser-native Thai TTS
   function speak(text) {
@@ -1377,7 +1395,7 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
   useEffect(() => {
     if (facePhase === "conclusion") {
       const timeout = setTimeout(() => {
-        navigate('/physicaltherapy');
+        navigate('/physicalmenu');
       }, 10000);
       return () => clearTimeout(timeout);
     }
@@ -1608,6 +1626,23 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
               <h1 className="mpfull-title">{lang === 'th' ? 'ฟื้นฟูท่าศีรษะ' : 'Face Rehabilitation'}</h1>
               {facePhase === "countdown" && (
                 <div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                    <button 
+                      onClick={skipToScore}
+                      style={{ 
+                        fontSize: "16px", 
+                        padding: "8px 20px",
+                        backgroundColor: '#ff9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {lang === 'th' ? 'ข้ามไปดูคะแนน' : 'Skip to Score'}
+                    </button>
+                  </div>
                   <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>
                     {lang === 'th' ? 'เตรียมตัว' : 'Get Ready'}
                   </div>
@@ -1623,6 +1658,23 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
               )}
               {facePhase === "challenge" && (
                 <>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                    <button 
+                      onClick={skipToScore}
+                      style={{ 
+                        fontSize: "16px", 
+                        padding: "8px 20px",
+                        backgroundColor: '#ff9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {lang === 'th' ? 'ข้ามไปดูคะแนน' : 'Skip to Score'}
+                    </button>
+                  </div>
                   <div style={{ fontSize: 20, color: "#1976d2", fontWeight: "bold", marginBottom: 8 }}>
                     {lang === 'th' ? `เซ็ต ${faceCurrentSet} / 5` : `Set ${faceCurrentSet} / 5`}
                   </div>
@@ -1649,6 +1701,23 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
               )}
               {facePhase === "rest" && (
                 <div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                    <button 
+                      onClick={skipToScore}
+                      style={{ 
+                        fontSize: "16px", 
+                        padding: "8px 20px",
+                        backgroundColor: '#ff9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {lang === 'th' ? 'ข้ามไปดูคะแนน' : 'Skip to Score'}
+                    </button>
+                  </div>
                   <div style={{ fontSize: 20, color: "#FFA500", fontWeight: "bold", marginBottom: 8 }}>
                     {lang === 'th' ? 'เวลาพัก' : 'Rest Time'}: {faceRestCountdown} s
                   </div>
@@ -1659,6 +1728,23 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
               )}
               {facePhase === "finished" && (
                 <div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                    <button 
+                      onClick={skipToScore}
+                      style={{ 
+                        fontSize: "16px", 
+                        padding: "8px 20px",
+                        backgroundColor: '#ff9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {lang === 'th' ? 'ข้ามไปดูคะแนน' : 'Skip to Score'}
+                    </button>
+                  </div>
                   <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>
                     {lang === 'th' ? 'ครบทุกเซ็ต!' : 'All Sets Complete!'}
                   </div>
@@ -1672,6 +1758,23 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
               )}
               {facePhase === "showfinal" && (
                 <div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                    <button 
+                      onClick={skipToScore}
+                      style={{ 
+                        fontSize: "16px", 
+                        padding: "8px 20px",
+                        backgroundColor: '#ff9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {lang === 'th' ? 'ข้ามไปดูคะแนน' : 'Skip to Score'}
+                    </button>
+                  </div>
                   <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>
                     {lang === 'th' ? 'ผลการทดสอบท่าทางศีรษะ' : 'Face Pose Results'}
                   </div>
@@ -1685,6 +1788,23 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
               )}
               {facePhase === "conclusion" && (
                 <div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                    <button 
+                      onClick={skipToScore}
+                      style={{ 
+                        fontSize: "16px", 
+                        padding: "8px 20px",
+                        backgroundColor: '#ff9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {lang === 'th' ? 'ข้ามไปดูคะแนน' : 'Skip to Score'}
+                    </button>
+                  </div>
                   <div style={{ fontSize: 20, color: "#00FF00", fontWeight: "bold", marginBottom: 8 }}>
                     {lang === 'th' ? 'สรุปผลการทดสอบทั้งหมด' : 'Complete Test Summary'}
                   </div>
@@ -1829,9 +1949,26 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
             <div style={{ marginBottom: "20px" }}>
               {phase === "idle" && (
                 <>
-                  <button onClick={startCountdown} disabled={phase !== "idle" || isLoading} style={{ fontSize: "18px", padding: "10px 30px" }}>
-                    {lang === 'th' ? 'เริ่มฟื้นฟู' : 'Start Rehabilitation'}
-                  </button>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '16px' }}>
+                    <button onClick={startCountdown} disabled={phase !== "idle" || isLoading} style={{ fontSize: "18px", padding: "10px 30px" }}>
+                      {lang === 'th' ? 'เริ่มฟื้นฟู' : 'Start Rehabilitation'}
+                    </button>
+                    <button 
+                      onClick={skipToScore}
+                      style={{ 
+                        fontSize: "18px", 
+                        padding: "10px 30px",
+                        backgroundColor: '#ff9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {lang === 'th' ? 'ข้ามไปดูคะแนน' : 'Skip to Score'}
+                    </button>
+                  </div>
                   <div style={{
                     marginTop: 16,
                     background: '#fffbe7',
@@ -1866,6 +2003,23 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
                   fontSize: 18,
                   color: feedback === "Correct" ? "#00CC00" : "#FF0000"
                 }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                    <button 
+                      onClick={skipToScore}
+                      style={{ 
+                        fontSize: "16px", 
+                        padding: "8px 20px",
+                        backgroundColor: '#ff9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {lang === 'th' ? 'ข้ามไปดูคะแนน' : 'Skip to Score'}
+                    </button>
+                  </div>
                   {/* ...existing phase/feedback UI... */}
                   {phase === "countdown" && (
                     <>
@@ -2048,9 +2202,26 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
             <div style={{ marginBottom: "20px" }}>
               {phase === "idle" && (
                 <>
-                  <button onClick={startCountdown} disabled={phase !== "idle" || isLoading} style={{ fontSize: "18px", padding: "10px 30px" }}>
-                    {lang === 'th' ? 'เริ่มฟื้นฟู' : 'Start Rehabilitation'}
-                  </button>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '16px' }}>
+                    <button onClick={startCountdown} disabled={phase !== "idle" || isLoading} style={{ fontSize: "18px", padding: "10px 30px" }}>
+                      {lang === 'th' ? 'เริ่มฟื้นฟู' : 'Start Rehabilitation'}
+                    </button>
+                    <button 
+                      onClick={skipToScore}
+                      style={{ 
+                        fontSize: "18px", 
+                        padding: "10px 30px",
+                        backgroundColor: '#ff9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {lang === 'th' ? 'ข้ามไปดูคะแนน' : 'Skip to Score'}
+                    </button>
+                  </div>
                   <div style={{
                     marginTop: 16,
                     background: '#fffbe7',
@@ -2085,6 +2256,23 @@ function playBeep(frequency = 800, duration = 300, volume = 0.3) {
                   fontSize: 18,
                   color: feedback === "Correct" ? "#00CC00" : "#FF0000"
                 }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                    <button 
+                      onClick={skipToScore}
+                      style={{ 
+                        fontSize: "16px", 
+                        padding: "8px 20px",
+                        backgroundColor: '#ff9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {lang === 'th' ? 'ข้ามไปดูคะแนน' : 'Skip to Score'}
+                    </button>
+                  </div>
                   {/* ...existing phase/feedback UI... */}
                   {phase === "countdown" && (
                     <>
