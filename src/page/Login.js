@@ -66,6 +66,28 @@ function Login() {
           justify-content: center;
         }
         
+        @media (max-width: 768px) {
+          .login-container {
+            flex-direction: column;
+          }
+          
+          .login-left {
+            flex: none;
+            min-height: 100vh;
+            padding: 1rem;
+          }
+          
+          .login-right {
+            display: none;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .login-left {
+            padding: 0.75rem;
+          }
+        }
+        
         .login-right::before {
           content: '';
           position: absolute;

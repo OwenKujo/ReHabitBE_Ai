@@ -18,7 +18,7 @@ function ContactUs() {
 
   if (lang === 'en') {
     return (
-      <div className="contact-page">
+      <div className="contact-page container">
         <style>{`
           .contact-page {
             font-family: 'Kanit', 'Prompt', Arial, sans-serif;
@@ -410,7 +410,7 @@ function ContactUs() {
     );
   } else {
     return (
-      <div className="contact-page">
+      <div className="contact-page container">
         <style>{`
           .contact-page {
             font-family: 'Kanit', 'Prompt', Arial, sans-serif;

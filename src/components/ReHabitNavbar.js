@@ -28,41 +28,34 @@ function ReHabitNavbar() {
 
   const navItems = lang === 'th' ? [
     { name: 'หน้าหลัก', href: '/', active: true },
-    { name: 'กายภาพบำบัด', href: 'MediaPipefull', active: false },
+    { name: 'กายภาพบำบัด', href: '/PhysicalMenu' },,
     { name: 'เกี่ยวกับเรา', href: '#', active: false },
     { name: 'ติดต่อ', href: '#', active: false },
   ] : [
     { name: 'Home', href: '/', active: true },
-    { name: 'Physical Therapy', href: 'MediaPipefull', active: false },
+    { name: 'Physical Therapy', href: '/PhysicalMenu', active: false },
     { name: 'About', href: '#', active: false },
     { name: 'Contact', href: '#', active: false },
   ];
 
   return (
-    <nav className="rehabit-navbar">
+    <nav className="nav" style={{ backgroundColor: '#1e293b', color: 'white', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
       <style>{`
-        .rehabit-navbar {
-          background-color: #1e293b;
-          color: white;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+        .nav {
+          position: relative;
+          z-index: 1000;
         }
-        .navbar-container {
-          max-width: 1280px;
-          margin: 0 auto;
-          padding: 0 1rem;
-        }
-        .navbar-flex {
+        .nav-brand {
+          color: white !important;
+          font-size: 1.25rem;
+          font-weight: bold;
+          text-decoration: none;
           display: flex;
           align-items: center;
-          height: 64px;
+          gap: 0.75rem;
+          margin-right: 3rem;
         }
-        .navbar-logo {
-          display: flex;
-          align-items: center;
-          margin-right: 48px;
-        }
-        .navbar-logo-icon {
+        .nav-brand-icon {
           width: 32px;
           height: 32px;
           background-color: #14b8a6;
@@ -70,45 +63,42 @@ function ReHabitNavbar() {
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-right: 12px;
         }
-        .navbar-logo-text {
-          font-size: 20px;
-          font-weight: bold;
-        }
-        .navbar-desktop-nav {
+        .nav-menu {
           display: flex;
           align-items: center;
-          gap: 32px;
+          gap: 2rem;
+          list-style: none;
+          margin: 0;
+          padding: 0;
           margin-left: auto;
         }
-        .navbar-nav-item {
-          padding: 8px 12px;
-          border-radius: 6px;
-          font-size: 14px;
-          font-weight: 500;
-          text-decoration: none;
-          transition: all 0.2s;
-          cursor: pointer;
+        .nav-menu a {
           color: #d1d5db;
+          text-decoration: none;
+          padding: 0.5rem 0.75rem;
+          border-radius: 6px;
+          font-weight: 500;
+          transition: all 0.2s;
+          border: none;
         }
-        .navbar-nav-item.active {
+        .nav-menu a.active {
           color: #5eead4;
           background-color: #374151;
         }
-        .navbar-nav-item:hover {
+        .nav-menu a:hover {
           color: white;
           background-color: #374151;
         }
-        .navbar-right-section {
+        .nav-right-section {
           display: flex;
           align-items: center;
-          gap: 16px;
-          margin-left: 32px;
+          gap: 1rem;
+          margin-left: 2rem;
         }
-        .navbar-icon-btn {
+        .nav-icon-btn {
           position: relative;
-          padding: 8px;
+          padding: 0.5rem;
           color: #9ca3af;
           background-color: transparent;
           border: none;
@@ -116,15 +106,15 @@ function ReHabitNavbar() {
           cursor: pointer;
           transition: all 0.2s;
         }
-        .navbar-icon-btn:hover {
+        .nav-icon-btn:hover {
           color: white;
           background-color: #374151;
         }
-        .navbar-profile-btn {
+        .nav-profile-btn {
           display: flex;
           align-items: center;
-          gap: 8px;
-          padding: 8px;
+          gap: 0.5rem;
+          padding: 0.5rem;
           color: #d1d5db;
           background-color: transparent;
           border: none;
@@ -132,11 +122,11 @@ function ReHabitNavbar() {
           cursor: pointer;
           transition: all 0.2s;
         }
-        .navbar-profile-btn:hover {
+        .nav-profile-btn:hover {
           color: white;
           background-color: #374151;
         }
-        .navbar-profile-icon {
+        .nav-profile-icon {
           width: 32px;
           height: 32px;
           background-color: #4b5563;
@@ -145,23 +135,23 @@ function ReHabitNavbar() {
           align-items: center;
           justify-content: center;
         }
-        .navbar-dropdown {
+        .nav-dropdown {
           position: absolute;
           right: 0;
           top: 100%;
-          margin-top: 8px;
-          width: 192px;
+          margin-top: 0.5rem;
+          width: 12rem;
           background-color: white;
           border-radius: 6px;
           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-          padding: 4px 0;
+          padding: 0.25rem 0;
           z-index: 50;
           border: 1px solid #e5e7eb;
         }
-        .navbar-dropdown-item {
+        .nav-dropdown-item {
           display: block;
-          padding: 8px 16px;
-          font-size: 14px;
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
           color: #374151;
           text-decoration: none;
           cursor: pointer;
@@ -171,139 +161,238 @@ function ReHabitNavbar() {
           width: 100%;
           text-align: left;
         }
-        .navbar-dropdown-item:hover {
+        .nav-dropdown-item:hover {
           background-color: #f3f4f6;
         }
-        .navbar-notification-dot {
+        .nav-notification-dot {
           position: absolute;
-          top: 4px;
-          right: 4px;
-          width: 8px;
-          height: 8px;
+          top: 0.25rem;
+          right: 0.25rem;
+          width: 0.5rem;
+          height: 0.5rem;
           background-color: #10b981;
           border-radius: 50%;
         }
-        .navbar-mobile-menu-btn {
-          display: none;
+        .nav-lang-buttons {
+          display: flex;
+          gap: 0.25rem;
+          align-items: center;
         }
-        .navbar-mobile-menu {
-          display: none;
+        .nav-lang-btn {
+          background: #1976d2;
+          color: #fff;
+          border: 1px solid #1976d2;
+          border-radius: 6px;
+          padding: 0.25rem 0.75rem;
+          font-weight: 700;
+          cursor: pointer;
+          font-size: 0.875rem;
+          transition: all 0.2s;
         }
-        @media (max-width: 900px) {
-          .navbar-desktop-nav {
+        .nav-lang-btn.inactive {
+          background: #fff;
+          color: #1976d2;
+        }
+        .nav-lang-btn:hover {
+          opacity: 0.8;
+        }
+        .nav-toggle {
+          display: none;
+          background: none;
+          border: none;
+          color: #9ca3af;
+          font-size: 1.5rem;
+          cursor: pointer;
+          padding: 0.5rem;
+          border-radius: 50%;
+        }
+        .nav-toggle:hover {
+          background-color: #374151;
+        }
+        .nav-mobile-menu {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background-color: #374151;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          z-index: 1000;
+          padding: 1rem;
+        }
+        .nav-mobile-menu.active {
+          display: block;
+        }
+        .nav-mobile-menu a {
+          display: block;
+          padding: 0.75rem;
+          color: #d1d5db;
+          text-decoration: none;
+          border-bottom: 1px solid #4b5563;
+          font-size: 1rem;
+        }
+        .nav-mobile-menu a:last-child {
+          border-bottom: none;
+        }
+        .nav-mobile-menu a:hover {
+          color: white;
+          background-color: #4b5563;
+        }
+        .nav-mobile-profile {
+          padding-top: 1rem;
+          border-top: 1px solid #4b5563;
+          margin-top: 0.75rem;
+        }
+        .nav-mobile-profile-header {
+          display: flex;
+          align-items: center;
+          padding: 0 0.75rem;
+        }
+        .nav-mobile-profile-info {
+          margin-left: 0.75rem;
+          flex: 1;
+        }
+        .nav-mobile-profile-name {
+          font-size: 1rem;
+          font-weight: 500;
+          color: white;
+        }
+        .nav-mobile-profile-email {
+          font-size: 0.875rem;
+          color: #9ca3af;
+        }
+        .nav-mobile-profile-actions {
+          padding: 0.5rem 0.75rem;
+          border-top: 1px solid #4b5563;
+          margin-top: 0.5rem;
+        }
+        .nav-mobile-profile-actions a {
+          display: block;
+          padding: 0.5rem 0.75rem;
+          color: #d1d5db;
+          text-decoration: none;
+          font-size: 0.875rem;
+          border-bottom: none;
+        }
+        .nav-mobile-profile-actions button {
+          width: 100%;
+          padding: 0.5rem 0.75rem;
+          background: none;
+          border: none;
+          color: #ef4444;
+          font-size: 0.875rem;
+          cursor: pointer;
+          text-align: left;
+        }
+        
+        @media (max-width: 768px) {
+          .nav-menu {
             display: none;
           }
-          .navbar-mobile-menu-btn {
+          .nav-toggle {
             display: block;
           }
-          .navbar-mobile-menu {
-            display: ${isMenuOpen ? 'block' : 'none'};
-            background-color: #374151;
-            padding: 8px;
+          .nav-brand {
+            font-size: 1.125rem;
+            margin-right: 0;
+          }
+          .nav-brand-icon {
+            width: 28px;
+            height: 28px;
+          }
+          .nav-right-section {
+            margin-left: 0;
           }
         }
-        @media (max-width: 600px) {
-          .navbar-container {
-            padding: 0 0.5rem;
+        
+        @media (max-width: 480px) {
+          .nav {
+            padding: 0.75rem 1rem;
           }
-          .navbar-flex {
-            height: 54px;
+          .nav-brand {
+            font-size: 1rem;
           }
-          .navbar-logo-text {
-            font-size: 16px;
-          }
-          .navbar-nav-item {
-            font-size: 12px;
-            padding: 6px 8px;
+          .nav-brand-icon {
+            width: 24px;
+            height: 24px;
           }
         }
       `}</style>
-      <div className="navbar-container">
-        <div className="navbar-flex">
+      <div className="container">
+        <div className="d-flex justify-between align-center">
           {/* Logo */}
-          <div className="navbar-logo">
-            <div className="navbar-logo-icon">
+          <a href="/" className="nav-brand">
+            <div className="nav-brand-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <span className="navbar-logo-text">ReHabit</span>
-          </div>
+            <span>ReHabit</span>
+          </a>
 
           {/* Desktop Navigation */}
-          <div className="navbar-desktop-nav">
+          <ul className="nav-menu">
             {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className={`navbar-nav-item${item.active ? ' active' : ''}`}
-              >
-                {item.name}
-              </a>
+              <li key={item.name}>
+                <a
+                  href={item.href}
+                  className={item.active ? 'active' : ''}
+                >
+                  {item.name}
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
 
           {/* Right Section */}
-          <div className="navbar-right-section">
+          <div className="nav-right-section">
             {/* Language Switcher */}
-            <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginLeft: 12 }}>
+            <div className="nav-lang-buttons">
               <button
                 onClick={() => changeLang('en')}
-                style={{
-                  background: lang === 'en' ? '#1976d2' : '#fff',
-                  color: lang === 'en' ? '#fff' : '#1976d2',
-                  border: '1px solid #1976d2',
-                  borderRadius: 6,
-                  padding: '4px 12px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  fontSize: 14
-                }}
+                className={`nav-lang-btn ${lang === 'en' ? '' : 'inactive'}`}
                 disabled={lang === 'en'}
-              >EN</button>
+              >
+                EN
+              </button>
               <button
                 onClick={() => changeLang('th')}
-                style={{
-                  background: lang === 'th' ? '#1976d2' : '#fff',
-                  color: lang === 'th' ? '#fff' : '#1976d2',
-                  border: '1px solid #1976d2',
-                  borderRadius: 6,
-                  padding: '4px 12px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  fontSize: 14
-                }}
+                className={`nav-lang-btn ${lang === 'th' ? '' : 'inactive'}`}
                 disabled={lang === 'th'}
-              >TH</button>
+              >
+                TH
+              </button>
             </div>
+            
             {/* Notification Bell */}
-            <button className="navbar-icon-btn">
+            <button className="nav-icon-btn">
               <Bell size={20} />
-              <span className="navbar-notification-dot"></span>
+              <span className="nav-notification-dot"></span>
             </button>
+            
             {/* Profile Dropdown */}
             <div style={{ position: 'relative' }} ref={dropdownRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="navbar-profile-btn"
+                className="nav-profile-btn"
               >
-                <div className="navbar-profile-icon">
+                <div className="nav-profile-icon">
                   <User size={20} />
                 </div>
                 <ChevronDown size={16} />
               </button>
               {isProfileOpen && (
-                <div className="navbar-dropdown">
-                  <Link to="#" className="navbar-dropdown-item">{lang === 'th' ? 'โปรไฟล์ของคุณ' : 'Your Profile'}</Link>
-                  <Link to="/edit-profile" className="navbar-dropdown-item" onClick={() => setIsProfileOpen(false)}>{lang === 'th' ? 'แก้ไขโปรไฟล์' : 'Edit Profile'}</Link>
+                <div className="nav-dropdown">
+                  <Link to="#" className="nav-dropdown-item">{lang === 'th' ? 'โปรไฟล์ของคุณ' : 'Your Profile'}</Link>
+                  <Link to="/edit-profile" className="nav-dropdown-item" onClick={() => setIsProfileOpen(false)}>{lang === 'th' ? 'แก้ไขโปรไฟล์' : 'Edit Profile'}</Link>
                   <button 
                     onClick={() => {
                       setShowLogoutConfirm(true);
                       setIsProfileOpen(false);
                     }} 
-                    className="navbar-dropdown-item"
+                    className="nav-dropdown-item"
                     style={{ color: '#ef4444' }}
                   >
                     {lang === 'th' ? 'ออกจากระบบ' : 'Sign Out'}
@@ -311,10 +400,12 @@ function ReHabitNavbar() {
                 </div>
               )}
             </div>
-            {/* Mobile menu button */}
+            
+            {/* Mobile Menu Toggle */}
             <button
-              className="navbar-mobile-menu-btn"
+              className="nav-toggle"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle navigation menu"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -322,46 +413,40 @@ function ReHabitNavbar() {
         </div>
       </div>
       {/* Mobile Menu */}
-      <div className="navbar-mobile-menu">
+      <div className={`nav-mobile-menu ${isMenuOpen ? 'active' : ''}`}>
         {navItems.map((item) => (
           <a
             key={item.name}
             href={item.href}
-            className={`navbar-nav-item${item.active ? ' active' : ''}`}
-            style={{ display: 'block', fontSize: 16, marginBottom: 4 }}
+            className={item.active ? 'active' : ''}
+            onClick={() => setIsMenuOpen(false)}
           >
             {item.name}
           </a>
         ))}
+        
         {/* Mobile Profile Section */}
-        <div style={{ paddingTop: 16, borderTop: '1px solid #4b5563', marginTop: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', padding: '0 12px' }}>
-            <div className="navbar-profile-icon" style={{ width: 40, height: 40 }}>
+        <div className="nav-mobile-profile">
+          <div className="nav-mobile-profile-header">
+            <div className="nav-profile-icon" style={{ width: 40, height: 40 }}>
               <User size={24} />
             </div>
-            <div style={{ marginLeft: 12, flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 500, color: 'white' }}>{user?.name || (lang === 'th' ? 'ชื่อผู้ใช้' : 'User Name')}</div>
-              <div style={{ fontSize: 14, color: '#9ca3af' }}>{user?.email || (lang === 'th' ? 'อีเมลผู้ใช้' : 'User Email')}</div>
+            <div className="nav-mobile-profile-info">
+              <div className="nav-mobile-profile-name">{user?.name || (lang === 'th' ? 'ชื่อผู้ใช้' : 'User Name')}</div>
+              <div className="nav-mobile-profile-email">{user?.email || (lang === 'th' ? 'อีเมลผู้ใช้' : 'User Email')}</div>
             </div>
-            <button className="navbar-icon-btn">
+            <button className="nav-icon-btn">
               <Bell size={24} />
             </button>
           </div>
-          <div style={{ padding: '8px 12px', borderTop: '1px solid #4b5563', marginTop: 8 }}>
-            <Link to="/edit-profile" style={{ display: 'block', padding: '8px 12px', color: '#d1d5db', textDecoration: 'none', fontSize: 14 }}>
+          <div className="nav-mobile-profile-actions">
+            <Link to="/edit-profile" onClick={() => setIsMenuOpen(false)}>
               {lang === 'th' ? 'แก้ไขโปรไฟล์' : 'Edit Profile'}
             </Link>
             <button 
-              onClick={() => setShowLogoutConfirm(true)}
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                background: 'none',
-                border: 'none',
-                color: '#ef4444',
-                fontSize: 14,
-                cursor: 'pointer',
-                textAlign: 'left'
+              onClick={() => {
+                setShowLogoutConfirm(true);
+                setIsMenuOpen(false);
               }}
             >
               {lang === 'th' ? 'ออกจากระบบ' : 'Sign Out'}

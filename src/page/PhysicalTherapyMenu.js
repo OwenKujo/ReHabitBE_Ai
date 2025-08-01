@@ -58,7 +58,56 @@ const PhysicalTherapyMenu = () => {
 
   if (lang === 'en') {
     return (
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#f4fafd', fontFamily: 'Kanit, Prompt, Arial, sans-serif' }}>
+      <div className="physical-therapy-menu" style={{ display: 'flex', minHeight: '100vh', background: '#f4fafd', fontFamily: 'Kanit, Prompt, Arial, sans-serif' }}>
+        <style>{`
+          .physical-therapy-menu {
+            display: flex;
+            min-height: 100vh;
+            background: #f4fafd;
+            font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+          }
+          
+          .sidebar {
+            width: 280px;
+            background: #fff;
+            box-shadow: 2px 0 16px 0 rgba(30,136,229,0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 0;
+          }
+          
+          .main-content {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+          }
+          
+          @media (max-width: 768px) {
+            .physical-therapy-menu {
+              flex-direction: column;
+            }
+            
+            .sidebar {
+              width: 100%;
+              padding: 16px;
+            }
+            
+            .main-content {
+              padding: 16px;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .sidebar {
+              padding: 12px;
+            }
+            
+            .main-content {
+              padding: 12px;
+            }
+          }
+        `}</style>
         {/* Sidebar */}
         <aside style={{ width: 280, background: '#fff', boxShadow: '2px 0 16px 0 rgba(30,136,229,0.06)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0' }}>
           {/* Logo */}
@@ -398,7 +447,7 @@ const PhysicalTherapyMenu = () => {
     );
   } else {
     return (
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#f4fafd', fontFamily: 'Kanit, Prompt, Arial, sans-serif' }}>
+      <div className="physical-therapy-menu" style={{ display: 'flex', minHeight: '100vh', background: '#f4fafd', fontFamily: 'Kanit, Prompt, Arial, sans-serif' }}>
         {/* Sidebar */}
         <aside style={{ width: 280, background: '#fff', boxShadow: '2px 0 16px 0 rgba(30,136,229,0.06)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0' }}>
           {/* Logo */}

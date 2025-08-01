@@ -81,6 +81,28 @@ function Register() {
           justify-content: center;
         }
         
+        @media (max-width: 768px) {
+          .register-container {
+            flex-direction: column;
+          }
+          
+          .register-left {
+            flex: none;
+            min-height: 100vh;
+            padding: 1rem;
+          }
+          
+          .register-right {
+            display: none;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .register-left {
+            padding: 0.75rem;
+          }
+        }
+        
         .register-right::before {
           content: '';
           position: absolute;

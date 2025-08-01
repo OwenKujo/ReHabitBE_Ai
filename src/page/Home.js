@@ -96,7 +96,7 @@ const Home = () => {
 
   if (lang === 'en') {
     return (
-      <div className="home-page" style={{ fontFamily: 'Kanit, Prompt, Arial, sans-serif', background: '#f8fafc' }}>
+      <div className="home-page container" style={{ fontFamily: 'Kanit, Prompt, Arial, sans-serif', background: '#f8fafc' }}>
         <style>{`
           .home-hero {
             background: url(/balance.webp) center/cover;
@@ -563,7 +563,7 @@ const Home = () => {
     );
   } else {
     return (
-      <div className="home-page" style={{ fontFamily: 'Kanit, Prompt, Arial, sans-serif', background: '#f8fafc' }}>
+      <div className="home-page container" style={{ fontFamily: 'Kanit, Prompt, Arial, sans-serif', background: '#f8fafc' }}>
         <style>{`
           .home-hero {
             background: url(/balance.webp) center/cover;
